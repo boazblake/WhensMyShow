@@ -1,15 +1,17 @@
 {
-  "name": "Painter",
+  "name": "shindigit",
   "description": "mithril brunch",
   "private": true,
   "author": "boazblake",
   "version": "0.0.1",
   "repository": "",
   "scripts": {
-    "start": "brunch watch --server",
+    "dev": "brunch watch --server",
+    "start": "pnpm run dev",
     "build": "brunch build --production"
   },
   "dependencies": {
+    "data.task": "^3.1.2",
     "mithril": "^2.0.4",
     "mithril-stream": "^2.0.0"
   },
@@ -21,6 +23,8 @@
     "babel-preset-stage-0": "^6.24.1",
     "brunch": "^2",
     "clean-css-brunch": "^2",
+    "sass-brunch": "^2.10.8",
+    "spectre.css": "^0.5.8",
     "uglify-js-brunch": "^2"
   }
 }

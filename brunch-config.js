@@ -6,11 +6,23 @@ exports.files = {
       "app.js": /^app/
     }
   },
-  stylesheets: { joinTo: { "app.css": "./app/styles/*.css" } }
+
+  stylesheets: {
+    joinTo: {
+      // "css/app.css": /^styles/,
+      "css/app.css": /^(?!css)/
+    }
+  }
+}
+
+exports.npm = {
+  styles: { "spectre.css": ["dist/spectre.css"] }
+  // globals: { spectre: "spectre.css" }
 }
 
 exports.plugins = {
-  babel: { presets: ["latest", "stage-0"] }
+  babel: { presets: ["latest", "stage-0"] },
+  sass: {}
 }
 
 exports.paths = {
