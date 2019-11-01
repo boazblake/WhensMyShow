@@ -3,78 +3,12 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  font-size: 18px;
-  line-height: 30px;
-}
-
-:root {
-  --primary-background: rgba(21, 64, 90, 1);
-  --primary-text: rgba(255, 255, 255, 1);
-  --secondary-background: rgba(191, 192, 192, 1);
-  --secondary-text: rgba(45, 49, 66, 1);
-  --error: rgba(191, 49, 52 1);
-  --info: rgba(108, 92, 231, 1);
-  --success: rgba(0, 184, 148, 1);
-  --warning: rgba(225, 112, 85, 1);
-}
-
-h1 {
-  font-size: 30px;
 }
 
 .app {
   display: flex;
   flex-flow: column;
   margin: 0 6px;
-}
-
-.btn {
-  width: 120px;
-  height: 40px;
-  outline: none;
-  transition: all 0.1s, color 0.1s 0.1s;
-  background-color: var(--primary-background);
-  color: var(--primary-text);
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--secondary-background);
-    color: var(--secondary-text);
-  }
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.label {
-  font-size: 22px;
-}
-
-.input {
-  margin: 2px;
-  padding: 2px;
-}
-
-.modalBackground {
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.modal {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%); /* for IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* for Safari */
 }
 
 @media (min-width: 700px) and (max-width: 990px) {

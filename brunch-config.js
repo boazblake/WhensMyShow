@@ -16,7 +16,13 @@ exports.files = {
 }
 
 exports.npm = {
-  styles: { "spectre.css": ["dist/spectre.css"] }
+  styles: {
+    "spectre.css": [
+      "dist/spectre.css",
+      "dist/spectre-icons.css",
+      "dist/spectre-exp.css"
+    ]
+  }
   // globals: { spectre: "spectre.css" }
 }
 

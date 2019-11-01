@@ -1,7 +1,6 @@
 import m from "mithril"
 import Stream from "mithril-stream"
-import Input from "../../components/Input.js"
-import Button from "../../components/Button.js"
+import { Button, Input, CheckBox } from "../../components/Elements.js"
 
 import Task from "data.task"
 
@@ -30,30 +29,29 @@ const RegisterForm = ({ attrs: { mdl } }) => {
         m("h1", "REGISTER"),
         m(Input, {
           label: "Email",
-          classList: "",
           id: "login-email",
           type: "email",
+          placeholder: "email@email.com",
           action: (e) => data.email(e.target.value),
           value: data.email()
         }),
         m(Input, {
           label: "Password",
-          classList: "",
           id: "login-password",
           type: "password",
+          placeholder: "allowed chars",
           action: (e) => data.password(e.target.value),
           value: data.password()
         }),
         m(Input, {
           label: "name",
-          classList: "",
           id: "login-name",
           type: "name",
+          placeholder: "first last",
           action: (e) => data.name(e.target.value),
           value: data.name()
         }),
         m(Button, {
-          classList: "",
           action: () => {
             authUser(mdl)(form)
           },
@@ -70,22 +68,21 @@ const LoginForm = ({ attrs: { mdl } }) => {
         m("h1", "LOGIN"),
         m(Input, {
           label: "Email",
-          classList: "",
           id: "login-email",
           type: "email",
+          placeholder: "email@email.com",
           action: (e) => data.email(e.target.value),
           value: data.email()
         }),
         m(Input, {
           label: "Password",
-          classList: "",
           id: "login-password",
           type: "password",
+          placeholder: "allowed chars",
           action: (e) => data.password(e.target.value),
           value: data.password()
         }),
         m(Button, {
-          classList: "",
           action: () => {
             authUser(mdl)(form)
           },
@@ -99,20 +96,20 @@ const Landing = () => {
   return {
     view: ({ attrs: { mdl } }) =>
       m(".landing", [
-        form.login()
-          ? m(LoginForm, { mdl, data: form })
-          : m(RegisterForm, { mdl, data: form }),
-        m(Input, {
+        m(CheckBox, {
           label: "Login",
-          classList: "",
-          id: "login-login",
-          type: "checkbox",
+          id: "login-or-register",
+          type: "switch",
           action: (e) => {
             form.login(!form.login())
             console.log("register", form.login())
           },
           value: form.login()
-        })
+        }),
+
+        form.login()
+          ? m(LoginForm, { mdl, data: form })
+          : m(RegisterForm, { mdl, data: form })
       ])
   }
 }
