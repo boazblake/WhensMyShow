@@ -162,6 +162,7 @@ var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var State = {
+  today: new Date(),
   isLoggedIn: (0, _mithrilStream2.default)(false)
 };
 
@@ -187,18 +188,24 @@ var _mithril = require("mithril");
 
 var _mithril2 = _interopRequireDefault(_mithril);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _Elements = require("./Elements");
 
-// import Input from "./Inputs"
+var _mithrilStream = require("mithril-stream");
+
+var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
+
+var _dateFns = require("date-fns");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var months = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+var daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 var calendarHeader = function calendarHeader() {
   return {
     view: function view() {
-      return (0, _mithril2.default)("div.calendar-header", days.map(function (d) {
+      return (0, _mithril2.default)("div.calendar-header", daysOfWeek.map(function (d) {
         return (0, _mithril2.default)("div.calendar-date", d);
       }));
     }
@@ -213,15 +220,34 @@ var calendarBody = function calendarBody() {
   };
 };
 
-var Calendar = function Calendar() {
+var Calendar = function Calendar(_ref) {
+  var mdl = _ref.attrs.mdl;
+
+  var month = mdl.State.today.getMonth();
+  var year = mdl.State.today.getFullYear();
+  var day = mdl.State.today.getDay();
+
+  var state = {
+    months: months,
+    daysOfWeek: daysOfWeek,
+    day: day,
+    month: month,
+    year: year,
+    daysInMonth: (0, _dateFns.getDaysInMonth)(month)
+  };
+
+  console.log("month", state);
+
   return {
-    view: function view(_ref) {
-      var _ref$attrs = _ref.attrs,
-          mdl = _ref$attrs.mdl,
-          large = _ref$attrs.large;
-      return (0, _mithril2.default)("div.calendar", { class: large && "calendar-lg" }, [(0, _mithril2.default)("div.calendar-nav.navbar", [(0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", (0, _mithril2.default)("i.icon.icon-arrow-left")),
-      // m(Input, { mdl, type: "checkbox", label: "calendar size" applicationCache, id: "calendar size", classList:"", value }),
-      (0, _mithril2.default)("div.navbar-primary", "March 2017"), (0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", (0, _mithril2.default)("i.icon.icon-arrow-right"))]), (0, _mithril2.default)("div.calendar-container", [(0, _mithril2.default)(calendarHeader, { mdl: mdl }), (0, _mithril2.default)(calendarBody, { mdl: mdl })])]);
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          mdl = _ref2$attrs.mdl,
+          large = _ref2$attrs.large;
+      return (0, _mithril2.default)("div.calendar", { class: large && "calendar-lg" }, [(0, _mithril2.default)("div.calendar-nav.navbar", [(0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", {
+        onclick: function onclick(e) {
+          return state.month--;
+        }
+      }, (0, _mithril2.default)("i.icon.icon-arrow-left")), (0, _mithril2.default)("div.navbar-primary", [state.months[state.month] + " " + state.year]), (0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", { onclick: state.month++ }, (0, _mithril2.default)("i.icon.icon-arrow-right"))]), (0, _mithril2.default)("div.calendar-container", [(0, _mithril2.default)(calendarHeader, { mdl: mdl }), (0, _mithril2.default)(calendarBody, { mdl: mdl })])]);
     }
   };
 };
@@ -259,9 +285,10 @@ var Button = exports.Button = function Button() {
   return {
     view: function view(_ref2) {
       var _ref2$attrs = _ref2.attrs,
+          classList = _ref2$attrs.classList,
           action = _ref2$attrs.action,
           label = _ref2$attrs.label;
-      return (0, _mithril2.default)("button.btn", { onclick: action }, label);
+      return (0, _mithril2.default)("button.btn." + classList, { onclick: action }, label);
     }
   };
 };
@@ -435,6 +462,9 @@ var Layout = function Layout() {
 var routes = function routes(mdl) {
   return {
     "/landing": {
+      onmatch: function onmatch() {
+        return mdl.State.isLoggedIn(false);
+      },
       render: function render() {
         return (0, _mithril2.default)(Layout, { mdl: mdl }, (0, _mithril2.default)(_component2.default, { mdl: mdl }));
       }
@@ -495,7 +525,7 @@ var Config = function Config() {
     view: function view(_ref2) {
       var mdl = _ref2.attrs.mdl;
       return (0, _mithril2.default)(_Elements.DropDown, { mdl: mdl, classList: "dropdown-right", label: "Cal Options" }, (0, _mithril2.default)(_Elements.Menu, {}, [(0, _mithril2.default)(_Elements.CheckBox, {
-        label: "Large",
+        label: "Details",
         id: "cal-size",
         type: "switch",
         action: function action(e) {
@@ -559,7 +589,6 @@ var onResult = function onResult(status) {
       mdl.User.map(function (usr) {
         return usr.name = data;
       });
-      console.log(status, data, _mithril2.default.route.set("home", { name: mdl.User().name }));
       _mithril2.default.route.set("/home/:name", { name: mdl.User().name });
     };
   };
@@ -669,7 +698,10 @@ var Landing = function Landing() {
 exports.default = Landing;
 });
 
-;require.alias("process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
+;require.alias("buffer/index.js", "buffer");
+require.alias("events/events.js", "events");
+require.alias("process/browser.js", "process");
+require.alias("stream-browserify/index.js", "stream");process = require('process');require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 

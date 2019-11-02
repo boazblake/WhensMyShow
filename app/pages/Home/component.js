@@ -17,7 +17,7 @@ const Config = () => {
         { mdl, classList: "dropdown-right", label: "Cal Options" },
         m(Menu, {}, [
           m(CheckBox, {
-            label: "Large",
+            label: "Details",
             id: "cal-size",
             type: "switch",
             action: (e) => mdl.Home.cal.isLarge(!mdl.Home.cal.isLarge()),

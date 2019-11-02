@@ -1,5 +1,6 @@
 dependencies:
   data.task: 3.1.2
+  date-fns: 2.6.0
   mithril: 2.0.4
   mithril-stream: 2.0.0
 devDependencies:
@@ -1535,6 +1536,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-gGDjno8m/FS1kdMU3EmKcLaO1enFyfCV/EscvDZ4+KZDSg9xHePa2VFfWd+QO5PUp18NdCIziOpaSUE4Efw8/w==
+  /date-fns/2.6.0:
+    dev: false
+    resolution:
+      integrity: sha512-F55YxqRdEfP/eYQmQjLN798v0AwLjmZ8nMBjdQvNwEE3N/zWVrlkkqT+9seBlPlsbkybG4JmWg3Ee3dIV9BcGQ==
   /debug/2.6.9:
     dependencies:
       ms: 2.0.0
@@ -4789,6 +4794,7 @@ specifiers:
   brunch: ^2
   clean-css-brunch: ^2
   data.task: ^3.1.2
+  date-fns: ^2.6.0
   mithril: ^2.0.4
   mithril-stream: ^2.0.0
   sass-brunch: ^2.10.8

@@ -23,7 +23,6 @@ exports.npm = {
       "dist/spectre-exp.css"
     ]
   }
-  // globals: { spectre: "spectre.css" }
 }
 
 exports.plugins = {

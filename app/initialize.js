@@ -39,6 +39,7 @@ const Layout = () => {
 const routes = (mdl) => {
   return {
     "/landing": {
+      onmatch: () => mdl.State.isLoggedIn(false),
       render: () => m(Layout, { mdl }, m(Landing, { mdl }))
     },
     "/home/:name": {

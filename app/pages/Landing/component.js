@@ -15,7 +15,6 @@ const authUserTask = (data) => Task.of(data.name())
 
 const onResult = (status) => (mdl) => (data) => {
   mdl.User.map((usr) => (usr.name = data))
-  console.log(status, data, m.route.set("home", { name: mdl.User().name }))
   m.route.set("/home/:name", { name: mdl.User().name })
 }
 

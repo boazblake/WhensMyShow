@@ -15,8 +15,8 @@ export const NavBar = () => {
 
 export const Button = () => {
   return {
-    view: ({ attrs: { action, label } }) =>
-      m(`button.btn`, { onclick: action }, label)
+    view: ({ attrs: { classList, action, label } }) =>
+      m(`button.btn.${classList}`, { onclick: action }, label)
   }
 }
 

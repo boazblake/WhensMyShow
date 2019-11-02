@@ -1,5 +1,7 @@
 import m from "mithril"
-// import Input from "./Inputs"
+import { Button } from "./Elements"
+import Stream from "mithril-stream"
+import { getDaysInMonth } from "date-fns"
 
 const months = [
   "January",
@@ -16,12 +18,12 @@ const months = [
   "December"
 ]
 
-const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 const calendarHeader = () => {
   return {
     view: () =>
-      m("div.calendar-header", days.map((d) => m("div.calendar-date", d)))
+      m("div.calendar-header", daysOfWeek.map((d) => m("div.calendar-date", d)))
   }
 }
 
@@ -83,19 +85,39 @@ const calendarBody = () => {
   }
 }
 
-const Calendar = () => {
+const Calendar = ({ attrs: { mdl } }) => {
+  let month = mdl.State.today.getMonth()
+  let year = mdl.State.today.getFullYear()
+  let day = mdl.State.today.getDay()
+
+  const state = {
+    months,
+    daysOfWeek,
+    day,
+    month,
+    year,
+    daysInMonth: getDaysInMonth(month)
+  }
+
+  console.log("month", state)
+
   return {
     view: ({ attrs: { mdl, large } }) =>
       m("div.calendar", { class: large && "calendar-lg" }, [
         m("div.calendar-nav.navbar", [
           m(
             "button.btn.btn-action.btn-link.btn-lg",
+            {
+              onclick: (e) => state.month--
+            },
             m("i.icon.icon-arrow-left")
           ),
-          // m(Input, { mdl, type: "checkbox", label: "calendar size" applicationCache, id: "calendar size", classList:"", value }),
-          m("div.navbar-primary", "March 2017"),
+          m("div.navbar-primary", [
+            `${state.months[state.month]} ${state.year}`
+          ]),
           m(
             "button.btn.btn-action.btn-link.btn-lg",
+            { onclick: state.month++ },
             m("i.icon.icon-arrow-right")
           )
         ]),

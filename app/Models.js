@@ -1,6 +1,7 @@
 import Stream from "mithril-stream"
 
 const State = {
+  today: new Date(),
   isLoggedIn: Stream(false)
 }
 
