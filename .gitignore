@@ -9,6 +9,7 @@
 *.vi
 *~
 *.sass-cache
+*secrets.js
 
 # OS or Editor folders
 .DS_Store

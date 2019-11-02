@@ -116,7 +116,6 @@
 
 (function() {
 var global = typeof window === 'undefined' ? this : window;
-var process;
 var __makeRelativeRequire = function(require, mappings, pref) {
   var none = {};
   var tryReq = function(name, pref) {
@@ -148,33 +147,110 @@ var __makeRelativeRequire = function(require, mappings, pref) {
     return require(name);
   }
 };
-require.register("Models.js", function(exports, require, module) {
+require.register("App.js", function(exports, require, module) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _mithrilStream = require("mithril-stream");
+var _mithril = require("mithril");
 
-var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _component = require("./pages/Home/component.js");
+
+var _component2 = _interopRequireDefault(_component);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var State = {
-  today: new Date(),
-  isLoggedIn: (0, _mithrilStream2.default)(false)
+var Main = function Main() {
+  return { view: function view(_ref) {
+      var children = _ref.children;
+      return (0, _mithril2.default)("section.main", children);
+    } };
 };
 
-var User = (0, _mithrilStream2.default)({});
-
-var Home = {
-  cal: { isLarge: (0, _mithrilStream2.default)(true) }
+var Layout = function Layout() {
+  return {
+    view: function view(_ref2) {
+      var children = _ref2.children,
+          mdl = _ref2.attrs.mdl;
+      return (0, _mithril2.default)(".app", [(0, _mithril2.default)(Main, { mdl: mdl }, children)]);
+    }
+  };
 };
 
-var Models = { User: User, Home: Home, State: State };
+var routes = function routes(mdl) {
+  return {
+    "/home": {
+      onmatch: function onmatch(a, b, c) {},
+      render: function render() {
+        return (0, _mithril2.default)(Layout, { mdl: mdl }, (0, _mithril2.default)(_component2.default, { mdl: mdl }));
+      }
+    }
+  };
+};
 
-exports.default = Models;
+exports.default = routes;
+});
+
+;require.register("Models.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.imagesUrl = exports.detailsUrl = exports.searchUrl = undefined;
+
+var _secrets = require("./secrets.js");
+
+var baseSearchUrl = function baseSearchUrl(baseUrl) {
+  return function (apiKey) {
+    return function (page) {
+      return function (query) {
+        return baseUrl + "/search/multi?api_key=" + apiKey + "&language=en-US&query=" + query + "&page=" + page + "&include_adult=false?";
+      };
+    };
+  };
+};
+
+var baseDetailsUrl = function baseDetailsUrl(baseUrl) {
+  return function (apiKey) {
+    return function (id) {
+      return baseUrl + "/tv/" + id + "?api_key=" + apiKey + "&language=en-US";
+    };
+  };
+};
+
+var baseImagesUrl = function baseImagesUrl(baseUrl) {
+  return function (apiKey) {
+    return function (id) {
+      return baseUrl + "/tv/" + id + "/images?api_key=" + apiKey + "&language=en-US";
+    };
+  };
+};
+
+var searchUrl = exports.searchUrl = baseSearchUrl(_secrets.baseUrl)(_secrets.apiKey);
+
+var detailsUrl = exports.detailsUrl = baseDetailsUrl(_secrets.baseUrl)(_secrets.apiKey);
+
+var imagesUrl = exports.imagesUrl = function imagesUrl(img) {
+  return "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + img;
+};
+
+var state = {
+  page: 1,
+  query: ""
+};
+
+var Model = {
+  state: state,
+  data: {},
+  error: {}
+};
+
+exports.default = Model;
 });
 
 ;require.register("components/Calendar.js", function(exports, require, module) {
@@ -405,85 +481,15 @@ var _Models = require("./Models.js");
 
 var _Models2 = _interopRequireDefault(_Models);
 
-var _component = require("./pages/Landing/component");
+var _App = require("./App.js");
 
-var _component2 = _interopRequireDefault(_component);
-
-var _component3 = require("./pages/Home/component");
-
-var _component4 = _interopRequireDefault(_component3);
-
-var _Elements = require("./components/Elements");
+var _App2 = _interopRequireDefault(_App);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Main = function Main() {
-  return { view: function view(_ref) {
-      var children = _ref.children;
-      return (0, _mithril2.default)("section.main", children);
-    } };
-};
-
-var Logout = function Logout() {
-  return {
-    view: function view(_ref2) {
-      var mdl = _ref2.attrs.mdl;
-      return (0, _mithril2.default)(_Elements.Button, {
-        action: function action() {
-          _mithril2.default.route.set("/landing");
-          mdl.State.isLoggedIn(false);
-        },
-        mdl: mdl,
-        label: "logout"
-      });
-    }
-  };
-};
-
-var Navigation = function Navigation() {
-  return {
-    view: function view(_ref3) {
-      var mdl = _ref3.attrs.mdl;
-      return (0, _mithril2.default)(_Elements.NavBar, { mdl: mdl }, mdl.State.isLoggedIn() && (0, _mithril2.default)(Logout, { mdl: mdl }));
-    }
-  };
-};
-
-var Layout = function Layout() {
-  return {
-    view: function view(_ref4) {
-      var children = _ref4.children,
-          mdl = _ref4.attrs.mdl;
-      return (0, _mithril2.default)(".app", [(0, _mithril2.default)(Navigation, { mdl: mdl }), (0, _mithril2.default)(Main, { mdl: mdl }, children)]);
-    }
-  };
-};
-
-var routes = function routes(mdl) {
-  return {
-    "/landing": {
-      onmatch: function onmatch() {
-        return mdl.State.isLoggedIn(false);
-      },
-      render: function render() {
-        return (0, _mithril2.default)(Layout, { mdl: mdl }, (0, _mithril2.default)(_component2.default, { mdl: mdl }));
-      }
-    },
-    "/home/:name": {
-      onmatch: function onmatch(a, b, c) {
-        !mdl.User().name && _mithril2.default.route.set("/landing");
-        mdl.State.isLoggedIn(true);
-      },
-      render: function render() {
-        return (0, _mithril2.default)(Layout, { mdl: mdl }, (0, _mithril2.default)(_component4.default, { mdl: mdl, key: name }));
-      }
-    }
-  };
-};
-
 document.addEventListener("DOMContentLoaded", function () {
   var root = document.body;
-  _mithril2.default.route(root, "/home/anon", routes(_Models2.default));
+  _mithril2.default.route(root, "/home", (0, _App2.default)(_Models2.default));
 });
 });
 
@@ -498,50 +504,21 @@ var _mithril = require("mithril");
 
 var _mithril2 = _interopRequireDefault(_mithril);
 
-var _Calendar = require("../../components/Calendar.js");
+var _search = require("./search.js");
 
-var _Calendar2 = _interopRequireDefault(_Calendar);
+var _search2 = _interopRequireDefault(_search);
 
-var _Schedule = require("../../components/Schedule.js");
+var _results = require("./results.js");
 
-var _Schedule2 = _interopRequireDefault(_Schedule);
-
-var _Elements = require("../../components/Elements");
+var _results2 = _interopRequireDefault(_results);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Toolbar = function Toolbar() {
-  return {
-    view: function view(_ref) {
-      var mdl = _ref.attrs.mdl,
-          children = _ref.children;
-      return (0, _mithril2.default)(_Elements.NavBar, { mdl: mdl }, children);
-    }
-  };
-};
-
-var Config = function Config() {
-  return {
-    view: function view(_ref2) {
-      var mdl = _ref2.attrs.mdl;
-      return (0, _mithril2.default)(_Elements.DropDown, { mdl: mdl, classList: "dropdown-right", label: "Cal Options" }, (0, _mithril2.default)(_Elements.Menu, {}, [(0, _mithril2.default)(_Elements.CheckBox, {
-        label: "Details",
-        id: "cal-size",
-        type: "switch",
-        action: function action(e) {
-          return mdl.Home.cal.isLarge(!mdl.Home.cal.isLarge());
-        },
-        value: mdl.Home.cal.isLarge()
-      })]));
-    }
-  };
-};
-
 var Home = function Home() {
   return {
-    view: function view(_ref3) {
-      var mdl = _ref3.attrs.mdl;
-      return (0, _mithril2.default)(".home", [(0, _mithril2.default)(Toolbar, { mdl: mdl }, [(0, _mithril2.default)("h1", "HOME"), (0, _mithril2.default)(Config, { mdl: mdl })]), (0, _mithril2.default)(_Calendar2.default, { mdl: mdl, large: mdl.Home.cal.isLarge() }), (0, _mithril2.default)(_Schedule2.default, { mdl: mdl })]);
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".main", [(0, _mithril2.default)(_search2.default, { mdl: mdl }), (0, _mithril2.default)(_results2.default, { mdl: mdl })]);
     }
   };
 };
@@ -549,7 +526,35 @@ var Home = function Home() {
 exports.default = Home;
 });
 
-;require.register("pages/Landing/component.js", function(exports, require, module) {
+;require.register("pages/Home/fns.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatSearchData = undefined;
+
+var _ramda = require("ramda");
+
+var toSearchVm = function toSearchVm(_ref) {
+  var original_name = _ref.original_name,
+      backdrop_path = _ref.backdrop_path,
+      poster_path = _ref.poster_path,
+      overview = _ref.overview,
+      id = _ref.id;
+  return {
+    original_name: original_name,
+    backdrop_path: backdrop_path,
+    poster_path: poster_path,
+    overview: overview,
+    id: id
+  };
+};
+
+var formatSearchData = exports.formatSearchData = (0, _ramda.over)((0, _ramda.lensProp)("results"), (0, _ramda.map)(toSearchVm));
+});
+
+;require.register("pages/Home/results.js", function(exports, require, module) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -560,148 +565,84 @@ var _mithril = require("mithril");
 
 var _mithril2 = _interopRequireDefault(_mithril);
 
-var _mithrilStream = require("mithril-stream");
-
-var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
-
-var _Elements = require("../../components/Elements.js");
-
-var _data = require("data.task");
-
-var _data2 = _interopRequireDefault(_data);
+var _Models = require("../../Models.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var form = {
-  login: (0, _mithrilStream2.default)(false),
-  email: (0, _mithrilStream2.default)(""),
-  password: (0, _mithrilStream2.default)(""),
-  name: (0, _mithrilStream2.default)("")
-};
-
-var authUserTask = function authUserTask(data) {
-  return _data2.default.of(data.name());
-};
-
-var onResult = function onResult(status) {
-  return function (mdl) {
-    return function (data) {
-      mdl.User.map(function (usr) {
-        return usr.name = data;
-      });
-      _mithril2.default.route.set("/home/:name", { name: mdl.User().name });
-    };
-  };
-};
-
-var authUser = function authUser(mdl) {
-  return function (data) {
-    return authUserTask(data).fork(onResult("error")(mdl), onResult("success")(mdl));
-  };
-};
-
-var RegisterForm = function RegisterForm(_ref) {
-  var mdl = _ref.attrs.mdl;
-
+var Results = function Results() {
   return {
-    view: function view(_ref2) {
-      var data = _ref2.attrs.data;
-      return (0, _mithril2.default)("form.form", [(0, _mithril2.default)("h1", "REGISTER"), (0, _mithril2.default)(_Elements.Input, {
-        label: "Email",
-        id: "login-email",
-        type: "email",
-        placeholder: "email@email.com",
-        action: function action(e) {
-          return data.email(e.target.value);
-        },
-        value: data.email()
-      }), (0, _mithril2.default)(_Elements.Input, {
-        label: "Password",
-        id: "login-password",
-        type: "password",
-        placeholder: "allowed chars",
-        action: function action(e) {
-          return data.password(e.target.value);
-        },
-        value: data.password()
-      }), (0, _mithril2.default)(_Elements.Input, {
-        label: "name",
-        id: "login-name",
-        type: "name",
-        placeholder: "first last",
-        action: function action(e) {
-          return data.name(e.target.value);
-        },
-        value: data.name()
-      }), (0, _mithril2.default)(_Elements.Button, {
-        action: function action() {
-          authUser(mdl)(form);
-        },
-        label: "SUBMIT"
-      })]);
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".results.columns", mdl.data && mdl.data.results ? mdl.data.results.map(function (result) {
+        return (0, _mithril2.default)(".column col-9", [(0, _mithril2.default)(".tile", [(0, _mithril2.default)(".tile-icon", (0, _mithril2.default)(".example-tile-icon", (0, _mithril2.default)("img", { src: "" + (0, _Models.imagesUrl)(result.poster_path) }))), (0, _mithril2.default)(".tile-content", [(0, _mithril2.default)("p.tile-title", result.original_name), (0, _mithril2.default)("p.tile-subtitle", result.overview)]), (0, _mithril2.default)(".tile-action", (0, _mithril2.default)("button.btn btn-primary", "Details"))])]);
+      }) : []);
     }
   };
 };
 
-var LoginForm = function LoginForm(_ref3) {
-  var mdl = _ref3.attrs.mdl;
-
-  return {
-    view: function view(_ref4) {
-      var data = _ref4.attrs.data;
-      return (0, _mithril2.default)("form.form", [(0, _mithril2.default)("h1", "LOGIN"), (0, _mithril2.default)(_Elements.Input, {
-        label: "Email",
-        id: "login-email",
-        type: "email",
-        placeholder: "email@email.com",
-        action: function action(e) {
-          return data.email(e.target.value);
-        },
-        value: data.email()
-      }), (0, _mithril2.default)(_Elements.Input, {
-        label: "Password",
-        id: "login-password",
-        type: "password",
-        placeholder: "allowed chars",
-        action: function action(e) {
-          return data.password(e.target.value);
-        },
-        value: data.password()
-      }), (0, _mithril2.default)(_Elements.Button, {
-        action: function action() {
-          authUser(mdl)(form);
-        },
-        label: "SUBMIT"
-      })]);
-    }
-  };
-};
-
-var Landing = function Landing() {
-  return {
-    view: function view(_ref5) {
-      var mdl = _ref5.attrs.mdl;
-      return (0, _mithril2.default)(".landing", [(0, _mithril2.default)(_Elements.CheckBox, {
-        label: "Login",
-        id: "login-or-register",
-        type: "switch",
-        action: function action(e) {
-          form.login(!form.login());
-          console.log("register", form.login());
-        },
-        value: form.login()
-      }), form.login() ? (0, _mithril2.default)(LoginForm, { mdl: mdl, data: form }) : (0, _mithril2.default)(RegisterForm, { mdl: mdl, data: form })]);
-    }
-  };
-};
-
-exports.default = Landing;
+exports.default = Results;
 });
 
-;require.alias("buffer/index.js", "buffer");
-require.alias("events/events.js", "events");
-require.alias("process/browser.js", "process");
-require.alias("stream-browserify/index.js", "stream");process = require('process');require.register("___globals___", function(exports, require, module) {
+;require.register("pages/Home/search.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Models = require("../../Models.js");
+
+var _fns = require("./fns.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Search = function Search() {
+  var searchShows = function searchShows(mdl) {
+    _mithril2.default.request({ url: (0, _Models.searchUrl)(mdl.state.page)(mdl.state.query) }).then(function (data) {
+      mdl.data = (0, _fns.formatSearchData)(data);
+    }, function (err) {
+      return mdl.error = err;
+    });
+  };
+
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".search", (0, _mithril2.default)(".form-group", [(0, _mithril2.default)("label.form-label", { for: "search" }, "Search"), (0, _mithril2.default)("input.form-input", {
+        type: "text",
+        id: "search",
+        placeholder: "search",
+        value: mdl.state.query,
+        oninput: function oninput(e) {
+          mdl.state.query = e.target.value;
+        },
+        onchange: function onchange(e) {
+          return searchShows(mdl);
+        }
+      })]));
+    }
+  };
+};
+
+exports.default = Search;
+});
+
+;require.register("secrets.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var apiKey = exports.apiKey = "1e4d78ab60660282c63379725fc9b111";
+
+var baseUrl = exports.baseUrl = "https://api.themoviedb.org/3";
+});
+
+;require.register("___globals___", function(exports, require, module) {
   
 });})();require('___globals___');
 
