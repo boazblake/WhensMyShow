@@ -4,11 +4,40 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+:root {
+  --pink: rgba(238, 80, 157, 1);
+  --light-blue: rgba(0, 175, 219, 1);
+  --dark-blue: rgba(0, 107, 180, 1);
+  --grey: rgba(87, 87, 87, 1);
+  --black: rgba(0, 0, 0, 0);
+  --off-white: rgba(239, 239, 233);
+  --white: rgba(255, 255, 255, 1);
+}
 
 .app {
   display: flex;
   flex-flow: column;
-  margin: 0 6px;
+  justify-content: space-between;
+  align-content: space-between;
+  height: 100vh;
+  width: 100vw;
+}
+
+.main {
+  height: 80%;
+  overflow: scroll;
+}
+
+.tiles {
+  display: flex;
+  flex-flow: wrap;
+  width: 100vw;
+  align-content: center;
+  justify-content: center;
+}
+
+.selected {
+  filter: grayscale(80%);
 }
 
 @media (min-width: 700px) and (max-width: 990px) {

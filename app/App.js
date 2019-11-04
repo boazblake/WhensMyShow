@@ -1,24 +1,19 @@
-import m from "mithril"
-import Home from "./pages/Home/component.js"
-
-const Main = () => {
-  return { view: ({ children }) => m("section.main", children) }
-}
-
-const Layout = () => {
-  return {
-    view: ({ children, attrs: { mdl } }) =>
-      m(".app", [m(Main, { mdl }, children)])
+const toRoutes = (mdl) => (acc, route) => {
+  acc[route.route] = {
+    onmatch: (args, path, fullroute) => {
+      if (route.group.includes("authenticated") && !mdl.state.isAuth()) {
+        mdl.route.set(m.route.get())
+      }
+      mdl.state.route = route
+      mdl.state.anchor = path.split("#")[1]
+      let isAnchor = Boolean(mdl.state.anchor)
+      route.onmatch(mdl, args, path, fullroute, isAnchor)
+    },
+    render: () => route.component(mdl)
   }
+  return acc
 }
 
-const routes = (mdl) => {
-  return {
-    "/home": {
-      onmatch: (a, b, c) => {},
-      render: () => m(Layout, { mdl }, m(Home, { mdl }))
-    }
-  }
-}
+const App = (mdl) => mdl.Routes.reduce(toRoutes(mdl), {})
 
-export default routes
+export default App

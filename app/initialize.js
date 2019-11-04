@@ -1,8 +1,8 @@
 import m from "mithril"
 import Model from "./Models.js"
-import routes from "./App.js"
+import App from "./App.js"
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.body
-  m.route(root, "/home", routes(Model))
+  m.route(root, "/home", App(Model))
 })
