@@ -1,6 +1,5 @@
 import m from "mithril"
 import http from "../../utils/http.js"
-import { log } from "../../Models.js"
 import { concat, any, map, propEq, over, lensProp } from "ramda"
 import { toSearchVm } from "../fns.js"
 import { ListSelector } from "../../components/Elements.js"
