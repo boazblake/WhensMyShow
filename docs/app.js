@@ -703,14 +703,19 @@ var ShowSelectedShows = function ShowSelectedShows() {
     return (0, _ramda.filter)((0, _ramda.propEq)("status", mdl.state.currentList()), mdl.user.shows());
   };
 
+  var deleteShow = function deleteShow(mdl) {
+    //delete show
+  };
+
   return {
     view: function view(_ref) {
       var mdl = _ref.attrs.mdl;
       return filterShowsByList(mdl).map(function (show, idx) {
-        return (0, _mithril2.default)("img.img-responsive.img-fit-cover", {
-          key: idx,
+        return (0, _mithril2.default)(".tileCard", {
+          key: idx
+        }, [(0, _mithril2.default)("i.icon icon-cross", { onclick: deleteShow(mdl) }), (0, _mithril2.default)("img.img-responsive.img-fit-cover", {
           src: _http2.default.imagesUrl(show.poster_path)
-        });
+        })]);
       });
     }
   };

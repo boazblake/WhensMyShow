@@ -12,13 +12,25 @@ const ShowSelectedShows = () => {
   const filterShowsByList = (mdl) =>
     filter(propEq("status", mdl.state.currentList()), mdl.user.shows())
 
+  const deleteShow = (mdl) => {
+    //delete show
+  }
+
   return {
     view: ({ attrs: { mdl } }) =>
       filterShowsByList(mdl).map((show, idx) =>
-        m("img.img-responsive.img-fit-cover", {
-          key: idx,
-          src: http.imagesUrl(show.poster_path)
-        })
+        m(
+          ".tileCard",
+          {
+            key: idx
+          },
+          [
+            m("i.icon icon-cross", { onclick: deleteShow(mdl) }),
+            m("img.img-responsive.img-fit-cover", {
+              src: http.imagesUrl(show.poster_path)
+            })
+          ]
+        )
       )
   }
 }
