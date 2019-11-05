@@ -1,9 +1,0 @@
-pages:
-  stage: deploy
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - public
-  only:
-    - master
