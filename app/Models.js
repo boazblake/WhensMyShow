@@ -26,7 +26,7 @@ const Model = {
   Routes,
   state,
   user,
-  data: {},
+  data: Stream([]),
   errors: Stream([])
 }
 

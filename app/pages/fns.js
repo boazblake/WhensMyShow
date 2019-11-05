@@ -1,4 +1,4 @@
-import { over, lensProp, map } from "ramda"
+import { over, lensProp, map, compose, propEq, prop, find, set } from "ramda"
 
 const log = (m) => (v) => {
   console.log(m, v)
@@ -23,4 +23,13 @@ export const toSearchVm = ({
 
 export const formatSearchData = over(lensProp("results"), map(toSearchVm))
 
-export const formatDetailData = log("wtf")
+const updateResults = (result) => (show) =>
+  show ? set(lensProp("status"), prop("status", show), result) : result
+
+export const mergeWithCurrentList = (shows) => (data) =>
+  data.results.map((r) =>
+    compose(
+      updateResults(r),
+      find(propEq("id", r.id))
+    )(shows)
+  )

@@ -15,12 +15,20 @@ export const NavBar = () => {
 
 export const ListSelector = () => {
   return {
-    view: ({ attrs: { list, action, active } }) =>
-      m(
+    view: ({ attrs: { list, action, active } }) => {
+      console.log("active??", list, active)
+      return m(
         "li.menu-item",
-        { class: active && "active" },
-        m("a", { onclick: action }, list)
+        m(
+          "a.btn",
+          {
+            class: active && "active",
+            onclick: action
+          },
+          list
+        )
       )
+    }
   }
 }
 
