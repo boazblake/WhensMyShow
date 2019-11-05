@@ -31,5 +31,5 @@ exports.plugins = {
 }
 
 exports.paths = {
-  public: "docs"
+  public: "public"
 }
