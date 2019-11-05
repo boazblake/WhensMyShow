@@ -45,8 +45,17 @@
   }
 }
 
+input#search {
+  border-top: none;
+}
+
 .selected {
   filter: grayscale(80%);
+}
+
+.active {
+  background: #f1f1fc;
+  color: #5755d9;
 }
 
 @media (min-width: 700px) and (max-width: 990px) {

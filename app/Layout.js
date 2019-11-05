@@ -8,7 +8,7 @@ const NavBar = ({ attrs: { mdl } }) => {
   return {
     view: ({ attrs: { mdl } }) => {
       return m(
-        "navbar.container",
+        "nav",
         m(
           "ul.tab tab-block",
           mdl.Routes.map((route, idx) =>

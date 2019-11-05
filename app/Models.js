@@ -14,12 +14,12 @@ const state = {
     max: Stream(0),
     value: Stream(0)
   },
-  currentList: Stream("Currently Watching")
+  currentList: Stream("Watching")
 }
 
 const user = {
   shows: Stream([]),
-  lists: Stream(["Currently Watching", "Wishlist"])
+  lists: Stream(["Watching", "Wishlist"])
 }
 
 const Model = {

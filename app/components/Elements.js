@@ -18,7 +18,8 @@ export const ListSelector = () => {
     view: ({ attrs: { list, action, active } }) =>
       m(
         "li.menu-item",
-        m("a", { class: active && "selected", onclick: action }, list)
+        { class: active && "active" },
+        m("a", { onclick: action }, list)
       )
   }
 }

@@ -213,7 +213,7 @@ var NavBar = function NavBar(_ref) {
     view: function view(_ref2) {
       var mdl = _ref2.attrs.mdl;
 
-      return (0, _mithril2.default)("navbar.container", (0, _mithril2.default)("ul.tab tab-block", mdl.Routes.map(function (route, idx) {
+      return (0, _mithril2.default)("nav", (0, _mithril2.default)("ul.tab tab-block", mdl.Routes.map(function (route, idx) {
         return (0, _mithril2.default)("li.tab-item", { key: idx, class: isActive(route) && "active" }, (0, _mithril2.default)("li", { class: "tab-item" }, (0, _mithril2.default)("a", { href: "#!" + route.route }, route.name)));
       })));
     }
@@ -290,12 +290,12 @@ var state = {
     max: (0, _mithrilStream2.default)(0),
     value: (0, _mithrilStream2.default)(0)
   },
-  currentList: (0, _mithrilStream2.default)("Currently Watching")
+  currentList: (0, _mithrilStream2.default)("Watching")
 };
 
 var user = {
   shows: (0, _mithrilStream2.default)([]),
-  lists: (0, _mithrilStream2.default)(["Currently Watching", "Wishlist"])
+  lists: (0, _mithrilStream2.default)(["Watching", "Wishlist"])
 };
 
 var Model = {
@@ -481,7 +481,7 @@ var ListSelector = exports.ListSelector = function ListSelector() {
           list = _ref2$attrs.list,
           action = _ref2$attrs.action,
           active = _ref2$attrs.active;
-      return (0, _mithril2.default)("li.menu-item", (0, _mithril2.default)("a", { class: active && "selected", onclick: action }, list));
+      return (0, _mithril2.default)("li.menu-item", { class: active && "active" }, (0, _mithril2.default)("a", { onclick: action }, list));
     }
   };
 };
@@ -834,6 +834,7 @@ var ShowListSelection = function ShowListSelection() {
       return (0, _mithril2.default)("ul.menu", mdl.user.lists().map(function (list, idx) {
         return (0, _mithril2.default)(_Elements.ListSelector, {
           list: list,
+          active: list == result.status && "active",
           key: idx,
           mdl: mdl,
           action: function action() {
@@ -848,7 +849,6 @@ var ShowListSelection = function ShowListSelection() {
 var Result = function Result() {
   var userHasAlready = function userHasAlready(mdl) {
     return function (result) {
-      console.log((0, _ramda.any)((0, _ramda.propEq)("id", result.id), mdl.user.shows()));
       return (0, _ramda.any)((0, _ramda.propEq)("id", result.id), mdl.user.shows());
     };
   };

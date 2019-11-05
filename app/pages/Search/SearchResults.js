@@ -25,6 +25,7 @@ const ShowListSelection = () => {
         mdl.user.lists().map((list, idx) =>
           m(ListSelector, {
             list,
+            active: list == result.status && "active",
             key: idx,
             mdl,
             action: () => updateUserShows(mdl)(result, list)
@@ -35,10 +36,8 @@ const ShowListSelection = () => {
 }
 
 const Result = () => {
-  const userHasAlready = (mdl) => (result) => {
-    console.log(any(propEq("id", result.id), mdl.user.shows()))
-    return any(propEq("id", result.id), mdl.user.shows())
-  }
+  const userHasAlready = (mdl) => (result) =>
+    any(propEq("id", result.id), mdl.user.shows())
 
   let selected = false
 
