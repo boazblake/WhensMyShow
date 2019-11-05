@@ -36,6 +36,15 @@
   justify-content: center;
 }
 
+.tileCard {
+  position: relative;
+
+  > ul.menu {
+    position: absolute;
+    top: 30px;
+  }
+}
+
 .selected {
   filter: grayscale(80%);
 }

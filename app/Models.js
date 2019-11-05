@@ -13,11 +13,13 @@ const state = {
   loadingProgress: {
     max: Stream(0),
     value: Stream(0)
-  }
+  },
+  currentList: Stream("Currently Watching")
 }
 
 const user = {
-  shows: Stream([])
+  shows: Stream([]),
+  lists: Stream(["Currently Watching", "Wishlist"])
 }
 
 const Model = {

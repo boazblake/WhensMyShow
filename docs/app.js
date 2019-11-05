@@ -1,1 +1,1406 @@
-!function(){"use strict";var e="undefined"==typeof global?self:global;if("function"!=typeof e.require){var t={},n={},r={},a={}.hasOwnProperty,u=/^\.\.?(\/|$)/,o=function(e,t){for(var n,r=[],a=(u.test(t)?e+"/"+t:t).split("/"),o=0,i=a.length;o<i;o++)n=a[o],".."===n?r.pop():"."!==n&&""!==n&&r.push(n);return r.join("/")},i=function(e){return e.split("/").slice(0,-1).join("/")},l=function(t){return function(n){var r=o(i(t),n);return e.require(r,t)}},d=function(e,t){var r=h&&h.createHot(e),a={id:e,exports:{},hot:r};return n[e]=a,t(a.exports,l(e),a),a.exports},s=function(e){return r[e]?s(r[e]):e},c=function(e,t){return s(o(i(e),t))},f=function(e,r){null==r&&(r="/");var u=s(e);if(a.call(n,u))return n[u].exports;if(a.call(t,u))return d(u,t[u]);throw new Error("Cannot find module '"+e+"' from '"+r+"'")};f.alias=function(e,t){r[t]=e};var m=/\.[^.\/]+$/,p=/\/index(\.[^\/]+)?$/,v=function(e){if(m.test(e)){var t=e.replace(m,"");a.call(r,t)&&r[t].replace(m,"")!==t+"/index"||(r[t]=e)}if(p.test(e)){var n=e.replace(p,"");a.call(r,n)||(r[n]=e)}};f.register=f.define=function(e,r){if(e&&"object"==typeof e)for(var u in e)a.call(e,u)&&f.register(u,e[u]);else t[e]=r,delete n[e],v(e)},f.list=function(){var e=[];for(var n in t)a.call(t,n)&&e.push(n);return e};var h=e._hmr&&new e._hmr(c,f,t,n);f._cache=n,f.hmr=h&&h.wrap,f.brunch=!0,e.require=f}}(),function(){var e;"undefined"==typeof window?this:window;require.register("App.js",function(e,t,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r=function(e){return function(t,n){return t[n.route]={onmatch:function(t,r,a){n.group.includes("authenticated")&&!e.state.isAuth()&&e.route.set(m.route.get()),e.state.route=n,e.state.anchor=r.split("#")[1];var u=Boolean(e.state.anchor);n.onmatch(e,t,r,a,u)},render:function(){return n.component(e)}},t}},a=function(e){return e.Routes.reduce(r(e),{})};e["default"]=a}),require.register("Layout.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("./pages/Search/SearchInput.js"),i=r(o),l=function(e){return"/search"==u["default"].route.get()&&(0,u["default"])(i["default"],{mdl:e})},d=function(){return{view:function(e){var t=e.attrs.mdl;return(0,u["default"])(".header",[(0,u["default"])("h1",t.state.route.name),l(t)])}}},s=function(){return{view:function(e){var t=e.children;return(0,u["default"])("section.main",t)}}},c=function(e){var t=(e.attrs.mdl,function(e){return e.route==u["default"].route.get()});return{view:function(e){var n=e.attrs.mdl;return(0,u["default"])("navbar.container",(0,u["default"])("ul.tab tab-block",n.Routes.map(function(e,n){return(0,u["default"])("li.tab-item",{key:n,"class":t(e)&&"active"},(0,u["default"])("li",{"class":"tab-item"},(0,u["default"])("a",{href:"#!"+e.route},e.name)))})))}}},f=function(){return{view:function(e){var t=e.children,n=e.attrs.mdl;return(0,u["default"])(".app",[(0,u["default"])(d,{mdl:n}),(0,u["default"])(s,{mdl:n},t),(0,u["default"])(c,{mdl:n})])}}};e["default"]=f}),require.register("Models.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0}),e.log=void 0;var a=t("mithril-stream"),u=r(a),o=t("./Routes.js"),i=r(o),l=(e.log=function(e){return function(t){return console.log(e,t),t}},{page:(0,u["default"])(1),query:(0,u["default"])(""),isLoading:(0,u["default"])(!1),loadingProgress:{max:(0,u["default"])(0),value:(0,u["default"])(0)}}),d={shows:(0,u["default"])([])},s={Routes:i["default"],state:l,user:d,data:{},errors:(0,u["default"])([])};e["default"]=s}),require.register("Routes.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("./Layout.js"),i=r(o),l=t("./pages/Home/component.js"),d=r(l),s=t("./pages/Search/component.js"),c=r(s),f=t("ramda"),m=[{id:"home",name:"Home",route:"/home",position:["nav"],group:[],children:[],onmatch:function(e,t,n,r,a){a&&scrollToAnchor(e.state.anchor)},component:function(e){return(0,u["default"])(i["default"],{mdl:e},(0,u["default"])(d["default"],{mdl:e}))}},{id:"search",name:"Search",route:"/search",position:["nav"],group:[],children:[],onmatch:function(e,t,n,r,a){a&&scrollToAnchor(e.state.anchor)},component:function(e){return(0,u["default"])(i["default"],{mdl:e},(0,u["default"])(c["default"],{mdl:e}))}}],p=(0,f.flatten)([m]);e["default"]=p}),require.register("components/Calendar.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=(t("./Elements"),t("mithril-stream")),i=(r(o),t("date-fns")),l=["January","Febuary","March","April","May","June","July","August","September","October","November","December"],d=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],s=function(){return{view:function(){return(0,u["default"])("div.calendar-header",d.map(function(e){return(0,u["default"])("div.calendar-date",e)}))}}},c=function(){return{view:function(){return(0,u["default"])("div.calendar-body",[(0,u["default"])("div.calendar-date.prev-month",(0,u["default"])("button.date-item","26")),(0,u["default"])("div.calendar-date.prev-month",(0,u["default"])("button.date-item","27")),(0,u["default"])("div.calendar-date.prev-month",(0,u["default"])("button.date-item","28")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","1")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","2")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","3")),(0,u["default"])(".calendar-date.tooltip[data-tooltip='Today']",(0,u["default"])("button.date-item.date-today","4")),(0,u["default"])(".calendar-date.tooltip[data-tooltip='Not available']",(0,u["default"])("button.date-item[disabled]","5")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","6")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","7")),(0,u["default"])(".calendar-date.tooltip[data-tooltip='You have appointments']",(0,u["default"])("button.date-item.badge","8")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","9")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","10")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","11")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","12")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","13")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","14")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","15")),(0,u["default"])("div.calendar-date.calendar-range.range-start",(0,u["default"])("button.date-item","16")),(0,u["default"])("div.calendar-date.calendar-range",(0,u["default"])("button.date-item","17")),(0,u["default"])("div.calendar-date.calendar-range",(0,u["default"])("button.date-item","18")),(0,u["default"])("div.calendar-date.calendar-range",(0,u["default"])("button.date-item","19")),(0,u["default"])("div.calendar-date.calendar-range.range-end",(0,u["default"])("button.date-item","20")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","21")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","22")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","23")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","24")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","25")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","26")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","27")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","28")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","29")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","30")),(0,u["default"])("div.calendar-date",(0,u["default"])("button.date-item","31")),(0,u["default"])("div.calendar-date.next-month",(0,u["default"])("button.date-item","1"))])}}},f=function(e){var t=e.attrs.mdl,n=t.State.today.getMonth(),r=t.State.today.getFullYear(),a=t.State.today.getDay(),o={months:l,daysOfWeek:d,day:a,month:n,year:r,daysInMonth:(0,i.getDaysInMonth)(n)};return console.log("month",o),{view:function(e){var t=e.attrs,n=t.mdl,r=t.large;return(0,u["default"])("div.calendar",{"class":r&&"calendar-lg"},[(0,u["default"])("div.calendar-nav.navbar",[(0,u["default"])("button.btn.btn-action.btn-link.btn-lg",{onclick:function(e){return o.month--}},(0,u["default"])("i.icon.icon-arrow-left")),(0,u["default"])("div.navbar-primary",[o.months[o.month]+" "+o.year]),(0,u["default"])("button.btn.btn-action.btn-link.btn-lg",{onclick:o.month++},(0,u["default"])("i.icon.icon-arrow-right"))]),(0,u["default"])("div.calendar-container",[(0,u["default"])(s,{mdl:n}),(0,u["default"])(c,{mdl:n})])])}}};e["default"]=f}),require.register("components/Elements.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0}),e.Menu=e.MenuItem=e.DropDown=e.CheckBox=e.Input=e.Button=e.NavBar=void 0;var a=t("mithril"),u=r(a),o=(e.NavBar=function(){return{view:function(e){var t=e.children;e.attrs.mdl;return(0,u["default"])("header",{"class":"navbar"},t.map(function(e){return(0,u["default"])("section",{"class":"navbar-section"},e)}))}}},e.Button=function(){return{view:function(e){var t=e.attrs,n=t.classList,r=t.action,a=t.label;return(0,u["default"])("button.btn."+n,{onclick:r},a)}}},e.Input=function(e){var t=e.attrs,n=t.type,r=t.label,a=t.action,o=t.id,i=t.placeholder;return{view:function(e){var t=e.attrs.value;return(0,u["default"])(".form-group",[(0,u["default"])("label.form-label",{"for":o},r),(0,u["default"])("input.form-input",{type:n,id:o,placeholder:i,value:t,onchange:a})])}}},e.CheckBox=function(e){var t=e.attrs,n=t.label,r=t.action,a=t.id,o=t.type;return{view:function(e){var t=e.attrs.value;return(0,u["default"])(".form-group",[(0,u["default"])("label.form-"+o,{"for":a,onclick:r},(0,u["default"])("input",{type:"checkbox",checked:t}),(0,u["default"])("i.form-icon",{id:a}),n)])}}},e.DropDown=function(e){var t=e.attrs,n=t.label,r=t.classList;return{view:function(e){var t=e.children;return(0,u["default"])(".dropdown",{"class":r},(0,u["default"])("a.btn btn-link dropdown-toggle",{href:"#",tabindex:"0"},n,(0,u["default"])("i.icon icon-caret")),t)}}},e.MenuItem=function(){return{view:function(e){var t=e.children;return(0,u["default"])("li.menu-item",t)}}});e.Menu=function(){return{view:function(e){var t=e.children;return(0,u["default"])("ul.menu",t.map(function(e){return(0,u["default"])(o,e)}))}}}}),require.register("components/Schedule.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=function(){return{view:function(e){e.attrs.mdl;return(0,u["default"])(".schedule","Schedule")}}};e["default"]=o}),require.register("initialize.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}var a=t("mithril"),u=r(a),o=t("./Models.js"),i=r(o),l=t("./App.js"),d=r(l);document.addEventListener("DOMContentLoaded",function(){var e=document.body;u["default"].route(e,"/home",(0,d["default"])(i["default"]))})}),require.register("pages/Home/component.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("../../utils/http.js"),i=r(o),l=t("../fns.js"),d=t("ramda"),s=(t("../../components/Elements.js"),function(){var e=function(e){var t=e.attrs.mdl;return i["default"].getTask(i["default"].backendlessUrl).map((0,d.map)(l.toSearchVm)).fork(t.errors,function(e){return t.user.shows(e)})};return{oninit:e,view:function(e){var t=e.attrs.mdl;return(0,u["default"])("section.tiles",(0,d.isEmpty)(t.user.shows())?(0,u["default"])(".container.empty",[(0,u["default"])("p.empty-title h5","You have no shows yet!"),(0,u["default"])("p.empty-subtitle","Click search to find your shows.")]):t.user.shows().map(function(e,t){return(0,u["default"])("img.img-responsive.img-fit-cover",{key:t,src:i["default"].imagesUrl(e.poster_path)})}))}}});e["default"]=s}),require.register("pages/Search/SearchInput.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("../../utils/http.js"),i=r(o),l=t("../fns.js"),d=function(){var e=function(e){return console.log("search",e),i["default"].getTask(i["default"].searchUrl(e.state.page())(e.state.query())).map(l.formatSearchData).fork(function(t){return e.error=t},function(t){e.data=t})};return{view:function(t){var n=t.attrs.mdl;return(0,u["default"])(".searchInput",(0,u["default"])(".form-group",[(0,u["default"])("input.form-input",{type:"text",id:"search",placeholder:"search",value:n.state.query(),oninput:function(e){n.state.query(e.target.value)},onchange:function(t){return e(n)}})]))}}};e["default"]=d}),require.register("pages/Search/SearchResults.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("../../utils/http.js"),i=r(o),l=(t("../../Models.js"),t("ramda")),d=t("../fns.js"),s=i["default"].getTask(i["default"].backendlessUrl).map((0,l.map)(d.toSearchVm)),c=function(e){return{body:(0,l.over)((0,l.lensProp)("status"),function(){return"selected"},e)}},f=function(){var e=function(e){return function(t){return i["default"].postTask(i["default"].backendlessUrl,c(t)).chain(function(e){return s}).fork(e.errors,function(t){return e.user.shows((0,l.concat)(t,e.user.shows()))})}},t=function(e){return function(t){return(0,l.any)((0,l.propEq)("id",t.id),e.user.shows())}};return{view:function(n){var r=n.attrs,a=r.mdl,o=r.result;return(0,u["default"])("img.img-responsive.img-fit-cover",{"class":t(a)(o)&&"selected",onclick:function(){return e(a)(o)},src:i["default"].imagesUrl(o.poster_path)})}}},m=function(){return{view:function(e){var t=e.attrs.mdl;return(0,u["default"])("section.tiles",t.data&&t.data.results?t.data.results.map(function(e,n){return(0,u["default"])(f,{mdl:t,result:e,key:n})}):[])}}};e["default"]=m}),require.register("pages/Search/component.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0});var a=t("mithril"),u=r(a),o=t("./SearchInput.js"),i=(r(o),t("./SearchResults.js")),l=r(i),d=function(){return{view:function(e){var t=e.attrs.mdl;return(0,u["default"])(".search",[(0,u["default"])(l["default"],{mdl:t})])}}};e["default"]=d}),require.register("pages/fns.js",function(e,t,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.formatDetailData=e.formatSearchData=e.toSearchVm=void 0;var r=t("ramda"),a=function(e){return function(t){return console.log(e,t),t}},u=e.toSearchVm=function(e){var t=e.name,n=e.first_air_date,r=e.poster_path,a=e.overview,u=e.id,o=e.status;return{name:t,first_air_date:n,poster_path:r,overview:a,id:u,status:o}};e.formatSearchData=(0,r.over)((0,r.lensProp)("results"),(0,r.map)(u)),e.formatDetailData=a("wtf")}),require.register("secrets.js",function(e,t,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});e.apiKey="1e4d78ab60660282c63379725fc9b111",e.tmdbAuth={Authorization:"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTRkNzhhYjYwNjYwMjgyYzYzMzc5NzI1ZmM5YjExMSIsInN1YiI6IjVkYmNjMjBjOTdhNGU2MDAxNTdjNjkxYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.TgL91o4VHyQo4cm3KLx6nVICyrn8E8pXDC1zMdlDFsU"},e.baseUrl="https://api.themoviedb.org/3"}),require.register("utils/animations.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function a(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}Object.defineProperty(e,"__esModule",{value:!0}),e.animateChildrenLimitsExit=e.slideModalOut=e.animate=e.animateChildrenLimitsEntrance=e.animateChildrenEntrance=e.animateSidebarEntrance=e.animateComponentEntrance=e.IsLoading=void 0;var u=t("mithril"),o=r(u);e.IsLoading=(0,o["default"])(".holder",[(0,o["default"])(".preloader",[(0,o["default"])("div"),(0,o["default"])("div"),(0,o["default"])("div"),(0,o["default"])("div"),(0,o["default"])("div"),(0,o["default"])("div"),(0,o["default"])("div")])]),e.animateComponentEntrance=function(e){return function(t){var n=t.dom;return n.style.opacity=0,setTimeout(function(){n.classList.toggle("stretchRight"),n.style.opacity=1},100*e+20)}},e.animateSidebarEntrance=function(e){var t=e.dom;t.style.opacity=0,t.classList.toggle("slideRight"),t.style.opacity=1},e.animateChildrenEntrance=function(e){var t=e.dom,n=[].concat(a(t.children));return n.map(function(e,t){e.style.opacity=0,setTimeout(function(){e.classList.toggle("slideRight"),e.style.opacity=1},10*(t+1))})},e.animateChildrenLimitsEntrance=function(e){return function(t){var n=t.dom;n.style.opacity=0,setTimeout(function(){n.classList.toggle("slideDown"),n.style.opacity=1},200*(e+1))}},e.animate=function(e){return function(t){var n=t.dom;n.style.opacity=0,setTimeout(function(){n.classList.toggle(e),n.style.opacity=1},200)}},e.slideModalOut=function(e){var t=e.dom;return new Promise(function(){return t.classList.remove("slideRight"),setTimeout(function(){t.classList.add("reverseAnimation","slideRight")},200)})},e.animateChildrenLimitsExit=function(e){var t=e.dom;return new Promise(function(){[].concat(a(t.children)).reverse().map(function(e,t){return setTimeout(function(){e.style.display="none"},100*t)})})}}),require.register("utils/helpers.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}Object.defineProperty(e,"__esModule",{value:!0}),e.jsonCopy=e.scrollToAnchor=e.getRoute=e.debounce=e.filterTask=e._paginate=e._direction=e._sort=e._search=e.addTerms=e.infiniteScroll=e.isEmpty=e.log=e.makeRoute=void 0;var a=t("mithril"),u=r(a),o=t("ramda"),i=t("data.task"),l=r(i),d=(e.makeRoute=(0,o.compose)((0,o.join)("-"),(0,o.split)(" "),(0,o.trim)(),(0,o.toLower)()),e.log=function(e){return function(t){return console.log(e,t),t}},e.isEmpty=function(e){return 0==e.length},e.infiniteScroll=function(e){return function(t){var n=e.state.route,r=e.data[n].data.length,a=10*r*e.state.scrollPos;t.target.scrollTop-e.state.scrollPos>=a&&e.state.scrollPos++ +t.target.scrollTop}},e.addTerms=function(e){var t=(0,o.compose)((0,o.join)(" "),o.values,(0,o.props)(["uuid","id","name"]))(e);return(0,o.assoc)("_terms",t,e)},function(e){return(0,o.compose)((0,o.test)(new RegExp(e,"i")),(0,o.prop)("name"))}),s=e._search=function(e){return(0,o.compose)((0,o.filter)(d(e)))},c=e._sort=function(e){return(0,o.sortBy)((0,o.compose)(o.toLower,toString,(0,o.prop)(e)))},f=e._direction=function(e){return"asc"==e?o.identity:o.reverse},m=e._paginate=function(e){return function(t){return function(n){return(0,o.slice)((0,o.max)(0,(0,o.min)(e,n.length)),(0,o.min)(e+t,n.length),n)}}};e.filterTask=function(e){return function(t){return function(n){return function(r){return function(a){return(0,o.compose)(l["default"].of,(0,o.map)(m(r)(a)),(0,o.map)(f(n)),(0,o.map)(c(t)),s(e))}}}}},e.debounce=function(e,t){return function(n){var r=void 0;return function(){var a=this,u=arguments,o=function(){r=void 0,t||n.apply(a,u)},i=t&&!r;clearTimeout(r),r=setTimeout(o,e),console.log(n),i&&n.apply(a,u)}}},e.getRoute=function(e){return u["default"].route.get().split("/")[e]},e.scrollToAnchor=function(e){var t=function(e){return void 0!==e&&null!==e},n=t(e)?document.getElementById(e):document.body,r=window.pageYOffset||document.documentElement.scrollTop,a=t(n)?n.getBoundingClientRect().top:0;window.scroll({top:a+r-10,left:0,behavior:"smooth"})},e.jsonCopy=function(e){return JSON.parse(JSON.stringify(e))}}),require.register("utils/http.js",function(e,t,n){"use strict";function r(e){return e&&e.__esModule?e:{"default":e}}function a(e){e.lengthComputable&&(v["default"].state.loadingProgress.max(e.total),v["default"].state.loadingProgress.value(e.loaded),m["default"].redraw())}function u(){return!1}function o(){return v["default"].state.isLoading(!0),!1}function i(){return v["default"].state.isLoading(!1),v["default"].state.loadingProgress.max(0),v["default"].state.loadingProgress.value(0),!1}Object.defineProperty(e,"__esModule",{value:!0});var l=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(e[r]=n[r])}return e},d=t("../secrets.js"),s=t("data.task"),c=r(s),f=t("mithril"),m=r(f),p=t("../Models.js"),v=r(p),h={config:function(e){e.onprogress=a,e.onload=u,e.onloadstart=o,e.onloadend=i}},g=function(e){return e.state.isLoading(!e.state.isLoading),m["default"].request},b=function(e){var t=e.includes("themoviedb")?d.tmdbAuth:{boaz:"boaz"};return console.log("bearer",t),{headers:l({},t,{"Content-Type":"application/json;charset=utf-8"})}},y=function(e){return function(t){return new c["default"](function(n,r){return g(v["default"])(e,l({},t,b(e),h)).then(r,n)})}},_=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return y(e)(l({},t,{method:"GET"}))},j=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return y(e)(l({},t,{method:"POST"}))},w=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};return y(e)(l({},t,{method:"PUT"}))},M=function(e){return function(t){return function(n){return function(r){return e+"/search/multi?api_key="+t+"&language=en-US&query="+r+"&page="+n+"&include_adult=false"}}}},k=function(e){return function(t){return function(n){return e+"/tv/"+n+"?api_key="+t+"&language=en-US"}}},O=function(e){return function(t){return function(n){return e+"/tv/"+n+"/images?api_key="+t+"&language=en-US"}}},S="https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/shows?pagesize=100",T=M(d.baseUrl)(d.apiKey),P=k(d.baseUrl)(d.apiKey),q=function(e){return"https://image.tmdb.org/t/p/w185_and_h278_bestv2/"+e},E={getTask:_,postTask:j,putTask:w,baseSearchUrl:M,baseDetailsUrl:k,baseImagesUrl:O,searchUrl:T,detailsUrl:P,imagesUrl:q,backendlessUrl:S};e["default"]=E}),require.register("utils/index.js",function(e,t,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r=t("./animations.js");Object.keys(r).forEach(function(t){"default"!==t&&"__esModule"!==t&&Object.defineProperty(e,t,{enumerable:!0,get:function(){return r[t]}})});var a=t("./helpers.js");Object.keys(a).forEach(function(t){"default"!==t&&"__esModule"!==t&&Object.defineProperty(e,t,{enumerable:!0,get:function(){return a[t]}})});var u=t("./http.js");Object.keys(u).forEach(function(t){"default"!==t&&"__esModule"!==t&&Object.defineProperty(e,t,{enumerable:!0,get:function(){return u[t]}})})}),require.alias(".pnpm/registry.npmjs.org/process/0.11.10/node_modules/process/browser.js","process"),e=require("process"),require.register("___globals___",function(e,t,n){})}(),require("___globals___");
+(function() {
+  'use strict';
+
+  var globals = typeof global === 'undefined' ? self : global;
+  if (typeof globals.require === 'function') return;
+
+  var modules = {};
+  var cache = {};
+  var aliases = {};
+  var has = {}.hasOwnProperty;
+
+  var expRe = /^\.\.?(\/|$)/;
+  var expand = function(root, name) {
+    var results = [], part;
+    var parts = (expRe.test(name) ? root + '/' + name : name).split('/');
+    for (var i = 0, length = parts.length; i < length; i++) {
+      part = parts[i];
+      if (part === '..') {
+        results.pop();
+      } else if (part !== '.' && part !== '') {
+        results.push(part);
+      }
+    }
+    return results.join('/');
+  };
+
+  var dirname = function(path) {
+    return path.split('/').slice(0, -1).join('/');
+  };
+
+  var localRequire = function(path) {
+    return function expanded(name) {
+      var absolute = expand(dirname(path), name);
+      return globals.require(absolute, path);
+    };
+  };
+
+  var initModule = function(name, definition) {
+    var hot = hmr && hmr.createHot(name);
+    var module = {id: name, exports: {}, hot: hot};
+    cache[name] = module;
+    definition(module.exports, localRequire(name), module);
+    return module.exports;
+  };
+
+  var expandAlias = function(name) {
+    return aliases[name] ? expandAlias(aliases[name]) : name;
+  };
+
+  var _resolve = function(name, dep) {
+    return expandAlias(expand(dirname(name), dep));
+  };
+
+  var require = function(name, loaderPath) {
+    if (loaderPath == null) loaderPath = '/';
+    var path = expandAlias(name);
+
+    if (has.call(cache, path)) return cache[path].exports;
+    if (has.call(modules, path)) return initModule(path, modules[path]);
+
+    throw new Error("Cannot find module '" + name + "' from '" + loaderPath + "'");
+  };
+
+  require.alias = function(from, to) {
+    aliases[to] = from;
+  };
+
+  var extRe = /\.[^.\/]+$/;
+  var indexRe = /\/index(\.[^\/]+)?$/;
+  var addExtensions = function(bundle) {
+    if (extRe.test(bundle)) {
+      var alias = bundle.replace(extRe, '');
+      if (!has.call(aliases, alias) || aliases[alias].replace(extRe, '') === alias + '/index') {
+        aliases[alias] = bundle;
+      }
+    }
+
+    if (indexRe.test(bundle)) {
+      var iAlias = bundle.replace(indexRe, '');
+      if (!has.call(aliases, iAlias)) {
+        aliases[iAlias] = bundle;
+      }
+    }
+  };
+
+  require.register = require.define = function(bundle, fn) {
+    if (bundle && typeof bundle === 'object') {
+      for (var key in bundle) {
+        if (has.call(bundle, key)) {
+          require.register(key, bundle[key]);
+        }
+      }
+    } else {
+      modules[bundle] = fn;
+      delete cache[bundle];
+      addExtensions(bundle);
+    }
+  };
+
+  require.list = function() {
+    var list = [];
+    for (var item in modules) {
+      if (has.call(modules, item)) {
+        list.push(item);
+      }
+    }
+    return list;
+  };
+
+  var hmr = globals._hmr && new globals._hmr(_resolve, require, modules, cache);
+  require._cache = cache;
+  require.hmr = hmr && hmr.wrap;
+  require.brunch = true;
+  globals.require = require;
+})();
+
+(function() {
+var global = typeof window === 'undefined' ? this : window;
+var process;
+var __makeRelativeRequire = function(require, mappings, pref) {
+  var none = {};
+  var tryReq = function(name, pref) {
+    var val;
+    try {
+      val = require(pref + '/node_modules/' + name);
+      return val;
+    } catch (e) {
+      if (e.toString().indexOf('Cannot find module') === -1) {
+        throw e;
+      }
+
+      if (pref.indexOf('node_modules') !== -1) {
+        var s = pref.split('/');
+        var i = s.lastIndexOf('node_modules');
+        var newPref = s.slice(0, i).join('/');
+        return tryReq(name, newPref);
+      }
+    }
+    return none;
+  };
+  return function(name) {
+    if (name in mappings) name = mappings[name];
+    if (!name) return;
+    if (name[0] !== '.' && pref) {
+      var val = tryReq(name, pref);
+      if (val !== none) return val;
+    }
+    return require(name);
+  }
+};
+require.register("App.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var toRoutes = function toRoutes(mdl) {
+  return function (acc, route) {
+    acc[route.route] = {
+      onmatch: function onmatch(args, path, fullroute) {
+        if (route.group.includes("authenticated") && !mdl.state.isAuth()) {
+          mdl.route.set(m.route.get());
+        }
+        mdl.state.route = route;
+        mdl.state.anchor = path.split("#")[1];
+        var isAnchor = Boolean(mdl.state.anchor);
+        route.onmatch(mdl, args, path, fullroute, isAnchor);
+      },
+      render: function render() {
+        return route.component(mdl);
+      }
+    };
+    return acc;
+  };
+};
+
+var App = function App(mdl) {
+  return mdl.Routes.reduce(toRoutes(mdl), {});
+};
+
+exports.default = App;
+});
+
+;require.register("Layout.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _SearchInput = require("./pages/Search/SearchInput.js");
+
+var _SearchInput2 = _interopRequireDefault(_SearchInput);
+
+var _HomeToolBar = require("./pages/Home/HomeToolBar.js");
+
+var _HomeToolBar2 = _interopRequireDefault(_HomeToolBar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NavBar = function NavBar(_ref) {
+  var mdl = _ref.attrs.mdl;
+
+  var isActive = function isActive(route) {
+    return route.route == _mithril2.default.route.get();
+  };
+
+  return {
+    view: function view(_ref2) {
+      var mdl = _ref2.attrs.mdl;
+
+      return (0, _mithril2.default)("navbar.container", (0, _mithril2.default)("ul.tab tab-block", mdl.Routes.map(function (route, idx) {
+        return (0, _mithril2.default)("li.tab-item", { key: idx, class: isActive(route) && "active" }, (0, _mithril2.default)("li", { class: "tab-item" }, (0, _mithril2.default)("a", { href: "#!" + route.route }, route.name)));
+      })));
+    }
+  };
+};
+
+var showSearchBar = function showSearchBar(mdl) {
+  return _mithril2.default.route.get() === "/search" && (0, _mithril2.default)(_SearchInput2.default, { mdl: mdl });
+};
+
+var showHomeBar = function showHomeBar(mdl) {
+  return _mithril2.default.route.get() === "/home" && (0, _mithril2.default)(_HomeToolBar2.default, { mdl: mdl });
+};
+
+var Header = function Header() {
+  return {
+    view: function view(_ref3) {
+      var mdl = _ref3.attrs.mdl;
+      return (0, _mithril2.default)(".header", [(0, _mithril2.default)("h1", mdl.state.route.name), (0, _mithril2.default)(NavBar, { mdl: mdl }), showHomeBar(mdl), showSearchBar(mdl)]);
+    }
+  };
+};
+
+var Main = function Main() {
+  return { view: function view(_ref4) {
+      var children = _ref4.children;
+      return (0, _mithril2.default)("section.main", children);
+    } };
+};
+
+var Layout = function Layout() {
+  return {
+    view: function view(_ref5) {
+      var children = _ref5.children,
+          mdl = _ref5.attrs.mdl;
+      return (0, _mithril2.default)(".app", [(0, _mithril2.default)(Header, { mdl: mdl }), (0, _mithril2.default)(Main, { mdl: mdl }, children)]);
+    }
+  };
+};
+
+exports.default = Layout;
+});
+
+;require.register("Models.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.log = undefined;
+
+var _mithrilStream = require("mithril-stream");
+
+var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
+
+var _Routes = require("./Routes.js");
+
+var _Routes2 = _interopRequireDefault(_Routes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var log = exports.log = function log(m) {
+  return function (v) {
+    console.log(m, v);
+    return v;
+  };
+};
+
+var state = {
+  page: (0, _mithrilStream2.default)(1),
+  query: (0, _mithrilStream2.default)(""),
+  isLoading: (0, _mithrilStream2.default)(false),
+  loadingProgress: {
+    max: (0, _mithrilStream2.default)(0),
+    value: (0, _mithrilStream2.default)(0)
+  },
+  currentList: (0, _mithrilStream2.default)("Currently Watching")
+};
+
+var user = {
+  shows: (0, _mithrilStream2.default)([]),
+  lists: (0, _mithrilStream2.default)(["Currently Watching", "Wishlist"])
+};
+
+var Model = {
+  Routes: _Routes2.default,
+  state: state,
+  user: user,
+  data: {},
+  errors: (0, _mithrilStream2.default)([])
+};
+
+exports.default = Model;
+});
+
+;require.register("Routes.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Layout = require("./Layout.js");
+
+var _Layout2 = _interopRequireDefault(_Layout);
+
+var _component = require("./pages/Home/component.js");
+
+var _component2 = _interopRequireDefault(_component);
+
+var _component3 = require("./pages/Search/component.js");
+
+var _component4 = _interopRequireDefault(_component3);
+
+var _ramda = require("ramda");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Main = [{
+  id: "home",
+  name: "Home",
+  // icon: Icons.home,
+  route: "/home",
+  position: ["nav"],
+  group: [],
+  children: [],
+  onmatch: function onmatch(mdl, args, path, fullroute, isAnchor) {
+    isAnchor && scrollToAnchor(mdl.state.anchor);
+  },
+  component: function component(mdl) {
+    return (0, _mithril2.default)(_Layout2.default, { mdl: mdl }, (0, _mithril2.default)(_component2.default, { mdl: mdl }));
+  }
+}, {
+  id: "search",
+  name: "Search",
+  // icon: Icons.search,
+  route: "/search",
+  position: ["nav"],
+  group: [],
+  children: [],
+  onmatch: function onmatch(mdl, args, path, fullroute, isAnchor) {
+    isAnchor && scrollToAnchor(mdl.state.anchor);
+  },
+  component: function component(mdl) {
+    return (0, _mithril2.default)(_Layout2.default, { mdl: mdl }, (0, _mithril2.default)(_component4.default, { mdl: mdl }));
+  }
+}];
+
+var Routes = (0, _ramda.flatten)([Main]);
+exports.default = Routes;
+});
+
+;require.register("components/Calendar.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Elements = require("./Elements");
+
+var _mithrilStream = require("mithril-stream");
+
+var _mithrilStream2 = _interopRequireDefault(_mithrilStream);
+
+var _dateFns = require("date-fns");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var months = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+var daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+var calendarHeader = function calendarHeader() {
+  return {
+    view: function view() {
+      return (0, _mithril2.default)("div.calendar-header", daysOfWeek.map(function (d) {
+        return (0, _mithril2.default)("div.calendar-date", d);
+      }));
+    }
+  };
+};
+
+var calendarBody = function calendarBody() {
+  return {
+    view: function view() {
+      return (0, _mithril2.default)("div.calendar-body", [(0, _mithril2.default)("div.calendar-date.prev-month", (0, _mithril2.default)("button.date-item", "26")), (0, _mithril2.default)("div.calendar-date.prev-month", (0, _mithril2.default)("button.date-item", "27")), (0, _mithril2.default)("div.calendar-date.prev-month", (0, _mithril2.default)("button.date-item", "28")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "1")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "2")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "3")), (0, _mithril2.default)(".calendar-date.tooltip[data-tooltip='Today']", (0, _mithril2.default)("button.date-item.date-today", "4")), (0, _mithril2.default)(".calendar-date.tooltip[data-tooltip='Not available']", (0, _mithril2.default)("button.date-item[disabled]", "5")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "6")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "7")), (0, _mithril2.default)(".calendar-date.tooltip[data-tooltip='You have appointments']", (0, _mithril2.default)("button.date-item.badge", "8")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "9")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "10")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "11")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "12")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "13")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "14")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "15")), (0, _mithril2.default)("div.calendar-date.calendar-range.range-start", (0, _mithril2.default)("button.date-item", "16")), (0, _mithril2.default)("div.calendar-date.calendar-range", (0, _mithril2.default)("button.date-item", "17")), (0, _mithril2.default)("div.calendar-date.calendar-range", (0, _mithril2.default)("button.date-item", "18")), (0, _mithril2.default)("div.calendar-date.calendar-range", (0, _mithril2.default)("button.date-item", "19")), (0, _mithril2.default)("div.calendar-date.calendar-range.range-end", (0, _mithril2.default)("button.date-item", "20")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "21")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "22")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "23")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "24")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "25")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "26")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "27")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "28")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "29")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "30")), (0, _mithril2.default)("div.calendar-date", (0, _mithril2.default)("button.date-item", "31")), (0, _mithril2.default)("div.calendar-date.next-month", (0, _mithril2.default)("button.date-item", "1"))]);
+    }
+  };
+};
+
+var Calendar = function Calendar(_ref) {
+  var mdl = _ref.attrs.mdl;
+
+  var month = mdl.State.today.getMonth();
+  var year = mdl.State.today.getFullYear();
+  var day = mdl.State.today.getDay();
+
+  var state = {
+    months: months,
+    daysOfWeek: daysOfWeek,
+    day: day,
+    month: month,
+    year: year,
+    daysInMonth: (0, _dateFns.getDaysInMonth)(month)
+  };
+
+  console.log("month", state);
+
+  return {
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          mdl = _ref2$attrs.mdl,
+          large = _ref2$attrs.large;
+      return (0, _mithril2.default)("div.calendar", { class: large && "calendar-lg" }, [(0, _mithril2.default)("div.calendar-nav.navbar", [(0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", {
+        onclick: function onclick(e) {
+          return state.month--;
+        }
+      }, (0, _mithril2.default)("i.icon.icon-arrow-left")), (0, _mithril2.default)("div.navbar-primary", [state.months[state.month] + " " + state.year]), (0, _mithril2.default)("button.btn.btn-action.btn-link.btn-lg", { onclick: state.month++ }, (0, _mithril2.default)("i.icon.icon-arrow-right"))]), (0, _mithril2.default)("div.calendar-container", [(0, _mithril2.default)(calendarHeader, { mdl: mdl }), (0, _mithril2.default)(calendarBody, { mdl: mdl })])]);
+    }
+  };
+};
+
+exports.default = Calendar;
+});
+
+;require.register("components/Elements.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Menu = exports.MenuItem = exports.DropDown = exports.CheckBox = exports.Input = exports.Button = exports.ListSelector = exports.NavBar = undefined;
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NavBar = exports.NavBar = function NavBar() {
+  return {
+    view: function view(_ref) {
+      var children = _ref.children,
+          mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)("header", { class: "navbar" }, children.map(function (child) {
+        return (0, _mithril2.default)("section", { class: "navbar-section" }, child);
+      }));
+    }
+  };
+};
+
+var ListSelector = exports.ListSelector = function ListSelector() {
+  return {
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          list = _ref2$attrs.list,
+          action = _ref2$attrs.action,
+          active = _ref2$attrs.active;
+      return (0, _mithril2.default)("li.menu-item", (0, _mithril2.default)("a", { class: active && "selected", onclick: action }, list));
+    }
+  };
+};
+
+var Button = exports.Button = function Button() {
+  return {
+    view: function view(_ref3) {
+      var _ref3$attrs = _ref3.attrs,
+          classList = _ref3$attrs.classList,
+          action = _ref3$attrs.action,
+          label = _ref3$attrs.label;
+      return (0, _mithril2.default)("button.btn." + classList, { onclick: action }, label);
+    }
+  };
+};
+
+var Input = exports.Input = function Input(_ref4) {
+  var _ref4$attrs = _ref4.attrs,
+      type = _ref4$attrs.type,
+      label = _ref4$attrs.label,
+      action = _ref4$attrs.action,
+      id = _ref4$attrs.id,
+      placeholder = _ref4$attrs.placeholder;
+
+  return {
+    view: function view(_ref5) {
+      var value = _ref5.attrs.value;
+      return (0, _mithril2.default)(".form-group", [(0, _mithril2.default)("label.form-label", { for: id }, label), (0, _mithril2.default)("input.form-input", {
+        type: type,
+        id: id,
+        placeholder: placeholder,
+        value: value,
+        onchange: action
+      })]);
+    }
+  };
+};
+
+var CheckBox = exports.CheckBox = function CheckBox(_ref6) {
+  var _ref6$attrs = _ref6.attrs,
+      label = _ref6$attrs.label,
+      action = _ref6$attrs.action,
+      id = _ref6$attrs.id,
+      type = _ref6$attrs.type;
+
+  return {
+    view: function view(_ref7) {
+      var value = _ref7.attrs.value;
+      return (0, _mithril2.default)(".form-group", [(0, _mithril2.default)("label.form-" + type, { for: id, onclick: action }, (0, _mithril2.default)("input", {
+        type: "checkbox",
+        checked: value
+      }), (0, _mithril2.default)("i.form-icon", {
+        id: id
+      }), label)]);
+    }
+  };
+};
+
+var DropDown = exports.DropDown = function DropDown(_ref8) {
+  var _ref8$attrs = _ref8.attrs,
+      label = _ref8$attrs.label,
+      classList = _ref8$attrs.classList;
+
+  return {
+    view: function view(_ref9) {
+      var children = _ref9.children;
+      return (0, _mithril2.default)(".dropdown", { class: classList }, (0, _mithril2.default)("a.btn btn-link dropdown-toggle", { href: "#", tabindex: "0" }, label, (0, _mithril2.default)("i.icon icon-caret")), children);
+    }
+  };
+};
+
+var MenuItem = exports.MenuItem = function MenuItem() {
+  return {
+    view: function view(_ref10) {
+      var children = _ref10.children;
+      return (0, _mithril2.default)("li.menu-item", children);
+    }
+  };
+};
+
+var Menu = exports.Menu = function Menu() {
+  return {
+    view: function view(_ref11) {
+      var children = _ref11.children;
+      return (0, _mithril2.default)("ul.menu", children.map(function (child) {
+        return (0, _mithril2.default)(MenuItem, child);
+      }));
+    }
+  };
+};
+});
+
+;require.register("components/Schedule.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Schedule = function Schedule() {
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".schedule", "Schedule");
+    }
+  };
+};
+
+exports.default = Schedule;
+});
+
+;require.register("initialize.js", function(exports, require, module) {
+"use strict";
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Models = require("./Models.js");
+
+var _Models2 = _interopRequireDefault(_Models);
+
+var _App = require("./App.js");
+
+var _App2 = _interopRequireDefault(_App);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+document.addEventListener("DOMContentLoaded", function () {
+  var root = document.body;
+  _mithril2.default.route(root, "/home", (0, _App2.default)(_Models2.default));
+});
+});
+
+;require.register("pages/Home/HomeToolBar.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Elements = require("../../components/Elements.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var FilterLists = function FilterLists() {
+  var selectList = function selectList(mdl, list) {
+    return mdl.state.currentList(list);
+  };
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".dropdown", [(0, _mithril2.default)("a.btn btn-link dropdown-toggle", { tabindex: "0" }, [mdl.state.currentList(), (0, _mithril2.default)("i.icon icon-caret")]), (0, _mithril2.default)("ul.menu", mdl.user.lists().map(function (list, idx) {
+        return (0, _mithril2.default)(_Elements.ListSelector, {
+          list: list,
+          action: function action() {
+            return selectList(mdl, list);
+          },
+          key: idx,
+          mdl: mdl
+        });
+      }))]);
+    }
+  };
+};
+
+var HomeToolBar = function HomeToolBar() {
+  return {
+    view: function view(_ref2) {
+      var mdl = _ref2.attrs.mdl;
+      return (0, _mithril2.default)("nav.navbar", (0, _mithril2.default)(FilterLists, { mdl: mdl }));
+    }
+  };
+};
+
+exports.default = HomeToolBar;
+});
+
+;require.register("pages/Home/component.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _http = require("../../utils/http.js");
+
+var _http2 = _interopRequireDefault(_http);
+
+var _fns = require("../fns.js");
+
+var _ramda = require("ramda");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NoShows = (0, _mithril2.default)(".container.empty", [(0, _mithril2.default)("p.empty-title h5", "You have no shows yet!"), (0, _mithril2.default)("p.empty-subtitle", "Click search to find your shows.")]);
+
+var ShowSelectedShows = function ShowSelectedShows() {
+  var filterShowsByList = function filterShowsByList(mdl) {
+    return (0, _ramda.filter)((0, _ramda.propEq)("status", mdl.state.currentList()), mdl.user.shows());
+  };
+
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return filterShowsByList(mdl).map(function (show, idx) {
+        return (0, _mithril2.default)("img.img-responsive.img-fit-cover", {
+          key: idx,
+          src: _http2.default.imagesUrl(show.poster_path)
+        });
+      });
+    }
+  };
+};
+
+var Home = function Home() {
+  var getUserData = function getUserData(_ref2) {
+    var mdl = _ref2.attrs.mdl;
+    return _http2.default.getTask(_http2.default.backendlessUrl).map((0, _ramda.map)(_fns.toSearchVm)).fork(mdl.errors, function (d) {
+      return mdl.user.shows(d);
+    });
+  };
+  return {
+    oninit: getUserData,
+    view: function view(_ref3) {
+      var mdl = _ref3.attrs.mdl;
+      return (0, _mithril2.default)("section.tiles", (0, _ramda.isEmpty)(mdl.user.shows()) ? NoShows : (0, _mithril2.default)(ShowSelectedShows, { mdl: mdl }));
+    }
+  };
+};
+exports.default = Home;
+});
+
+;require.register("pages/Search/SearchInput.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _http = require("../../utils/http.js");
+
+var _http2 = _interopRequireDefault(_http);
+
+var _fns = require("../fns.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SearchInput = function SearchInput() {
+  var searchShows = function searchShows(mdl) {
+    console.log("search", mdl);
+    return _http2.default.getTask(_http2.default.searchUrl(mdl.state.page())(mdl.state.query())).map(_fns.formatSearchData).fork(function (err) {
+      return mdl.error = err;
+    }, function (data) {
+      mdl.data = data;
+    });
+  };
+
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".searchInput", (0, _mithril2.default)(".form-group", [(0, _mithril2.default)("input.form-input", {
+        type: "text",
+        id: "search",
+        placeholder: "search",
+        value: mdl.state.query(),
+        oninput: function oninput(e) {
+          mdl.state.query(e.target.value);
+        },
+        onchange: function onchange(e) {
+          return searchShows(mdl);
+        }
+      })]));
+    }
+  };
+};
+
+exports.default = SearchInput;
+});
+
+;require.register("pages/Search/SearchResults.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _http = require("../../utils/http.js");
+
+var _http2 = _interopRequireDefault(_http);
+
+var _Models = require("../../Models.js");
+
+var _ramda = require("ramda");
+
+var _fns = require("../fns.js");
+
+var _Elements = require("../../components/Elements.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var loadShows = _http2.default.getTask(_http2.default.backendlessUrl).map((0, _ramda.map)(_fns.toSearchVm));
+
+var saveDto = function saveDto(d, value) {
+  return {
+    body: (0, _ramda.over)((0, _ramda.lensProp)("status"), function () {
+      return value;
+    }, d)
+  };
+};
+
+var updateUserShows = function updateUserShows(mdl) {
+  return function (result, list) {
+    return _http2.default.postTask(_http2.default.backendlessUrl, saveDto(result, list)).chain(function (_) {
+      return loadShows;
+    }).fork(mdl.errors, function (d) {
+      return mdl.user.shows((0, _ramda.concat)(d, mdl.user.shows()));
+    });
+  };
+};
+
+var ShowListSelection = function ShowListSelection() {
+  return {
+    view: function view(_ref) {
+      var _ref$attrs = _ref.attrs,
+          mdl = _ref$attrs.mdl,
+          result = _ref$attrs.result;
+      return (0, _mithril2.default)("ul.menu", mdl.user.lists().map(function (list, idx) {
+        return (0, _mithril2.default)(_Elements.ListSelector, {
+          list: list,
+          key: idx,
+          mdl: mdl,
+          action: function action() {
+            return updateUserShows(mdl)(result, list);
+          }
+        });
+      }));
+    }
+  };
+};
+
+var Result = function Result() {
+  var userHasAlready = function userHasAlready(mdl) {
+    return function (result) {
+      console.log((0, _ramda.any)((0, _ramda.propEq)("id", result.id), mdl.user.shows()));
+      return (0, _ramda.any)((0, _ramda.propEq)("id", result.id), mdl.user.shows());
+    };
+  };
+
+  var selected = false;
+
+  return {
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          mdl = _ref2$attrs.mdl,
+          result = _ref2$attrs.result;
+      return (0, _mithril2.default)(".tileCard", [(0, _mithril2.default)("img.img-responsive.img-fit-cover", {
+        class: userHasAlready(mdl)(result) && "selected",
+        onclick: function onclick() {
+          selected = !userHasAlready(mdl)(result);
+        },
+        src: _http2.default.imagesUrl(result.poster_path)
+      }), selected && (0, _mithril2.default)(ShowListSelection, {
+        mdl: mdl,
+        result: result,
+        active: userHasAlready(mdl)(result)
+      })]);
+    }
+  };
+};
+
+var SearchResults = function SearchResults() {
+  return {
+    view: function view(_ref3) {
+      var mdl = _ref3.attrs.mdl;
+      return (0, _mithril2.default)("section.tiles", mdl.data && mdl.data.results ? mdl.data.results.map(function (result, idx) {
+        return (0, _mithril2.default)(Result, { mdl: mdl, result: result, key: idx });
+      }) : []);
+    }
+  };
+};
+
+exports.default = SearchResults;
+});
+
+;require.register("pages/Search/component.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _SearchInput = require("./SearchInput.js");
+
+var _SearchInput2 = _interopRequireDefault(_SearchInput);
+
+var _SearchResults = require("./SearchResults.js");
+
+var _SearchResults2 = _interopRequireDefault(_SearchResults);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Search = function Search() {
+  return {
+    view: function view(_ref) {
+      var mdl = _ref.attrs.mdl;
+      return (0, _mithril2.default)(".search", [(0, _mithril2.default)(_SearchResults2.default, { mdl: mdl })]);
+    }
+  };
+};
+
+exports.default = Search;
+});
+
+;require.register("pages/fns.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatDetailData = exports.formatSearchData = exports.toSearchVm = undefined;
+
+var _ramda = require("ramda");
+
+var log = function log(m) {
+  return function (v) {
+    console.log(m, v);
+    return v;
+  };
+};
+
+var toSearchVm = exports.toSearchVm = function toSearchVm(_ref) {
+  var name = _ref.name,
+      first_air_date = _ref.first_air_date,
+      poster_path = _ref.poster_path,
+      overview = _ref.overview,
+      id = _ref.id,
+      status = _ref.status;
+  return {
+    name: name,
+    first_air_date: first_air_date,
+    poster_path: poster_path,
+    overview: overview,
+    id: id,
+    status: status
+  };
+};
+
+var formatSearchData = exports.formatSearchData = (0, _ramda.over)((0, _ramda.lensProp)("results"), (0, _ramda.map)(toSearchVm));
+
+var formatDetailData = exports.formatDetailData = log("wtf");
+});
+
+;require.register("secrets.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var apiKey = exports.apiKey = "1e4d78ab60660282c63379725fc9b111";
+var tmdbAuth = exports.tmdbAuth = {
+  Authorization: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTRkNzhhYjYwNjYwMjgyYzYzMzc5NzI1ZmM5YjExMSIsInN1YiI6IjVkYmNjMjBjOTdhNGU2MDAxNTdjNjkxYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.TgL91o4VHyQo4cm3KLx6nVICyrn8E8pXDC1zMdlDFsU"
+};
+var baseUrl = exports.baseUrl = "https://api.themoviedb.org/3";
+});
+
+;require.register("utils/animations.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.animateChildrenLimitsExit = exports.slideModalOut = exports.animate = exports.animateChildrenLimitsEntrance = exports.animateChildrenEntrance = exports.animateSidebarEntrance = exports.animateComponentEntrance = exports.IsLoading = undefined;
+
+var _mithril = require('mithril');
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var IsLoading = exports.IsLoading = (0, _mithril2.default)('.holder', [(0, _mithril2.default)('.preloader', [(0, _mithril2.default)('div'), (0, _mithril2.default)('div'), (0, _mithril2.default)('div'), (0, _mithril2.default)('div'), (0, _mithril2.default)('div'), (0, _mithril2.default)('div'), (0, _mithril2.default)('div')])]);
+
+var animateComponentEntrance = exports.animateComponentEntrance = function animateComponentEntrance(idx) {
+  return function (_ref) {
+    var dom = _ref.dom;
+
+    dom.style.opacity = 0;
+    return setTimeout(function () {
+      dom.classList.toggle('stretchRight');
+      dom.style.opacity = 1;
+    }, idx * 100 + 20);
+  };
+};
+
+var animateSidebarEntrance = exports.animateSidebarEntrance = function animateSidebarEntrance(_ref2) {
+  var dom = _ref2.dom;
+
+  dom.style.opacity = 0;
+  dom.classList.toggle('slideRight');
+  dom.style.opacity = 1;
+};
+
+var animateChildrenEntrance = exports.animateChildrenEntrance = function animateChildrenEntrance(_ref3) {
+  var dom = _ref3.dom;
+
+  var children = [].concat(_toConsumableArray(dom.children));
+
+  return children.map(function (child, idx) {
+    child.style.opacity = 0;
+    setTimeout(function () {
+      child.classList.toggle('slideRight');
+      child.style.opacity = 1;
+    }, (idx + 1) * 10);
+  });
+};
+
+var animateChildrenLimitsEntrance = exports.animateChildrenLimitsEntrance = function animateChildrenLimitsEntrance(idx) {
+  return function (_ref4) {
+    var dom = _ref4.dom;
+
+    dom.style.opacity = 0;
+    setTimeout(function () {
+      dom.classList.toggle('slideDown');
+      dom.style.opacity = 1;
+    }, (idx + 1) * 200);
+  };
+};
+
+var animate = exports.animate = function animate(dir) {
+  return function (_ref5) {
+    var dom = _ref5.dom;
+
+    dom.style.opacity = 0;
+    setTimeout(function () {
+      dom.classList.toggle(dir);
+      dom.style.opacity = 1;
+    }, 200);
+  };
+};
+
+var slideModalOut = exports.slideModalOut = function slideModalOut(_ref6) {
+  var dom = _ref6.dom;
+
+  return new Promise(function () {
+    dom.classList.remove('slideRight');
+    return setTimeout(function () {
+      dom.classList.add('reverseAnimation', 'slideRight');
+    }, 200);
+  });
+};
+
+var animateChildrenLimitsExit = exports.animateChildrenLimitsExit = function animateChildrenLimitsExit(_ref7) {
+  var dom = _ref7.dom;
+  return new Promise(function () {
+    [].concat(_toConsumableArray(dom.children)).reverse().map(function (child, idx) {
+      return setTimeout(function () {
+        child.style.display = 'none';
+      }, idx * 100);
+    });
+  });
+};
+});
+
+;require.register("utils/helpers.js", function(exports, require, module) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.jsonCopy = exports.scrollToAnchor = exports.getRoute = exports.debounce = exports.filterTask = exports._paginate = exports._direction = exports._sort = exports._search = exports.addTerms = exports.infiniteScroll = exports.isEmpty = exports.log = exports.makeRoute = undefined;
+
+var _mithril = require('mithril');
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _ramda = require('ramda');
+
+var _data = require('data.task');
+
+var _data2 = _interopRequireDefault(_data);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var makeRoute = exports.makeRoute = (0, _ramda.compose)((0, _ramda.join)('-'), (0, _ramda.split)(' '), (0, _ramda.trim)(), (0, _ramda.toLower)());
+var log = exports.log = function log(m) {
+  return function (v) {
+    console.log(m, v);
+    return v;
+  };
+};
+
+var isEmpty = exports.isEmpty = function isEmpty(data) {
+  return data.length == 0;
+};
+
+var infiniteScroll = exports.infiniteScroll = function infiniteScroll(mdl) {
+  return function (e) {
+    var route = mdl.state.route;
+    var length = mdl.data[route].data.length;
+    var setpoint = 10 * length * mdl.state.scrollPos;
+    if (e.target.scrollTop - mdl.state.scrollPos >= setpoint) {
+      mdl.state.scrollPos++ + e.target.scrollTop;
+    }
+  };
+};
+
+var addTerms = exports.addTerms = function addTerms(item) {
+  var terms = (0, _ramda.compose)((0, _ramda.join)(' '), _ramda.values, (0, _ramda.props)(['uuid', 'id', 'name']))(item);
+
+  return (0, _ramda.assoc)('_terms', terms, item);
+};
+
+var byTerms = function byTerms(query) {
+  return (0, _ramda.compose)((0, _ramda.test)(new RegExp(query, 'i')), (0, _ramda.prop)('name'));
+};
+
+var _search = exports._search = function _search(query) {
+  return (0, _ramda.compose)((0, _ramda.filter)(byTerms(query)));
+};
+
+var _sort = exports._sort = function _sort(p) {
+  return (0, _ramda.sortBy)((0, _ramda.compose)(_ramda.toLower, toString, (0, _ramda.prop)(p)));
+};
+
+var _direction = exports._direction = function _direction(dir) {
+  return dir == 'asc' ? _ramda.identity : _ramda.reverse;
+};
+
+var _paginate = exports._paginate = function _paginate(offset) {
+  return function (limit) {
+    return function (data) {
+      return (0, _ramda.slice)((0, _ramda.max)(0, (0, _ramda.min)(offset, data.length)), (0, _ramda.min)(offset + limit, data.length), data);
+    };
+  };
+};
+
+var filterTask = exports.filterTask = function filterTask(query) {
+  return function (prop) {
+    return function (direction) {
+      return function (offset) {
+        return function (limit) {
+          return (0, _ramda.compose)(_data2.default.of, (0, _ramda.map)(_paginate(offset)(limit)), (0, _ramda.map)(_direction(direction)), (0, _ramda.map)(_sort(prop)), _search(query));
+        };
+      };
+    };
+  };
+};
+
+var debounce = exports.debounce = function debounce(wait, now) {
+  return function (fn) {
+    var timeout = undefined;
+    return function () {
+      var context = this;
+      var args = arguments;
+      var later = function later() {
+        timeout = undefined;
+        if (!now) fn.apply(context, args);
+      };
+      var callNow = now && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      console.log(fn);
+      if (callNow) fn.apply(context, args);
+    };
+  };
+};
+
+var getRoute = exports.getRoute = function getRoute(int) {
+  return _mithril2.default.route.get().split('/')[int];
+};
+
+var scrollToAnchor = exports.scrollToAnchor = function scrollToAnchor(anchor) {
+  var is = function is(el) {
+    return el !== undefined && el !== null;
+  };
+
+  //if you pass an undefined anchor it will scroll to the top of the body
+  var targetEl = is(anchor) ? document.getElementById(anchor) : document.body;
+  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  var target = is(targetEl) ? targetEl.getBoundingClientRect().top : 0;
+  window.scroll({
+    top: target + scrollTop - 10,
+    left: 0,
+    behavior: 'smooth'
+  });
+};
+
+var jsonCopy = exports.jsonCopy = function jsonCopy(src) {
+  return JSON.parse(JSON.stringify(src));
+};
+});
+
+;require.register("utils/http.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _secrets = require("../secrets.js");
+
+var _data = require("data.task");
+
+var _data2 = _interopRequireDefault(_data);
+
+var _mithril = require("mithril");
+
+var _mithril2 = _interopRequireDefault(_mithril);
+
+var _Models = require("../Models.js");
+
+var _Models2 = _interopRequireDefault(_Models);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function onProgress(e) {
+  if (e.lengthComputable) {
+    _Models2.default.state.loadingProgress.max(e.total);
+    _Models2.default.state.loadingProgress.value(e.loaded);
+    _mithril2.default.redraw();
+  }
+}
+
+function onLoad() {
+  return false;
+}
+
+function onLoadStart() {
+  _Models2.default.state.isLoading(true);
+  return false;
+}
+function onLoadEnd() {
+  _Models2.default.state.isLoading(false);
+  _Models2.default.state.loadingProgress.max(0);
+  _Models2.default.state.loadingProgress.value(0);
+  return false;
+}
+
+var xhrProgress = {
+  config: function config(xhr) {
+    // console.log(xhr)
+    xhr.onprogress = onProgress;
+    xhr.onload = onLoad;
+    xhr.onloadstart = onLoadStart;
+    xhr.onloadend = onLoadEnd;
+  }
+};
+
+var _http = function _http(mdl) {
+  mdl.state.isLoading(!mdl.state.isLoading);
+  return _mithril2.default.request;
+};
+
+var headers = function headers(url) {
+  var tmdbBearerToken = url.includes("themoviedb") ? _secrets.tmdbAuth : { boaz: "boaz" };
+  console.log("bearer", tmdbBearerToken);
+  return {
+    headers: _extends({}, tmdbBearerToken, {
+      "Content-Type": "application/json;charset=utf-8"
+    })
+  };
+};
+
+var _task = function _task(url) {
+  return function (args) {
+    return new _data2.default(function (rej, res) {
+      return _http(_Models2.default)(url, _extends({}, args, headers(url), xhrProgress)).then(res, rej);
+    });
+  };
+};
+
+var getTask = function getTask(url) {
+  var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return _task(url)(_extends({}, args, {
+    method: "GET"
+  }));
+};
+var postTask = function postTask(url) {
+  var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return _task(url)(_extends({}, args, {
+    method: "POST"
+  }));
+};
+var putTask = function putTask(url) {
+  var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  return _task(url)(_extends({}, args, {
+    method: "PUT"
+  }));
+};
+
+var baseSearchUrl = function baseSearchUrl(baseUrl) {
+  return function (apiKey) {
+    return function (page) {
+      return function (query) {
+        return baseUrl + "/search/multi?api_key=" + apiKey + "&language=en-US&query=" + query + "&page=" + page + "&include_adult=false";
+      };
+    };
+  };
+};
+
+var baseDetailsUrl = function baseDetailsUrl(baseUrl) {
+  return function (apiKey) {
+    return function (id) {
+      return baseUrl + "/tv/" + id + "?api_key=" + apiKey + "&language=en-US";
+    };
+  };
+};
+// &append_to_response=recommendations,similar,latest,airing_today,on_the_air
+var baseImagesUrl = function baseImagesUrl(baseUrl) {
+  return function (apiKey) {
+    return function (id) {
+      return baseUrl + "/tv/" + id + "/images?api_key=" + apiKey + "&language=en-US";
+    };
+  };
+};
+
+var backendlessUrl = "https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/shows?pagesize=100";
+
+var searchUrl = baseSearchUrl(_secrets.baseUrl)(_secrets.apiKey);
+
+var detailsUrl = baseDetailsUrl(_secrets.baseUrl)(_secrets.apiKey);
+
+var imagesUrl = function imagesUrl(img) {
+  return "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + img;
+};
+
+var http = {
+  getTask: getTask,
+  postTask: postTask,
+  putTask: putTask,
+  baseSearchUrl: baseSearchUrl,
+  baseDetailsUrl: baseDetailsUrl,
+  baseImagesUrl: baseImagesUrl,
+  searchUrl: searchUrl,
+  detailsUrl: detailsUrl,
+  imagesUrl: imagesUrl,
+  backendlessUrl: backendlessUrl
+};
+
+exports.default = http;
+});
+
+;require.register("utils/index.js", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _animations = require("./animations.js");
+
+Object.keys(_animations).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _animations[key];
+    }
+  });
+});
+
+var _helpers = require("./helpers.js");
+
+Object.keys(_helpers).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _helpers[key];
+    }
+  });
+});
+
+var _http = require("./http.js");
+
+Object.keys(_http).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _http[key];
+    }
+  });
+});
+});
+
+;require.alias(".pnpm/registry.npmjs.org/process/0.11.10/node_modules/process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
+  
+});})();require('___globals___');
+
+
+//# sourceMappingURL=app.js.map

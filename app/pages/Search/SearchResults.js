@@ -3,30 +3,62 @@ import http from "../../utils/http.js"
 import { log } from "../../Models.js"
 import { concat, any, map, propEq, over, lensProp } from "ramda"
 import { toSearchVm } from "../fns.js"
+import { ListSelector } from "../../components/Elements.js"
 
 const loadShows = http.getTask(http.backendlessUrl).map(map(toSearchVm))
 
-const saveDto = (d) => ({
-  body: over(lensProp("status"), () => "selected", d)
+const saveDto = (d, value) => ({
+  body: over(lensProp("status"), () => value, d)
 })
 
-const Result = () => {
-  const updateUserShows = (mdl) => (result) =>
-    http
-      .postTask(http.backendlessUrl, saveDto(result))
-      .chain((_) => loadShows)
-      .fork(mdl.errors, (d) => mdl.user.shows(concat(d, mdl.user.shows())))
+const updateUserShows = (mdl) => (result, list) =>
+  http
+    .postTask(http.backendlessUrl, saveDto(result, list))
+    .chain((_) => loadShows)
+    .fork(mdl.errors, (d) => mdl.user.shows(concat(d, mdl.user.shows())))
 
-  const isSelected = (mdl) => (result) =>
-    any(propEq("id", result.id), mdl.user.shows())
+const ShowListSelection = () => {
+  return {
+    view: ({ attrs: { mdl, result } }) =>
+      m(
+        "ul.menu",
+        mdl.user.lists().map((list, idx) =>
+          m(ListSelector, {
+            list,
+            key: idx,
+            mdl,
+            action: () => updateUserShows(mdl)(result, list)
+          })
+        )
+      )
+  }
+}
+
+const Result = () => {
+  const userHasAlready = (mdl) => (result) => {
+    console.log(any(propEq("id", result.id), mdl.user.shows()))
+    return any(propEq("id", result.id), mdl.user.shows())
+  }
+
+  let selected = false
 
   return {
     view: ({ attrs: { mdl, result } }) =>
-      m("img.img-responsive.img-fit-cover", {
-        class: isSelected(mdl)(result) && "selected",
-        onclick: () => updateUserShows(mdl)(result),
-        src: http.imagesUrl(result.poster_path)
-      })
+      m(".tileCard", [
+        m("img.img-responsive.img-fit-cover", {
+          class: userHasAlready(mdl)(result) && "selected",
+          onclick: () => {
+            selected = !userHasAlready(mdl)(result)
+          },
+          src: http.imagesUrl(result.poster_path)
+        }),
+        selected &&
+          m(ShowListSelection, {
+            mdl,
+            result,
+            active: userHasAlready(mdl)(result)
+          })
+      ])
   }
 }
 

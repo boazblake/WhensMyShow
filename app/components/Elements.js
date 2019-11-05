@@ -13,6 +13,16 @@ export const NavBar = () => {
   }
 }
 
+export const ListSelector = () => {
+  return {
+    view: ({ attrs: { list, action, active } }) =>
+      m(
+        "li.menu-item",
+        m("a", { class: active && "selected", onclick: action }, list)
+      )
+  }
+}
+
 export const Button = () => {
   return {
     view: ({ attrs: { classList, action, label } }) =>
