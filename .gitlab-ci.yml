@@ -1,9 +1,7 @@
 pages:
   stage: deploy
   script:
-    - mkdir .public
-    - cp -r * .public
-    - mv .public public
+    - npm run build
   artifacts:
     paths:
       - public
