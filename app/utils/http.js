@@ -45,8 +45,8 @@ const headers = (url) => {
   let tmdbBearerToken = url.includes("themoviedb") && tmdbAuth
   return {
     headers: {
-      ...tmdbBearerToken,
-      "Content-Type": "application/json;charset=utf-8"
+      ...tmdbBearerToken
+      // "Content-Type": "application/json;charset=utf-8"
     }
   }
 }

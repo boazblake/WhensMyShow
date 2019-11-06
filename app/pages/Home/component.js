@@ -5,27 +5,19 @@ import { isEmpty, filter, propEq } from "ramda"
 
 const NoShows = m(".container.empty", [
   m("p.empty-title h5", "You have no shows yet!"),
-  m("p.empty-subtitle", "Click search to find your shows."),
+  m("p.empty-subtitle", "Click search to find your shows.")
 ])
 
 const ShowSelectedShows = () => {
-  const filterShowsByList = mdl =>
+  const filterShowsByList = (mdl) =>
     filter(propEq("status", mdl.state.currentList()), mdl.user.shows())
 
   const deleteShow = (show, mdl) => {
     http
       .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
-      .chain(_ => getShows(mdl, http))
-      .fork(
-        e => mdl.log("e")(e),
-        d => {
-          mdl.user.shows(d)
-          alert("deleted")
-        }
-      )
+      .chain((_) => getShows(mdl, http))
+      .fork((e) => mdl.log("e")(e), (d) => mdl.user.shows(d))
   }
-
-  let isHovered = null
 
   return {
     view: ({ attrs: { mdl } }) =>
@@ -33,43 +25,37 @@ const ShowSelectedShows = () => {
         m(
           ".tileCard",
           {
-            key: idx,
-            onclick: () => (isHovered = idx),
-            onmouseover: () => (isHovered = idx),
-            onmouseout: () => (isHovered = null),
+            key: idx
           },
           [
             m("img.img-responsive.img-fit-cover", {
               onclick: () => m.route.set(`/details/${show.id}`),
-              src: http.imagesUrl(show.poster_path),
+              src: http.imagesUrl(show.poster_path)
             }),
-            isHovered == idx &&
-              m(
-                "b.btn btn-action btn-error btn-s s-circle deleteIcon",
-                {
-                  onclick: () => {
-                    alert("deleting")
-                    deleteShow(show, mdl)
-                  },
-                },
-                m("i.icon icon-cross")
-              ),
+
+            m(
+              "b.btn btn-action btn-error btn-s s-circle deleteIcon",
+              {
+                onclick: () => deleteShow(show, mdl)
+              },
+              m("i.icon icon-cross")
+            )
           ]
         )
-      ),
+      )
   }
 }
 
 const Home = () => {
   return {
     oninit: ({ attrs: { mdl } }) =>
-      getShows(mdl, http).fork(mdl.errors, d => mdl.user.shows(d)),
+      getShows(mdl, http).fork(mdl.errors, (d) => mdl.user.shows(d)),
     view: ({ attrs: { mdl } }) =>
       m(
         "section.tiles",
         isEmpty(mdl.user.shows()) ? NoShows : m(ShowSelectedShows, { mdl })
       ),
-    onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching"),
+    onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
   }
 }
 export default Home
