@@ -1,10 +1,5 @@
 import { over, lensProp, map, compose, propEq, prop, find, set } from "ramda"
 
-const log = (m) => (v) => {
-  console.log(m, v)
-  return v
-}
-
 export const toSearchVm = ({
   name,
   first_air_date,

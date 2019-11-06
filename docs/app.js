@@ -767,6 +767,10 @@ var Home = function Home() {
     view: function view(_ref3) {
       var mdl = _ref3.attrs.mdl;
       return (0, _mithril2.default)("section.tiles", (0, _ramda.isEmpty)(mdl.user.shows()) ? NoShows : (0, _mithril2.default)(ShowSelectedShows, { mdl: mdl }));
+    },
+    onbeforeremove: function onbeforeremove(_ref4) {
+      var mdl = _ref4.attrs.mdl;
+      return mdl.state.currentList("Watching");
     }
   };
 };
@@ -975,13 +979,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.getShows = exports.mergeWithCurrentList = exports.formatSearchData = exports.toSearchVm = undefined;
 
 var _ramda = require("ramda");
-
-var log = function log(m) {
-  return function (v) {
-    console.log(m, v);
-    return v;
-  };
-};
 
 var toSearchVm = exports.toSearchVm = function toSearchVm(_ref) {
   var name = _ref.name,

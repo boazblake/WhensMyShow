@@ -50,7 +50,7 @@ input#search {
 }
 
 .selected {
-  filter: grayscale(80%);
+  filter: grayscale(80%) opacity(10%);
 }
 
 .active {

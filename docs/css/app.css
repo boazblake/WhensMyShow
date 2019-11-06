@@ -8218,7 +8218,7 @@ input#search {
   border-top: none; }
 
 .selected {
-  filter: grayscale(80%); }
+  filter: grayscale(80%) opacity(10%); }
 
 .active {
   background: #f1f1fc;

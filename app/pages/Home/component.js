@@ -1,7 +1,7 @@
 import m from "mithril"
 import http from "../../utils/http.js"
-import { toSearchVm, getShows } from "../fns.js"
-import { map, isEmpty, filter, propEq } from "ramda"
+import { getShows } from "../fns.js"
+import { isEmpty, filter, propEq } from "ramda"
 
 const NoShows = m(".container.empty", [
   m("p.empty-title h5", "You have no shows yet!"),
@@ -56,7 +56,8 @@ const Home = () => {
       m(
         "section.tiles",
         isEmpty(mdl.user.shows()) ? NoShows : m(ShowSelectedShows, { mdl })
-      )
+      ),
+    onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
   }
 }
 export default Home
