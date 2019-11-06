@@ -4,7 +4,11 @@ import SearchResults from "./SearchResults.js"
 
 const Search = () => {
   return {
-    view: ({ attrs: { mdl } }) => m(".search", [m(SearchResults, { mdl })])
+    view: ({ attrs: { mdl } }) => m(".search", [m(SearchResults, { mdl })]),
+    onbeforeremove: ({ attrs: { mdl } }) => {
+      mdl.state.query("")
+      mdl.data.shows([])
+    }
   }
 }
 

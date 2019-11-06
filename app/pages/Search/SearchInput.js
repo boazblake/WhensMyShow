@@ -11,7 +11,7 @@ const SearchInput = () => {
       .fork(
         (err) => (mdl.error = err),
         (data) => {
-          mdl.data(data)
+          mdl.data.shows(data)
         }
       )
   }
@@ -26,10 +26,8 @@ const SearchInput = () => {
             id: "search",
             placeholder: "search",
             value: mdl.state.query(),
-            oninput: (e) => {
-              mdl.state.query(e.target.value)
-            },
-            onchange: (e) => searchShows(mdl)
+            oninput: (e) => mdl.state.query(e.target.value),
+            onchange: () => searchShows(mdl)
           })
         ])
       )

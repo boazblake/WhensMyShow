@@ -11,14 +11,16 @@ export const toSearchVm = ({
   poster_path,
   overview,
   id,
-  status
+  status,
+  objectId
 }) => ({
   name,
   first_air_date,
   poster_path,
   overview,
   id,
-  status
+  status,
+  objectId
 })
 
 export const formatSearchData = over(lensProp("results"), map(toSearchVm))
@@ -33,3 +35,6 @@ export const mergeWithCurrentList = (shows) => (data) =>
       find(propEq("id", r.id))
     )(shows)
   )
+
+export const getShows = (mdl, http) =>
+  http.getTask(http.backendlessUrl("shows?pagesize=100")).map(map(toSearchVm))

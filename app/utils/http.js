@@ -42,8 +42,7 @@ const _http = (mdl) => {
 }
 
 const headers = (url) => {
-  let tmdbBearerToken = url.includes("themoviedb") ? tmdbAuth : { boaz: "boaz" }
-  console.log("bearer", tmdbBearerToken)
+  let tmdbBearerToken = url.includes("themoviedb") && tmdbAuth
   return {
     headers: {
       ...tmdbBearerToken,
@@ -75,6 +74,11 @@ const putTask = (url, args = {}) =>
     ...args,
     method: "PUT"
   })
+const deleteTask = (url, args = {}) =>
+  _task(url)({
+    ...args,
+    method: "DELETE"
+  })
 
 const baseSearchUrl = (baseUrl) => (apiKey) => (page) => (query) =>
   `${baseUrl}/search/multi?api_key=${apiKey}&language=en-US&query=${query}&page=${page}&include_adult=false`
@@ -85,8 +89,12 @@ const baseDetailsUrl = (baseUrl) => (apiKey) => (id) =>
 const baseImagesUrl = (baseUrl) => (apiKey) => (id) =>
   `${baseUrl}/tv/${id}/images?api_key=${apiKey}&language=en-US`
 
-const backendlessUrl =
-  "https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/shows?pagesize=100"
+const backEndlessBaseUrl =
+  "https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/"
+
+const backendlessUrl = (url) => backEndlessBaseUrl + url
+
+// const shows = (shows) => `data/${shows}?pagesize=100`
 
 const searchUrl = baseSearchUrl(baseUrl)(apiKey)
 
@@ -99,6 +107,7 @@ const http = {
   getTask,
   postTask,
   putTask,
+  deleteTask,
   baseSearchUrl,
   baseDetailsUrl,
   baseImagesUrl,

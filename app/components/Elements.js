@@ -16,7 +16,6 @@ export const NavBar = () => {
 export const ListSelector = () => {
   return {
     view: ({ attrs: { list, action, active } }) => {
-      console.log("active??", list, active)
       return m(
         "li.menu-item",
         m(
