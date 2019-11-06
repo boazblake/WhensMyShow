@@ -35,3 +35,18 @@ export const mergeWithCurrentList = (shows) => (data) => {
 
 export const getShows = (mdl, http) =>
   http.getTask(http.backendlessUrl("shows?pagesize=100")).map(map(toSearchVm))
+
+export const searchShows = (mdl, http) => {
+  return http
+    .getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query()))
+    .map(formatSearchData)
+    .map(mergeWithCurrentList(mdl.user.shows()))
+    .fork(
+      (err) => (mdl.error = err),
+      (data) => {
+        mdl.state.paginate.total_pages(data.total_pages)
+        mdl.state.paginate.total_results(data.total_results)
+        mdl.data.shows(data.results)
+      }
+    )
+}

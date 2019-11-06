@@ -1,4 +1,7 @@
 import m from "mithril"
+import { range, take, takeLast, flatten } from "ramda"
+import { searchShows } from "../pages/fns"
+import http from "../utils/http.js"
 
 export const Loader = () => {
   return {
@@ -7,32 +10,65 @@ export const Loader = () => {
 }
 
 export const Paginator = () => {
+  const fetchShows = (mdl) => searchShows(mdl, http)
+
   return {
-    view: ({
-      attrs: {
-        mdl: {
-          state: { paginate }
+    view: ({ attrs: { mdl } }) => {
+      let { page, total_pages, total_results } = mdl.state.paginate
+      if (total_results()) {
+        let viewModel,
+          totalPages = range(1, total_pages() + 1)
+
+        if (totalPages.length > 6) {
+          let firstThree = take(3, totalPages)
+          let lastThree = takeLast(3, totalPages)
+          viewModel = flatten([firstThree, m("span", "..."), lastThree])
+        } else {
+          viewModel = totalPages
         }
+
+        console.log("page", page(), typeof page())
+
+        return m("ul.pagination.navbar", [
+          m(
+            "li.page-item",
+            {
+              class: page() == 1 && "disabled",
+              onclick: () => {
+                page() !== 1 && page(page() - 1)
+                fetchShows(mdl)
+              }
+            },
+            m("a[tabindex='-1']", "Previous")
+          ),
+          viewModel.map((p) =>
+            m(
+              "li.page-item",
+              {
+                class: page() == p && "active",
+                onclick: () => {
+                  if (Number(p)) {
+                    page(p)
+                    fetchShows(mdl)
+                  }
+                }
+              },
+              m("a", p)
+            )
+          ),
+          m(
+            "li.page-item",
+            {
+              class: page() == total_pages() && "disabled",
+              onclick: () => {
+                page() !== total_pages() && page(page() + 1)
+                fetchShows(mdl)
+              }
+            },
+            m("a", "Next")
+          )
+        ])
       }
-    }) => {
-      let { page, total_pages, total_results } = paginate
-      console.log(
-        "page",
-        page(),
-        "pages",
-        total_pages(),
-        "results",
-        total_results()
-      )
-      return m("ul.pagination", [
-        m("li.page-item.disabled", m("a[href='#'][tabindex='-1']", "Previous")),
-        m("li.page-item.active", m("a[href='#']", "1")),
-        m("li.page-item", m("a[href='#']", "2")),
-        m("li.page-item", m("a[href='#']", "3")),
-        m("li.page-item", m("span", "...")),
-        m("li.page-item", m("a[href='#']", "12")),
-        m("li.page-item", m("a[href='#']", "Next"))
-      ])
     }
   }
 }

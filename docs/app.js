@@ -504,9 +504,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Menu = exports.MenuItem = exports.DropDown = exports.CheckBox = exports.Input = exports.Button = exports.ListSelector = exports.NavBar = exports.ProgressBar = exports.Paginator = exports.Loader = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _mithril = require("mithril");
 
 var _mithril2 = _interopRequireDefault(_mithril);
+
+var _ramda = require("ramda");
+
+var _fns = require("../pages/fns");
+
+var _http = require("../utils/http.js");
+
+var _http2 = _interopRequireDefault(_http);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -519,15 +529,56 @@ var Loader = exports.Loader = function Loader() {
 };
 
 var Paginator = exports.Paginator = function Paginator() {
+  var fetchShows = function fetchShows(mdl) {
+    return (0, _fns.searchShows)(mdl, _http2.default);
+  };
+
   return {
     view: function view(_ref) {
-      var paginate = _ref.attrs.mdl.state.paginate;
-      var page = paginate.page,
-          total_pages = paginate.total_pages,
-          total_results = paginate.total_results;
+      var mdl = _ref.attrs.mdl;
+      var _mdl$state$paginate = mdl.state.paginate,
+          page = _mdl$state$paginate.page,
+          total_pages = _mdl$state$paginate.total_pages,
+          total_results = _mdl$state$paginate.total_results;
 
-      console.log("page", page(), "pages", total_pages(), "results", total_results());
-      return (0, _mithril2.default)("ul.pagination", [(0, _mithril2.default)("li.page-item.disabled", (0, _mithril2.default)("a[href='#'][tabindex='-1']", "Previous")), (0, _mithril2.default)("li.page-item.active", (0, _mithril2.default)("a[href='#']", "1")), (0, _mithril2.default)("li.page-item", (0, _mithril2.default)("a[href='#']", "2")), (0, _mithril2.default)("li.page-item", (0, _mithril2.default)("a[href='#']", "3")), (0, _mithril2.default)("li.page-item", (0, _mithril2.default)("span", "...")), (0, _mithril2.default)("li.page-item", (0, _mithril2.default)("a[href='#']", "12")), (0, _mithril2.default)("li.page-item", (0, _mithril2.default)("a[href='#']", "Next"))]);
+      if (total_results()) {
+        var viewModel = void 0,
+            totalPages = (0, _ramda.range)(1, total_pages() + 1);
+
+        if (totalPages.length > 6) {
+          var firstThree = (0, _ramda.take)(3, totalPages);
+          var lastThree = (0, _ramda.takeLast)(3, totalPages);
+          viewModel = (0, _ramda.flatten)([firstThree, (0, _mithril2.default)("span", "..."), lastThree]);
+        } else {
+          viewModel = totalPages;
+        }
+
+        console.log("page", page(), _typeof(page()));
+
+        return (0, _mithril2.default)("ul.pagination.navbar", [(0, _mithril2.default)("li.page-item", {
+          class: page() == 1 && "disabled",
+          onclick: function onclick() {
+            page() !== 1 && page(page() - 1);
+            fetchShows(mdl);
+          }
+        }, (0, _mithril2.default)("a[tabindex='-1']", "Previous")), viewModel.map(function (p) {
+          return (0, _mithril2.default)("li.page-item", {
+            class: page() == p && "active",
+            onclick: function onclick() {
+              if (Number(p)) {
+                page(p);
+                fetchShows(mdl);
+              }
+            }
+          }, (0, _mithril2.default)("a", p));
+        }), (0, _mithril2.default)("li.page-item", {
+          class: page() == total_pages() && "disabled",
+          onclick: function onclick() {
+            page() !== total_pages() && page(page() + 1);
+            fetchShows(mdl);
+          }
+        }, (0, _mithril2.default)("a", "Next"))]);
+      }
     }
   };
 };
@@ -906,16 +957,6 @@ var _Elements = require("../../components/Elements.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SearchInput = function SearchInput() {
-  var searchShows = function searchShows(mdl) {
-    return _http2.default.getTask(_http2.default.searchUrl(mdl.state.paginate.page())(mdl.state.query())).map(_fns.formatSearchData).map((0, _fns.mergeWithCurrentList)(mdl.user.shows())).fork(function (err) {
-      return mdl.error = err;
-    }, function (data) {
-      mdl.state.paginate.total_pages(data.total_pages);
-      mdl.state.paginate.total_results(data.total_results);
-      mdl.data.shows(data.results);
-    });
-  };
-
   return {
     view: function view(_ref) {
       var mdl = _ref.attrs.mdl;
@@ -928,7 +969,7 @@ var SearchInput = function SearchInput() {
           return mdl.state.query(e.target.value);
         },
         onchange: function onchange() {
-          return searchShows(mdl);
+          return (0, _fns.searchShows)(mdl, _http2.default);
         }
       }), (0, _mithril2.default)(_Elements.Paginator, { mdl: mdl })]));
     }
@@ -1087,7 +1128,7 @@ exports.default = Search;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getShows = exports.mergeWithCurrentList = exports.formatSearchData = exports.toSearchVm = undefined;
+exports.searchShows = exports.getShows = exports.mergeWithCurrentList = exports.formatSearchData = exports.toSearchVm = undefined;
 
 var _ramda = require("ramda");
 
@@ -1129,6 +1170,16 @@ var mergeWithCurrentList = exports.mergeWithCurrentList = function mergeWithCurr
 
 var getShows = exports.getShows = function getShows(mdl, http) {
   return http.getTask(http.backendlessUrl("shows?pagesize=100")).map((0, _ramda.map)(toSearchVm));
+};
+
+var searchShows = exports.searchShows = function searchShows(mdl, http) {
+  return http.getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query())).map(formatSearchData).map(mergeWithCurrentList(mdl.user.shows())).fork(function (err) {
+    return mdl.error = err;
+  }, function (data) {
+    mdl.state.paginate.total_pages(data.total_pages);
+    mdl.state.paginate.total_results(data.total_results);
+    mdl.data.shows(data.results);
+  });
 };
 });
 
