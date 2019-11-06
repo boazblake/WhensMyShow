@@ -80,7 +80,13 @@ input#search {
   border-radius: 50%;
   animation: ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
+
+.progressBar {
+  z-index: 1000;
+}
+
 .loader div:nth-child(2) {
+  z-index: 1000;
   animation-delay: -0.5s;
 }
 
