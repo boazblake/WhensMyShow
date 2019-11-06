@@ -34,10 +34,10 @@ const ShowSelectedShows = () => {
           ".tileCard",
           {
             key: idx,
-            ontouchstart: () => (isHovered = idx),
-            onblur: () => (isHovered = null),
-            onmouseenter: () => (isHovered = idx),
-            onmouseleave: () => (isHovered = null),
+            onpointerenter: () => (isHovered = idx),
+            onpointerleave: () => (isHovered = null),
+            // onmouseenter: () => (isHovered = idx),
+            // onmouseleave: () => (isHovered = null),
           },
           [
             m("img.img-responsive.img-fit-cover", {
