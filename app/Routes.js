@@ -2,6 +2,7 @@ import m from "mithril"
 import Layout from "./Layout.js"
 import Home from "./pages/Home/component.js"
 import Search from "./pages/Search/component.js"
+import Details from "./pages/Details/component.js"
 import { flatten } from "ramda"
 
 const Main = [
@@ -10,7 +11,7 @@ const Main = [
     name: "Home",
     // icon: Icons.home,
     route: "/home",
-    position: ["nav"],
+    isNav: true,
     group: [],
     children: [],
     onmatch: (mdl, args, path, fullroute, isAnchor) => {
@@ -23,13 +24,27 @@ const Main = [
     name: "Search",
     // icon: Icons.search,
     route: "/search",
-    position: ["nav"],
+    isNav: true,
     group: [],
     children: [],
     onmatch: (mdl, args, path, fullroute, isAnchor) => {
       isAnchor && scrollToAnchor(mdl.state.anchor)
     },
     component: (mdl) => m(Layout, { mdl }, m(Search, { mdl }))
+  },
+  {
+    id: "details",
+    name: "Details",
+    // icon: Icons.search,
+    route: "/details/:id",
+    isNav: false,
+    group: [],
+    children: [],
+    onmatch: (mdl, args, path, fullroute, isAnchor) => {
+      console.log("DETAILS PAGE", mdl, args, path, fullroute, isAnchor)
+      isAnchor && scrollToAnchor(mdl.state.anchor)
+    },
+    component: (mdl) => m(Layout, { mdl }, m(Details, { mdl }))
   }
 ]
 

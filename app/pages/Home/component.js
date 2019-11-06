@@ -16,7 +16,14 @@ const ShowSelectedShows = () => {
     http
       .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
       .chain((_) => getShows(mdl, http))
-      .fork(mdl.errors, (d) => mdl.user.shows(d))
+      .fork(
+        (e) => mdl.log("e")(e),
+        (d) => {
+          alert("deleting show", d)
+
+          mdl.user.shows(d)
+        }
+      )
   }
 
   let isHovered = null
@@ -28,20 +35,27 @@ const ShowSelectedShows = () => {
           ".tileCard",
           {
             key: idx,
+
+            ontouchstart: () => (isHovered = idx),
+            // onpointerdown: () => (isHovered = idx),
             onmouseenter: () => (isHovered = idx),
+            // ontouchend: () => (isHovered = null),
+            // onpointerup: () => (isHovered = null),
             onmouseleave: () => (isHovered = null)
           },
           [
+            m("img.img-responsive.img-fit-cover", {
+              onclick: () => m.route.set(`/details/${show.id}`),
+              src: http.imagesUrl(show.poster_path)
+            }),
             isHovered == idx &&
               m(
                 "b.btn btn-action btn-error btn-s s-circle deleteIcon",
-                { onclick: () => deleteShow(show, mdl) },
+                {
+                  onclick: () => deleteShow(show, mdl)
+                },
                 m("i.icon icon-cross")
-              ),
-
-            m("img.img-responsive.img-fit-cover", {
-              src: http.imagesUrl(show.poster_path)
-            })
+              )
           ]
         )
       )

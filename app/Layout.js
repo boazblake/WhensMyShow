@@ -1,4 +1,5 @@
 import m from "mithril"
+import { propEq } from "ramda"
 import SearchInput from "./pages/Search/SearchInput.js"
 import HomeToolBar from "./pages/Home/HomeToolBar.js"
 
@@ -11,7 +12,7 @@ const NavBar = ({ attrs: { mdl } }) => {
         "nav",
         m(
           "ul.tab tab-block",
-          mdl.Routes.map((route, idx) =>
+          mdl.Routes.filter(propEq("isNav", true)).map((route, idx) =>
             m(
               "li.tab-item",
               { key: idx, class: isActive(route) && "active" },
