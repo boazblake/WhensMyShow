@@ -1,5 +1,4 @@
 import m from "mithril"
-import SearchInput from "./SearchInput.js"
 import SearchResults from "./SearchResults.js"
 
 const Search = () => {
@@ -8,6 +7,9 @@ const Search = () => {
     onbeforeremove: ({ attrs: { mdl } }) => {
       mdl.state.query("")
       mdl.data.shows([])
+      mdl.state.paginate.page(1)
+      mdl.state.paginate.total_pages(0)
+      mdl.state.paginate.total_results(0)
     }
   }
 }

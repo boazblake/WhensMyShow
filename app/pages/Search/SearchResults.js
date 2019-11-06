@@ -16,6 +16,7 @@ const updateUserShows = (mdl) => (result, list) =>
       mdl.user.shows(d)
       mdl.data.shows(
         mergeWithCurrentList(mdl.user.shows())({ results: mdl.data.shows() })
+          .results
       )
     })
 
