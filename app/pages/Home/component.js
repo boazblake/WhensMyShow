@@ -34,8 +34,8 @@ const ShowSelectedShows = () => {
           ".tileCard",
           {
             key: idx,
-            onpointerenter: () => (isHovered = idx),
-            onpointerleave: () => (isHovered = null),
+            onpointerdown: () => (isHovered = idx),
+            onpointerup: () => (isHovered = null),
             // onmouseenter: () => (isHovered = idx),
             // onmouseleave: () => (isHovered = null),
           },
