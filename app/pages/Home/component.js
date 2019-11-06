@@ -34,10 +34,8 @@ const ShowSelectedShows = () => {
           ".tileCard",
           {
             key: idx,
-            onpointermove: () => (isHovered = idx),
-            onpointerout: () => (isHovered = null),
-            // onmouseenter: () => (isHovered = idx),
-            // onmouseleave: () => (isHovered = null),
+            onmouseover: () => (isHovered = idx),
+            onmouseout: () => (isHovered = null),
           },
           [
             m("img.img-responsive.img-fit-cover", {
