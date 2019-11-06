@@ -27,13 +27,11 @@ export const Paginator = () => {
           viewModel = totalPages
         }
 
-        console.log("page", page(), typeof page())
-
         return m("ul.pagination.navbar", [
           m(
             "li.page-item",
             {
-              class: page() == 1 && "disabled",
+              class: page() == 1 ? "disabled" : "c-hand",
               onclick: () => {
                 page() !== 1 && page(page() - 1)
                 fetchShows(mdl)
@@ -43,9 +41,9 @@ export const Paginator = () => {
           ),
           viewModel.map((p) =>
             m(
-              "li.page-item",
+              "li.page-item.c-hand",
               {
-                class: page() == p && "active",
+                class: page() == p && "active c-auto",
                 onclick: () => {
                   if (Number(p)) {
                     page(p)
@@ -59,7 +57,7 @@ export const Paginator = () => {
           m(
             "li.page-item",
             {
-              class: page() == total_pages() && "disabled",
+              class: page() == total_pages() ? "disabled" : "c-hand",
               onclick: () => {
                 page() !== total_pages() && page(page() + 1)
                 fetchShows(mdl)
@@ -84,7 +82,6 @@ export const ProgressBar = () => {
         }
       }
     }) => {
-      // console.log("MAX", max(), "value: ", value())
       return m(
         ".progressBar",
         m("progress.progress", { max: max(), value: value() })

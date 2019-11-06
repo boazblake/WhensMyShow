@@ -504,8 +504,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Menu = exports.MenuItem = exports.DropDown = exports.CheckBox = exports.Input = exports.Button = exports.ListSelector = exports.NavBar = exports.ProgressBar = exports.Paginator = exports.Loader = undefined;
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _mithril = require("mithril");
 
 var _mithril2 = _interopRequireDefault(_mithril);
@@ -553,17 +551,15 @@ var Paginator = exports.Paginator = function Paginator() {
           viewModel = totalPages;
         }
 
-        console.log("page", page(), _typeof(page()));
-
         return (0, _mithril2.default)("ul.pagination.navbar", [(0, _mithril2.default)("li.page-item", {
-          class: page() == 1 && "disabled",
+          class: page() == 1 ? "disabled" : "c-hand",
           onclick: function onclick() {
             page() !== 1 && page(page() - 1);
             fetchShows(mdl);
           }
         }, (0, _mithril2.default)("a[tabindex='-1']", "Previous")), viewModel.map(function (p) {
-          return (0, _mithril2.default)("li.page-item", {
-            class: page() == p && "active",
+          return (0, _mithril2.default)("li.page-item.c-hand", {
+            class: page() == p && "active c-auto",
             onclick: function onclick() {
               if (Number(p)) {
                 page(p);
@@ -572,7 +568,7 @@ var Paginator = exports.Paginator = function Paginator() {
             }
           }, (0, _mithril2.default)("a", p));
         }), (0, _mithril2.default)("li.page-item", {
-          class: page() == total_pages() && "disabled",
+          class: page() == total_pages() ? "disabled" : "c-hand",
           onclick: function onclick() {
             page() !== total_pages() && page(page() + 1);
             fetchShows(mdl);
@@ -590,7 +586,6 @@ var ProgressBar = exports.ProgressBar = function ProgressBar() {
           value = _ref2$attrs$mdl$state.value,
           max = _ref2$attrs$mdl$state.max;
 
-      // console.log("MAX", max(), "value: ", value())
       return (0, _mithril2.default)(".progressBar", (0, _mithril2.default)("progress.progress", { max: max(), value: value() }));
     }
   };
