@@ -20,6 +20,7 @@ const ShowSelectedShows = () => {
         e => mdl.log("e")(e),
         d => {
           mdl.user.shows(d)
+          alert("deleted")
         }
       )
   }
@@ -47,7 +48,10 @@ const ShowSelectedShows = () => {
               m(
                 "b.btn btn-action btn-error btn-s s-circle deleteIcon",
                 {
-                  onclick: () => deleteShow(show, mdl),
+                  onclick: () => {
+                    alert("deleting")
+                    deleteShow(show, mdl)
+                  },
                 },
                 m("i.icon icon-cross")
               ),
