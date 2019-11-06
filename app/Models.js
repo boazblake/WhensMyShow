@@ -10,7 +10,11 @@ const userHasAlready = (mdl) => (result) =>
   any(propEq("id", result.id), mdl.user.shows())
 
 const state = {
-  page: Stream(1),
+  paginate: {
+    page: Stream(1),
+    total_pages: Stream(0),
+    total_results: Stream(0)
+  },
   query: Stream(""),
   isLoading: Stream(false),
   loadingProgress: {

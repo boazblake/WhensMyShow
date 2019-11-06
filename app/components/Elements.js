@@ -1,5 +1,62 @@
 import m from "mithril"
 
+export const Loader = () => {
+  return {
+    view: () => m(".loader", [m("."), m(".")])
+  }
+}
+
+export const Paginator = () => {
+  return {
+    view: ({
+      attrs: {
+        mdl: {
+          state: { paginate }
+        }
+      }
+    }) => {
+      let { page, total_pages, total_results } = paginate
+      console.log(
+        "page",
+        page(),
+        "pages",
+        total_pages(),
+        "results",
+        total_results()
+      )
+      return m("ul.pagination", [
+        m("li.page-item.disabled", m("a[href='#'][tabindex='-1']", "Previous")),
+        m("li.page-item.active", m("a[href='#']", "1")),
+        m("li.page-item", m("a[href='#']", "2")),
+        m("li.page-item", m("a[href='#']", "3")),
+        m("li.page-item", m("span", "...")),
+        m("li.page-item", m("a[href='#']", "12")),
+        m("li.page-item", m("a[href='#']", "Next"))
+      ])
+    }
+  }
+}
+
+export const ProgressBar = () => {
+  return {
+    view: ({
+      attrs: {
+        mdl: {
+          state: {
+            loadingProgress: { value, max }
+          }
+        }
+      }
+    }) => {
+      // console.log("MAX", max(), "value: ", value())
+      return m(
+        ".progressBar",
+        m("progress.progress", { max: max(), value: value() })
+      )
+    }
+  }
+}
+
 export const NavBar = () => {
   return {
     view: ({ children, attrs: { mdl } }) =>

@@ -23,13 +23,15 @@ export const formatSearchData = over(lensProp("results"), map(toSearchVm))
 const updateResults = (result) => (show) =>
   show ? set(lensProp("status"), prop("status", show), result) : result
 
-export const mergeWithCurrentList = (shows) => (data) =>
+export const mergeWithCurrentList = (shows) => (data) => {
   data.results.map((r) =>
     compose(
       updateResults(r),
       find(propEq("id", r.id))
     )(shows)
   )
+  return data
+}
 
 export const getShows = (mdl, http) =>
   http.getTask(http.backendlessUrl("shows?pagesize=100")).map(map(toSearchVm))

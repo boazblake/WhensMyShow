@@ -1,5 +1,7 @@
 import m from "mithril"
 import http from "../../utils/http.js"
+import { isEmpty } from "ramda"
+import { Loader } from "../../components/Elements"
 
 let getId = () => m.route.get().split("/")[2]
 
@@ -11,9 +13,11 @@ const Details = () => {
     oninit: ({ attrs: { mdl } }) =>
       getShowDetails(mdl, http).fork(mdl.log("e"), (d) => (data = d)),
     view: () =>
-      m(".contains", [
+      m(".container", [
         m("h1", "DETAILS PAGE"),
-        m("code", m("pre", JSON.stringify(data, null, 4)))
+        isEmpty(data)
+          ? m(Loader)
+          : m("code", m("pre", JSON.stringify(data, null, 4)))
       ])
   }
 }

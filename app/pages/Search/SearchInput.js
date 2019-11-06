@@ -1,17 +1,20 @@
 import m from "mithril"
 import http from "../../utils/http.js"
 import { formatSearchData, mergeWithCurrentList } from "../fns.js"
+import { Paginator } from "../../components/Elements.js"
 
 const SearchInput = () => {
   const searchShows = (mdl) => {
     return http
-      .getTask(http.searchUrl(mdl.state.page())(mdl.state.query()))
+      .getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query()))
       .map(formatSearchData)
       .map(mergeWithCurrentList(mdl.user.shows()))
       .fork(
         (err) => (mdl.error = err),
         (data) => {
-          mdl.data.shows(data)
+          mdl.state.paginate.total_pages(data.total_pages)
+          mdl.state.paginate.total_results(data.total_results)
+          mdl.data.shows(data.results)
         }
       )
   }
@@ -19,7 +22,7 @@ const SearchInput = () => {
   return {
     view: ({ attrs: { mdl } }) =>
       m(
-        ".searchInput",
+        ".searchForm",
         m(".form-group", [
           m("input.form-input", {
             type: "text",
@@ -28,7 +31,9 @@ const SearchInput = () => {
             value: mdl.state.query(),
             oninput: (e) => mdl.state.query(e.target.value),
             onchange: () => searchShows(mdl)
-          })
+          }),
+
+          m(Paginator, { mdl })
         ])
       )
   }

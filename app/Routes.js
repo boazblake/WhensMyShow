@@ -41,7 +41,6 @@ const Main = [
     group: [],
     children: [],
     onmatch: (mdl, args, path, fullroute, isAnchor) => {
-      console.log("DETAILS PAGE", mdl, args, path, fullroute, isAnchor)
       isAnchor && scrollToAnchor(mdl.state.anchor)
     },
     component: (mdl) => m(Layout, { mdl }, m(Details, { mdl }))

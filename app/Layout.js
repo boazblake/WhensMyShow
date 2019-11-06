@@ -2,6 +2,7 @@ import m from "mithril"
 import { propEq } from "ramda"
 import SearchInput from "./pages/Search/SearchInput.js"
 import HomeToolBar from "./pages/Home/HomeToolBar.js"
+import { ProgressBar, Loader } from "./components/Elements.js"
 
 const NavBar = ({ attrs: { mdl } }) => {
   const isActive = (route) => route.route == m.route.get()
@@ -41,6 +42,8 @@ const Header = () => {
       m(".header", [
         m("h1", mdl.state.route.name),
         m(NavBar, { mdl }),
+        mdl.state.isLoading() && m(ProgressBar, { mdl }),
+        mdl.state.isLoading() && m(Loader),
         showHomeBar(mdl),
         showSearchBar(mdl)
       ])

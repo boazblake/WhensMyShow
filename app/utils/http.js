@@ -5,6 +5,7 @@ import Model from "../Models.js"
 
 function onProgress(e) {
   if (e.lengthComputable) {
+    console.log("onprogress", e.total, e.loaded)
     Model.state.loadingProgress.max(e.total)
     Model.state.loadingProgress.value(e.loaded)
     m.redraw()

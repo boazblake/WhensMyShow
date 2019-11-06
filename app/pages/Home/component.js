@@ -34,7 +34,7 @@ const ShowSelectedShows = () => {
             }),
 
             m(
-              "b.btn btn-action btn-error btn-s s-circle deleteIcon",
+              "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
               {
                 onclick: () => deleteShow(show, mdl)
               },
