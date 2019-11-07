@@ -27,7 +27,7 @@ exports.npm = {
 
 exports.plugins = {
   babel: { presets: ["latest", "stage-0"] },
-  sass: {}
+  uncss: { options: { csspath: "css/app.css" } }
 }
 
 exports.paths = {

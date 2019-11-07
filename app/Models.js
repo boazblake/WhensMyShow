@@ -10,8 +10,8 @@ const state = {
   query: Stream(""),
   isLoading: Stream(false),
   loadingProgress: {
-    max: Stream(0),
-    value: Stream(0)
+    max: Stream(null),
+    value: Stream(null)
   },
   item: {
     selected: Stream(false),
