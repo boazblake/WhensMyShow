@@ -6,6 +6,7 @@ export const log = (m) => (v) => {
   console.log(m, v)
   return v
 }
+
 const userHasAlready = (mdl) => (result) =>
   any(propEq("id", result.id), mdl.user.shows())
 

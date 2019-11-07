@@ -33,8 +33,9 @@ export const Paginator = () => {
             {
               class: page() == 1 ? "disabled" : "c-hand",
               onclick: () => {
-                page() !== 1 && page(page() - 1)
-                fetchShows(mdl)
+                if (page() !== 1 && page(page() - 1)) {
+                  fetchShows(mdl)
+                }
               }
             },
             m("a[tabindex='-1']", "Previous")
@@ -45,7 +46,7 @@ export const Paginator = () => {
               {
                 class: page() == p && "active c-auto",
                 onclick: () => {
-                  if (Number(p)) {
+                  if (Number(p) && p !== page()) {
                     page(p)
                     fetchShows(mdl)
                   }
@@ -59,8 +60,9 @@ export const Paginator = () => {
             {
               class: page() == total_pages() ? "disabled" : "c-hand",
               onclick: () => {
-                page() !== total_pages() && page(page() + 1)
-                fetchShows(mdl)
+                if (page() < total_pages() && page(page() + 1)) {
+                  fetchShows(mdl)
+                }
               }
             },
             m("a", "Next")

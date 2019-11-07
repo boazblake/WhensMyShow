@@ -1,4 +1,20 @@
-import { over, lensProp, map, compose, propEq, prop, find, set } from "ramda"
+import {
+  over,
+  lensProp,
+  map,
+  compose,
+  propEq,
+  prop,
+  find,
+  set,
+  filter,
+  is
+} from "ramda"
+
+const log = (m) => (v) => {
+  console.log(m, v)
+  return v
+}
 
 export const toSearchVm = ({
   name,
@@ -18,12 +34,25 @@ export const toSearchVm = ({
   objectId
 })
 
-export const formatSearchData = over(lensProp("results"), map(toSearchVm))
+const removeNoPics = filter(
+  compose(
+    is(String),
+    prop("poster_path")
+  )
+)
+
+export const formatSearchData = over(
+  lensProp("results"),
+  compose(
+    map(toSearchVm),
+    compose(removeNoPics)
+  )
+)
 
 const updateResults = (result) => (show) =>
   show ? set(lensProp("status"), prop("status", show), result) : result
 
-export const mergeWithCurrentList = (shows) => (data) => {
+export const updateShowStatus = (shows) => (data) => {
   let newResults = data.results.map((r) =>
     compose(
       updateResults(r),
@@ -37,11 +66,11 @@ export const mergeWithCurrentList = (shows) => (data) => {
 export const getShows = (mdl, http) =>
   http.getTask(http.backendlessUrl("shows?pagesize=100")).map(map(toSearchVm))
 
-export const searchShows = (mdl, http) => {
-  return http
+export const searchShows = (mdl, http) =>
+  http
     .getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query()))
     .map(formatSearchData)
-    .map(mergeWithCurrentList(mdl.user.shows()))
+    .map(updateShowStatus(mdl.user.shows()))
     .fork(
       (err) => (mdl.error = err),
       (data) => {
@@ -50,4 +79,3 @@ export const searchShows = (mdl, http) => {
         mdl.data.shows(data.results)
       }
     )
-}

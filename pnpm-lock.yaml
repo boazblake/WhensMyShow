@@ -1090,7 +1090,7 @@ packages:
   /browserslist/3.2.8:
     dependencies:
       caniuse-lite: 1.0.30001008
-      electron-to-chromium: 1.3.304
+      electron-to-chromium: 1.3.305
     dev: true
     hasBin: true
     resolution:
@@ -1639,7 +1639,7 @@ packages:
       browser-resolve: 1.11.3
       deep-assign: 2.0.0
       detective: 4.7.1
-      glob: 7.1.5
+      glob: 7.1.6
       loggy: 1.0.8
       micro-promisify: 0.1.1
       node-browser-modules: 0.1.0
@@ -1714,10 +1714,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
-  /electron-to-chromium/1.3.304:
+  /electron-to-chromium/1.3.305:
     dev: true
     resolution:
-      integrity: sha512-a5mqa13jCdBc+Crgk3Gyr7vpXCiFWfFq23YDCEmrPYeiDOQKZDVE6EX/Q4Xdv97n3XkcjiSBDOY0IS19yP2yeA==
+      integrity: sha512-jBEhRZ3eeJWf3eAnGYB1vDy09uBQpZWshC5fxiiIRofA9L3vkpa3SxsXleVS2MvuYir15oTVxzWPsOwj7KBzUw==
   /elliptic/6.5.1:
     dependencies:
       bn.js: 4.11.8
@@ -2196,7 +2196,7 @@ packages:
     dev: true
     resolution:
       integrity: sha1-G8k2ueAvSmA/zCIuz3Yz0wuLk7E=
-  /glob/7.1.5:
+  /glob/7.1.6:
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -2206,7 +2206,7 @@ packages:
       path-is-absolute: 1.0.1
     dev: true
     resolution:
-      integrity: sha512-J9dlskqUXK1OeTOYBEn5s8aMukWMwWfs+rPTn/jn50Ux4MNXVhubL1wu/j2t+H4NVI+cXEcCaYellqaPVGXNqQ==
+      integrity: sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA==
   /global-modules/0.2.3:
     dependencies:
       global-prefix: 0.1.5
@@ -2235,7 +2235,7 @@ packages:
       integrity: sha512-S0nG3CLEQiY/ILxqtztTWH/3iRRdyBLw6KMDxnKMchrtbj2OFmehVh0WUCfW3DUrIgx/qFrJPICrq4Z4sTR9UQ==
   /globule/1.2.1:
     dependencies:
-      glob: 7.1.5
+      glob: 7.1.6
       lodash: 4.17.15
       minimatch: 3.0.4
     dev: true
@@ -3234,7 +3234,7 @@ packages:
   /node-gyp/3.8.0:
     dependencies:
       fstream: 1.0.12
-      glob: 7.1.5
+      glob: 7.1.6
       graceful-fs: 4.2.3
       mkdirp: 0.5.1
       nopt: 3.0.6
@@ -3264,7 +3264,7 @@ packages:
       cross-spawn: 3.0.1
       gaze: 1.1.3
       get-stdin: 4.0.1
-      glob: 7.1.5
+      glob: 7.1.6
       in-publish: 2.0.0
       lodash.assign: 4.2.0
       lodash.clonedeep: 4.5.0
@@ -3664,7 +3664,7 @@ packages:
       async-each: 1.0.3
       chalk: 1.1.3
       fs-mode: 1.0.1
-      glob: 7.1.5
+      glob: 7.1.6
     dev: true
     resolution:
       integrity: sha512-n5rRHPP2Pxeh1fL385XNTlgyYrTm8MzG+kXO3G87+vmLU5MHouzrF4D5TRKPNfCwpE4/GOwmCS4XSzCPC7hEoA==
@@ -4018,7 +4018,7 @@ packages:
       integrity: sha1-YTObci/mo1FWiSENJOFMlhSGE+8=
   /rimraf/2.7.1:
     dependencies:
-      glob: 7.1.5
+      glob: 7.1.6
     dev: true
     hasBin: true
     resolution:
@@ -4062,7 +4062,7 @@ packages:
       integrity: sha512-/P5zwRNzF/XMOf5xNgJW0JOU0jsOPlEq2zPO3QxTEgCQiJQFG5H29aFa0XF4t6VdIs/yPDjfuM8NfygGS/kfJg==
   /sass-graph/2.2.4:
     dependencies:
-      glob: 7.1.5
+      glob: 7.1.6
       lodash: 4.17.15
       scss-tokenizer: 0.2.3
       yargs: 7.1.0
@@ -4512,7 +4512,7 @@ packages:
       integrity: sha1-yy4SAwZ+DI3h9hQJS5/kVwTqYAM=
   /true-case-path/1.0.3:
     dependencies:
-      glob: 7.1.5
+      glob: 7.1.6
     dev: true
     resolution:
       integrity: sha512-m6s2OdQe5wgpFMC+pAJ+q9djG82O2jcHPOI6RNg1yy9rCYR+WD6Nbpl32fDpfC56nirdRy+opFa/Vk7HYhqaew==

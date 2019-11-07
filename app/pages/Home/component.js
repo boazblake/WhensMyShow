@@ -54,8 +54,8 @@ const Home = () => {
       m(
         "section.tiles",
         isEmpty(mdl.user.shows()) ? NoShows : m(ShowSelectedShows, { mdl })
-      ),
-    onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
+      )
+    // onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
   }
 }
 export default Home

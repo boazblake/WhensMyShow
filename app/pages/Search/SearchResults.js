@@ -1,7 +1,7 @@
 import m from "mithril"
 import http from "../../utils/http.js"
 import { over, lensProp } from "ramda"
-import { getShows, mergeWithCurrentList } from "../fns.js"
+import { getShows, updateShowStatus } from "../fns.js"
 import { ListSelector } from "../../components/Elements.js"
 
 const saveDto = (d, value) => ({
@@ -15,7 +15,7 @@ const updateUserShows = (mdl) => (result, list) =>
     .fork(mdl.errors, (d) => {
       mdl.user.shows(d)
       mdl.data.shows(
-        mergeWithCurrentList(mdl.user.shows())({
+        updateShowStatus(mdl.user.shows())({
           results: mdl.data.shows()
         }).results
       )
@@ -43,7 +43,7 @@ const ShowListSelection = () => {
 const Result = () => {
   return {
     view: ({ attrs: { mdl, result } }) => {
-      return m(".tileCard", [
+      return m(".menu", [
         m("img.img-responsive.img-fit-cover", {
           class: mdl.userHasAlready(mdl)(result) && "selected",
           onclick: () => mdl.state.item.showMenu(result.id),
@@ -57,7 +57,8 @@ const Result = () => {
           })
       ])
     },
-    onbeforeremove: () => console.log("bye")
+    onbeforeremove: ({ attrs: { mdl, result } }) =>
+      console.log(result.id, "removed")
   }
 }
 

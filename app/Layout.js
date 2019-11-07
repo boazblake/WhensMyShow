@@ -41,7 +41,7 @@ const Header = () => {
     view: ({ attrs: { mdl } }) =>
       m(".header", [
         mdl.state.isLoading() && m(ProgressBar, { mdl }),
-        m("h1", mdl.state.route.name),
+        // m("h1.h1", mdl.state.route.name),
         m(NavBar, { mdl }),
         mdl.state.isLoading() && m(Loader),
         showHomeBar(mdl),
