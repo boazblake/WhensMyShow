@@ -21,12 +21,14 @@ const state = {
 }
 
 const data = {
-  shows: Stream([])
+  shows: Stream([]),
+  details: Stream(null)
 }
 
 const errors = {
-  search: Stream([]),
-  user: Stream([])
+  details: Stream(null),
+  search: Stream(null),
+  user: Stream(null)
 }
 
 const user = {

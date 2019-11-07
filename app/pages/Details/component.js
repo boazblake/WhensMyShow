@@ -1,11 +1,17 @@
 import m from "mithril"
 import http from "../../Http.js"
-import { isEmpty, map, prop } from "ramda"
+import { isNil, map, prop } from "ramda"
 import { Loader } from "../../components/Elements"
+import { getShowDetailsTask } from "../fns.js"
 
-let getId = () => m.route.get().split("/")[2]
+const getId = () => m.route.get().split("/")[2]
 
-const getShowDetails = (mdl, http) => http.getTask(http.detailsUrl(getId()))
+const formatError = (error) => JSON.parse(JSON.stringify(error))
+
+const getShowDetails = (http) => (mdl) =>
+  getShowDetailsTask(http)(getId()).fork((e) => {
+    mdl.errors.details(formatError(e))
+  }, mdl.data.details)
 
 const TextBlock = () => {
   return {
@@ -50,20 +56,31 @@ const DetailCard = () => {
           label: "number_of_seasons:  ",
           text: show.number_of_seasons
         })
-        // m("code", m("pre", JSON.stringify(show, null, 4)))
       ])
   }
 }
 
 const Details = () => {
-  let data = {}
   return {
-    oninit: ({ attrs: { mdl } }) =>
-      getShowDetails(mdl, http).fork(mdl.log("e"), (d) => (data = d)),
-    view: () =>
-      m(".container", [
-        isEmpty(data) ? m(Loader) : m(DetailCard, { show: data })
+    oninit: ({ attrs: { mdl } }) => getShowDetails(http)(mdl),
+    view: ({ attrs: { mdl } }) => {
+      console.log(mdl.errors.details())
+      return m(".container", [
+        isNil(mdl.data.details())
+          ? m(Loader)
+          : m(DetailCard, { show: mdl.data.details() }),
+        mdl.errors.details() !== null &&
+          m(
+            ".toast.toast-error",
+            m("p", mdl.errors.details().response.status_message),
+            m("p", "Choose a different show")
+          )
       ])
+    },
+    onbeforeremove: ({ attrs: { mdl } }) => {
+      mdl.errors.details(null)
+      mdl.data.details(null)
+    }
   }
 }
 

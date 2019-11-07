@@ -13,7 +13,7 @@ import {
   anyPass
 } from "ramda"
 
-const log = (m) => (v) => {
+export const log = (m) => (v) => {
   console.log(m, v)
   return v
 }
@@ -35,6 +35,17 @@ export const toSearchVm = ({
   status,
   objectId
 })
+
+const onError = (mdl) => (type) => (error) => mdl.errors[type](error)
+
+const onSuccess = (mdl) => (d) => {
+  mdl.user.shows(d)
+  mdl.data.shows(
+    updateShowStatus(mdl.user.shows())({
+      results: mdl.data.shows()
+    }).results
+  )
+}
 
 export const filterIncorrectAttrTypes = (type) => (attr) =>
   filter(
@@ -83,14 +94,11 @@ export const searchShows = (mdl, http) =>
     .getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query()))
     .map(formatSearchData)
     .map(updateShowStatus(mdl.user.shows()))
-    .fork(
-      (err) => (mdl.error = err),
-      (data) => {
-        mdl.state.paginate.total_pages(data.total_pages)
-        mdl.state.paginate.total_results(data.total_results)
-        mdl.data.shows(data.results)
-      }
-    )
+    .fork(onError(mdl)("search"), (data) => {
+      mdl.state.paginate.total_pages(data.total_pages)
+      mdl.state.paginate.total_results(data.total_results)
+      mdl.data.shows(data.results)
+    })
 
 const itemSelected = (mdl) => (result) => mdl.state.item.showMenu() == result.id
 export const propIsDefined = (attr) => (result) => result[attr] !== undefined
@@ -102,22 +110,11 @@ export const saveDto = (d, value) => ({
   body: over(lensProp("status"), () => value, d)
 })
 
-const onError = (mdl) => (error) => mdl.errors(error)
-
-const onSuccess = (mdl) => (d) => {
-  mdl.user.shows(d)
-  mdl.data.shows(
-    updateShowStatus(mdl.user.shows())({
-      results: mdl.data.shows()
-    }).results
-  )
-}
-
 export const addUserShowsTask = (http) => (mdl) => (result) => (list) =>
   http
     .postTask(http.backendlessUrl("shows"), saveDto(result, list))
     .chain((_) => getShows(mdl, http))
-    .fork(onError(mdl), onSuccess(mdl))
+    .fork(onError(mdl)("search"), onSuccess(mdl))
 
 export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
   http
@@ -126,11 +123,14 @@ export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
       saveDto(result, list)
     )
     .chain((_) => getShows(mdl, http))
-    .fork(onError(mdl), onSuccess(mdl))
+    .fork(onError(mdl)("search"), onSuccess(mdl))
 
 export const deleteShowTask = (http) => (mdl) => (show) => {
   http
     .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
     .chain((_) => getShows(mdl, http))
-    .fork(onError(mdl), mdl.user.shows)
+    .fork(onError(mdl)("user"), mdl.user.shows)
 }
+
+export const getShowDetailsTask = (http) => (id) =>
+  http.getTask(http.detailsUrl(id))
