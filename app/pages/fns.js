@@ -24,12 +24,13 @@ const updateResults = (result) => (show) =>
   show ? set(lensProp("status"), prop("status", show), result) : result
 
 export const mergeWithCurrentList = (shows) => (data) => {
-  data.results.map((r) =>
+  let newResults = data.results.map((r) =>
     compose(
       updateResults(r),
       find(propEq("id", r.id))
     )(shows)
   )
+  data.results = newResults
   return data
 }
 

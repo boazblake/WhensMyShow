@@ -15,8 +15,9 @@ const updateUserShows = (mdl) => (result, list) =>
     .fork(mdl.errors, (d) => {
       mdl.user.shows(d)
       mdl.data.shows(
-        mergeWithCurrentList(mdl.user.shows())({ results: mdl.data.shows() })
-          .results
+        mergeWithCurrentList(mdl.user.shows())({
+          results: mdl.data.shows()
+        }).results
       )
     })
 
@@ -25,15 +26,15 @@ const ShowListSelection = () => {
     view: ({ attrs: { mdl, result, active } }) => {
       return m(
         "ul.menu",
-        mdl.user.lists().map((list, idx) => {
-          return m(ListSelector, {
+        mdl.user.lists().map((list, idx) =>
+          m(ListSelector, {
             list,
             active: list == result.status,
             key: idx,
             mdl,
             action: () => !active && updateUserShows(mdl)(result, list)
           })
-        })
+        )
       )
     }
   }
