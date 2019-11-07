@@ -85,7 +85,7 @@ const baseSearchUrl = (baseUrl) => (apiKey) => (page) => (query) =>
   `${baseUrl}/search/multi?api_key=${apiKey}&language=en-US&query=${query}&page=${page}&include_adult=false`
 
 const baseDetailsUrl = (baseUrl) => (apiKey) => (id) =>
-  `${baseUrl}/tv/${id}?api_key=${apiKey}&language=en-US&append_to_response=recommendations,similar,latest,airing_today,on_the_air`
+  `${baseUrl}/tv/${id}?api_key=${apiKey}&language=en-US`
 const baseImagesUrl = (baseUrl) => (apiKey) => (id) =>
   `${baseUrl}/tv/${id}/images?api_key=${apiKey}&language=en-US`
 
