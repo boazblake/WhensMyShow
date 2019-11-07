@@ -1,4 +1,5 @@
 import {
+  assoc,
   over,
   lensProp,
   map,
@@ -34,23 +35,33 @@ export const toSearchVm = ({
   objectId
 })
 
-const removeNoPics = filter(
-  compose(
-    is(String),
-    prop("poster_path")
+export const filterIncorrectAttrTypes = (type) => (attr) =>
+  filter(
+    compose(
+      is(type),
+      prop(attr)
+    )
   )
-)
 
 export const formatSearchData = over(
   lensProp("results"),
   compose(
     map(toSearchVm),
-    compose(removeNoPics)
+    compose(filterIncorrectAttrTypes(String)("poster_path"))
   )
 )
 
-const updateResults = (result) => (show) =>
-  show ? set(lensProp("status"), prop("status", show), result) : result
+const updateResults = (result) => (show) => {
+  if (show) {
+    return assoc(
+      "objectId",
+      show.objectId,
+      set(lensProp("status"), prop("status", show), result)
+    )
+  } else {
+    return result
+  }
+}
 
 export const updateShowStatus = (shows) => (data) => {
   let newResults = data.results.map((r) =>

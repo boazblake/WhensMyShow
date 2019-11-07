@@ -1206,6 +1206,21 @@ var _Elements = require("../../components/Elements.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var itemSelected = function itemSelected(mdl) {
+  return function (result) {
+    return mdl.state.item.showMenu() == result.id;
+  };
+};
+var propIsDefined = function propIsDefined(attr) {
+  return function (result) {
+    return result[attr] !== undefined;
+  };
+};
+
+var showListSelection = function showListSelection(mdl) {
+  return (0, _ramda.anyPass)([itemSelected(mdl), propIsDefined("objectId")]);
+};
+
 var saveDto = function saveDto(d, value) {
   return {
     body: (0, _ramda.over)((0, _ramda.lensProp)("status"), function () {
@@ -1215,6 +1230,19 @@ var saveDto = function saveDto(d, value) {
 };
 
 var updateUserShows = function updateUserShows(mdl) {
+  return function (result, list) {
+    return _Http2.default.putTask(_Http2.default.backendlessUrl("shows\\" + result.objectId), saveDto(result, list)).chain(function (_) {
+      return (0, _fns.getShows)(mdl, _Http2.default);
+    }).fork(mdl.errors, function (d) {
+      mdl.user.shows(d);
+      mdl.data.shows((0, _fns.updateShowStatus)(mdl.user.shows())({
+        results: mdl.data.shows()
+      }).results);
+    });
+  };
+};
+
+var addUserShows = function addUserShows(mdl) {
   return function (result, list) {
     return _Http2.default.postTask(_Http2.default.backendlessUrl("shows"), saveDto(result, list)).chain(function (_) {
       return (0, _fns.getShows)(mdl, _Http2.default);
@@ -1227,13 +1255,12 @@ var updateUserShows = function updateUserShows(mdl) {
   };
 };
 
-var ShowListSelection = function ShowListSelection() {
+var ListSelection = function ListSelection() {
   return {
     view: function view(_ref) {
       var _ref$attrs = _ref.attrs,
           mdl = _ref$attrs.mdl,
-          result = _ref$attrs.result,
-          active = _ref$attrs.active;
+          result = _ref$attrs.result;
 
       return (0, _mithril2.default)("ul.menu", mdl.user.lists().map(function (list, idx) {
         return (0, _mithril2.default)(_Elements.ListSelector, {
@@ -1242,7 +1269,9 @@ var ShowListSelection = function ShowListSelection() {
           key: idx,
           mdl: mdl,
           action: function action() {
-            return !active && updateUserShows(mdl)(result, list);
+            if (result.status != list) {
+              result.status == undefined ? addUserShows(mdl)(result, list) : updateUserShows(mdl)(result, list);
+            }
           }
         });
       }));
@@ -1257,16 +1286,16 @@ var Result = function Result() {
           mdl = _ref2$attrs.mdl,
           result = _ref2$attrs.result;
 
+      // console.log(result.objectId)
       return (0, _mithril2.default)(".menu", [(0, _mithril2.default)("img.img-responsive.img-fit-cover", {
         class: mdl.userHasAlready(mdl)(result) && "selected",
         onclick: function onclick() {
           return mdl.state.item.showMenu(result.id);
         },
         src: _Http2.default.imagesUrl(result.poster_path)
-      }), mdl.state.item.showMenu() == result.id && (0, _mithril2.default)(ShowListSelection, {
+      }), showListSelection(mdl)(result) && (0, _mithril2.default)(ListSelection, {
         mdl: mdl,
-        result: result,
-        active: mdl.userHasAlready(mdl)(result)
+        result: result
       })]);
     },
     onbeforeremove: function onbeforeremove(_ref3) {
@@ -1337,7 +1366,7 @@ exports.default = Search;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.searchShows = exports.getShows = exports.updateShowStatus = exports.formatSearchData = exports.toSearchVm = undefined;
+exports.searchShows = exports.getShows = exports.updateShowStatus = exports.formatSearchData = exports.filterIncorrectAttrTypes = exports.toSearchVm = undefined;
 
 var _ramda = require("ramda");
 
@@ -1367,13 +1396,21 @@ var toSearchVm = exports.toSearchVm = function toSearchVm(_ref) {
   };
 };
 
-var removeNoPics = (0, _ramda.filter)((0, _ramda.compose)((0, _ramda.is)(String), (0, _ramda.prop)("poster_path")));
+var filterIncorrectAttrTypes = exports.filterIncorrectAttrTypes = function filterIncorrectAttrTypes(type) {
+  return function (attr) {
+    return (0, _ramda.filter)((0, _ramda.compose)((0, _ramda.is)(type), (0, _ramda.prop)(attr)));
+  };
+};
 
-var formatSearchData = exports.formatSearchData = (0, _ramda.over)((0, _ramda.lensProp)("results"), (0, _ramda.compose)((0, _ramda.map)(toSearchVm), (0, _ramda.compose)(removeNoPics)));
+var formatSearchData = exports.formatSearchData = (0, _ramda.over)((0, _ramda.lensProp)("results"), (0, _ramda.compose)((0, _ramda.map)(toSearchVm), (0, _ramda.compose)(filterIncorrectAttrTypes(String)("poster_path"))));
 
 var updateResults = function updateResults(result) {
   return function (show) {
-    return show ? (0, _ramda.set)((0, _ramda.lensProp)("status"), (0, _ramda.prop)("status", show), result) : result;
+    if (show) {
+      return (0, _ramda.assoc)("objectId", show.objectId, (0, _ramda.set)((0, _ramda.lensProp)("status"), (0, _ramda.prop)("status", show), result));
+    } else {
+      return result;
+    }
   };
 };
 
