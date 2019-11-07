@@ -1,5 +1,3 @@
-import m from 'mithril'
-
 import {
   compose,
   join,
@@ -18,16 +16,10 @@ import {
   trim,
   max,
   min,
-  map,
-} from 'ramda'
-import Task from 'data.task'
+  map
+} from "ramda"
+import Task from "data.task"
 
-export const makeRoute = compose(
-  join('-'),
-  split(' '),
-  trim(),
-  toLower()
-)
 export const log = (m) => (v) => {
   console.log(m, v)
   return v
@@ -46,18 +38,18 @@ export const infiniteScroll = (mdl) => (e) => {
 
 export const addTerms = (item) => {
   const terms = compose(
-    join(' '),
+    join(" "),
     values,
-    props(['uuid', 'id', 'name'])
+    props(["uuid", "id", "name"])
   )(item)
 
-  return assoc('_terms', terms, item)
+  return assoc("_terms", terms, item)
 }
 
 const byTerms = (query) =>
   compose(
-    test(new RegExp(query, 'i')),
-    prop('name')
+    test(new RegExp(query, "i")),
+    prop("name")
   )
 
 export const _search = (query) => compose(filter(byTerms(query)))
@@ -71,7 +63,7 @@ export const _sort = (p) =>
     )
   )
 
-export const _direction = (dir) => (dir == 'asc' ? identity : reverse)
+export const _direction = (dir) => (dir == "asc" ? identity : reverse)
 
 export const _paginate = (offset) => (limit) => (data) =>
   slice(
@@ -108,8 +100,6 @@ export const debounce = (wait, now) => (fn) => {
   }
 }
 
-export const getRoute = (int) => m.route.get().split('/')[int]
-
 export const scrollToAnchor = (anchor) => {
   let is = (el) => el !== undefined && el !== null
 
@@ -120,7 +110,7 @@ export const scrollToAnchor = (anchor) => {
   window.scroll({
     top: target + scrollTop - 10,
     left: 0,
-    behavior: 'smooth',
+    behavior: "smooth"
   })
 }
 

@@ -1,7 +1,5 @@
 import m from "mithril"
 import { range, take, takeLast, flatten } from "ramda"
-import { searchShows } from "../pages/fns"
-import http from "../utils/http.js"
 
 export const Loader = () => {
   return {
@@ -10,10 +8,8 @@ export const Loader = () => {
 }
 
 export const Paginator = () => {
-  const fetchShows = (mdl) => searchShows(mdl, http)
-
   return {
-    view: ({ attrs: { mdl } }) => {
+    view: ({ attrs: { mdl, paginateFn } }) => {
       let { page, total_pages, total_results } = mdl.state.paginate
       if (total_results()) {
         let viewModel,
@@ -34,7 +30,7 @@ export const Paginator = () => {
               class: page() == 1 ? "disabled" : "c-hand",
               onclick: () => {
                 if (page() !== 1 && page(page() - 1)) {
-                  fetchShows(mdl)
+                  paginateFn(mdl)
                 }
               }
             },
@@ -48,7 +44,7 @@ export const Paginator = () => {
                 onclick: () => {
                   if (Number(p) && p !== page()) {
                     page(p)
-                    fetchShows(mdl)
+                    paginateFn(mdl)
                   }
                 }
               },
@@ -61,7 +57,7 @@ export const Paginator = () => {
               class: page() == total_pages() ? "disabled" : "c-hand",
               onclick: () => {
                 if (page() < total_pages() && page(page() + 1)) {
-                  fetchShows(mdl)
+                  paginateFn(mdl)
                 }
               }
             },

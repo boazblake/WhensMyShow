@@ -1,5 +1,5 @@
 import m from "mithril"
-import http from "../../utils/http.js"
+import http from "../../Http.js"
 import { getShows } from "../fns.js"
 import { isEmpty, filter, propEq } from "ramda"
 

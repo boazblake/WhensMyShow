@@ -1,5 +1,5 @@
 import m from "mithril"
-import http from "../../utils/http.js"
+import http from "../../Http.js"
 import { over, lensProp } from "ramda"
 import { getShows, updateShowStatus } from "../fns.js"
 import { ListSelector } from "../../components/Elements.js"

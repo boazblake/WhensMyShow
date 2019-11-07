@@ -1,7 +1,7 @@
-import { baseUrl, apiKey, tmdbAuth } from "../secrets.js"
+import { baseUrl, apiKey, tmdbAuth } from "./secrets.js"
 import Task from "data.task"
 import m from "mithril"
-import Model from "../Models.js"
+import Model from "./Models.js"
 
 function onProgress(e) {
   if (e.lengthComputable) {

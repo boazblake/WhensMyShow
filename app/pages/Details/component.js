@@ -1,5 +1,5 @@
 import m from "mithril"
-import http from "../../utils/http.js"
+import http from "../../Http.js"
 import { isEmpty, map, prop } from "ramda"
 import { Loader } from "../../components/Elements"
 

@@ -1,9 +1,11 @@
 import m from "mithril"
-import http from "../../utils/http.js"
+import http from "../../Http.js"
 import { searchShows } from "../fns.js"
 import { Paginator } from "../../components/Elements.js"
 
 const SearchInput = () => {
+  const paginateFn = (mdl) => searchShows(mdl, http)
+
   return {
     view: ({ attrs: { mdl } }) =>
       m(
@@ -18,7 +20,7 @@ const SearchInput = () => {
             onchange: () => searchShows(mdl, http)
           }),
 
-          m(Paginator, { mdl })
+          m(Paginator, { mdl, paginateFn })
         ])
       )
   }
