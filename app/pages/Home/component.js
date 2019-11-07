@@ -1,7 +1,9 @@
 import m from "mithril"
 import http from "../../Http.js"
-import { getShows } from "../fns.js"
+import { getShows, deleteShowTask } from "../fns.js"
 import { isEmpty, filter, propEq } from "ramda"
+
+const deleteShow = (show, mdl) => deleteShowTask(http)(mdl)(show)
 
 const NoShows = m(".container.empty", [
   m("p.empty-title h5", "You have no shows yet!"),
@@ -11,13 +13,6 @@ const NoShows = m(".container.empty", [
 const ShowSelectedShows = () => {
   const filterShowsByList = (mdl) =>
     filter(propEq("status", mdl.state.currentList()), mdl.user.shows())
-
-  const deleteShow = (show, mdl) => {
-    http
-      .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
-      .chain((_) => getShows(mdl, http))
-      .fork((e) => mdl.log("e")(e), (d) => mdl.user.shows(d))
-  }
 
   return {
     view: ({ attrs: { mdl } }) =>
@@ -55,7 +50,6 @@ const Home = () => {
         "section.tiles",
         isEmpty(mdl.user.shows()) ? NoShows : m(ShowSelectedShows, { mdl })
       )
-    // onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
   }
 }
 export default Home

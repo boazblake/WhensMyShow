@@ -9,7 +9,8 @@ import {
   find,
   set,
   filter,
-  is
+  is,
+  anyPass
 } from "ramda"
 
 const log = (m) => (v) => {
@@ -90,3 +91,46 @@ export const searchShows = (mdl, http) =>
         mdl.data.shows(data.results)
       }
     )
+
+const itemSelected = (mdl) => (result) => mdl.state.item.showMenu() == result.id
+export const propIsDefined = (attr) => (result) => result[attr] !== undefined
+
+export const showListSelection = (mdl) =>
+  anyPass([itemSelected(mdl), propIsDefined("objectId")])
+
+export const saveDto = (d, value) => ({
+  body: over(lensProp("status"), () => value, d)
+})
+
+const onError = (mdl) => (error) => mdl.errors(error)
+
+const onSuccess = (mdl) => (d) => {
+  mdl.user.shows(d)
+  mdl.data.shows(
+    updateShowStatus(mdl.user.shows())({
+      results: mdl.data.shows()
+    }).results
+  )
+}
+
+export const addUserShowsTask = (http) => (mdl) => (result) => (list) =>
+  http
+    .postTask(http.backendlessUrl("shows"), saveDto(result, list))
+    .chain((_) => getShows(mdl, http))
+    .fork(onError(mdl), onSuccess(mdl))
+
+export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
+  http
+    .putTask(
+      http.backendlessUrl(`shows\\${result.objectId}`),
+      saveDto(result, list)
+    )
+    .chain((_) => getShows(mdl, http))
+    .fork(onError(mdl), onSuccess(mdl))
+
+export const deleteShowTask = (http) => (mdl) => (show) => {
+  http
+    .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
+    .chain((_) => getShows(mdl, http))
+    .fork(onError(mdl), mdl.user.shows)
+}

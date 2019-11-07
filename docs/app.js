@@ -431,7 +431,6 @@ exports.default = Layout;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.log = undefined;
 
 var _mithrilStream = require("mithril-stream");
 
@@ -441,22 +440,7 @@ var _Routes = require("./Routes.js");
 
 var _Routes2 = _interopRequireDefault(_Routes);
 
-var _ramda = require("ramda");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var log = exports.log = function log(m) {
-  return function (v) {
-    console.log(m, v);
-    return v;
-  };
-};
-
-var userHasAlready = function userHasAlready(mdl) {
-  return function (result) {
-    return (0, _ramda.any)((0, _ramda.propEq)("id", result.id), mdl.user.shows());
-  };
-};
 
 var state = {
   paginate: {
@@ -492,13 +476,11 @@ var user = {
 };
 
 var Model = {
-  log: log,
   Routes: _Routes2.default,
   state: state,
   user: user,
   data: data,
-  errors: errors,
-  userHasAlready: userHasAlready
+  errors: errors
 };
 
 exports.default = Model;
@@ -1079,21 +1061,15 @@ var _ramda = require("ramda");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var deleteShow = function deleteShow(show, mdl) {
+  return (0, _fns.deleteShowTask)(_Http2.default)(mdl)(show);
+};
+
 var NoShows = (0, _mithril2.default)(".container.empty", [(0, _mithril2.default)("p.empty-title h5", "You have no shows yet!"), (0, _mithril2.default)("p.empty-subtitle", "Click search to find your shows.")]);
 
 var ShowSelectedShows = function ShowSelectedShows() {
   var filterShowsByList = function filterShowsByList(mdl) {
     return (0, _ramda.filter)((0, _ramda.propEq)("status", mdl.state.currentList()), mdl.user.shows());
-  };
-
-  var deleteShow = function deleteShow(show, mdl) {
-    _Http2.default.deleteTask(_Http2.default.backendlessUrl("shows/" + show.objectId)).chain(function (_) {
-      return (0, _fns.getShows)(mdl, _Http2.default);
-    }).fork(function (e) {
-      return mdl.log("e")(e);
-    }, function (d) {
-      return mdl.user.shows(d);
-    });
   };
 
   return {
@@ -1129,7 +1105,6 @@ var Home = function Home() {
       var mdl = _ref3.attrs.mdl;
       return (0, _mithril2.default)("section.tiles", (0, _ramda.isEmpty)(mdl.user.shows()) ? NoShows : (0, _mithril2.default)(ShowSelectedShows, { mdl: mdl }));
     }
-    // onbeforeremove: ({ attrs: { mdl } }) => mdl.state.currentList("Watching")
   };
 };
 exports.default = Home;
@@ -1198,60 +1173,21 @@ var _Http = require("../../Http.js");
 
 var _Http2 = _interopRequireDefault(_Http);
 
-var _ramda = require("ramda");
-
 var _fns = require("../fns.js");
 
 var _Elements = require("../../components/Elements.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var itemSelected = function itemSelected(mdl) {
-  return function (result) {
-    return mdl.state.item.showMenu() == result.id;
-  };
-};
-var propIsDefined = function propIsDefined(attr) {
-  return function (result) {
-    return result[attr] !== undefined;
-  };
-};
-
-var showListSelection = function showListSelection(mdl) {
-  return (0, _ramda.anyPass)([itemSelected(mdl), propIsDefined("objectId")]);
-};
-
-var saveDto = function saveDto(d, value) {
-  return {
-    body: (0, _ramda.over)((0, _ramda.lensProp)("status"), function () {
-      return value;
-    }, d)
-  };
-};
-
 var updateUserShows = function updateUserShows(mdl) {
   return function (result, list) {
-    return _Http2.default.putTask(_Http2.default.backendlessUrl("shows\\" + result.objectId), saveDto(result, list)).chain(function (_) {
-      return (0, _fns.getShows)(mdl, _Http2.default);
-    }).fork(mdl.errors, function (d) {
-      mdl.user.shows(d);
-      mdl.data.shows((0, _fns.updateShowStatus)(mdl.user.shows())({
-        results: mdl.data.shows()
-      }).results);
-    });
+    return (0, _fns.updateUserShowsTask)(_Http2.default)(mdl)(result)(list);
   };
 };
 
 var addUserShows = function addUserShows(mdl) {
   return function (result, list) {
-    return _Http2.default.postTask(_Http2.default.backendlessUrl("shows"), saveDto(result, list)).chain(function (_) {
-      return (0, _fns.getShows)(mdl, _Http2.default);
-    }).fork(mdl.errors, function (d) {
-      mdl.user.shows(d);
-      mdl.data.shows((0, _fns.updateShowStatus)(mdl.user.shows())({
-        results: mdl.data.shows()
-      }).results);
-    });
+    return (0, _fns.addUserShowsTask)(_Http2.default)(mdl)(result)(list);
   };
 };
 
@@ -1285,32 +1221,24 @@ var Result = function Result() {
       var _ref2$attrs = _ref2.attrs,
           mdl = _ref2$attrs.mdl,
           result = _ref2$attrs.result;
-
-      // console.log(result.objectId)
       return (0, _mithril2.default)(".menu", [(0, _mithril2.default)("img.img-responsive.img-fit-cover", {
-        class: mdl.userHasAlready(mdl)(result) && "selected",
+        class: (0, _fns.propIsDefined)("objectId")(result) && "selected",
         onclick: function onclick() {
           return mdl.state.item.showMenu(result.id);
         },
         src: _Http2.default.imagesUrl(result.poster_path)
-      }), showListSelection(mdl)(result) && (0, _mithril2.default)(ListSelection, {
+      }), (0, _fns.showListSelection)(mdl)(result) && (0, _mithril2.default)(ListSelection, {
         mdl: mdl,
         result: result
       })]);
-    },
-    onbeforeremove: function onbeforeremove(_ref3) {
-      var _ref3$attrs = _ref3.attrs,
-          mdl = _ref3$attrs.mdl,
-          result = _ref3$attrs.result;
-      return console.log(result.id, "removed");
     }
   };
 };
 
 var SearchResults = function SearchResults() {
   return {
-    view: function view(_ref4) {
-      var mdl = _ref4.attrs.mdl;
+    view: function view(_ref3) {
+      var mdl = _ref3.attrs.mdl;
       return (0, _mithril2.default)("section.tiles", mdl.data.shows() ? mdl.data.shows().map(function (result, idx) {
         return (0, _mithril2.default)(Result, { mdl: mdl, result: result, key: idx });
       }) : []);
@@ -1366,7 +1294,7 @@ exports.default = Search;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.searchShows = exports.getShows = exports.updateShowStatus = exports.formatSearchData = exports.filterIncorrectAttrTypes = exports.toSearchVm = undefined;
+exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.saveDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShows = exports.updateShowStatus = exports.formatSearchData = exports.filterIncorrectAttrTypes = exports.toSearchVm = undefined;
 
 var _ramda = require("ramda");
 
@@ -1436,6 +1364,78 @@ var searchShows = exports.searchShows = function searchShows(mdl, http) {
     mdl.state.paginate.total_results(data.total_results);
     mdl.data.shows(data.results);
   });
+};
+
+var itemSelected = function itemSelected(mdl) {
+  return function (result) {
+    return mdl.state.item.showMenu() == result.id;
+  };
+};
+var propIsDefined = exports.propIsDefined = function propIsDefined(attr) {
+  return function (result) {
+    return result[attr] !== undefined;
+  };
+};
+
+var showListSelection = exports.showListSelection = function showListSelection(mdl) {
+  return (0, _ramda.anyPass)([itemSelected(mdl), propIsDefined("objectId")]);
+};
+
+var saveDto = exports.saveDto = function saveDto(d, value) {
+  return {
+    body: (0, _ramda.over)((0, _ramda.lensProp)("status"), function () {
+      return value;
+    }, d)
+  };
+};
+
+var onError = function onError(mdl) {
+  return function (error) {
+    return mdl.errors(error);
+  };
+};
+
+var onSuccess = function onSuccess(mdl) {
+  return function (d) {
+    mdl.user.shows(d);
+    mdl.data.shows(updateShowStatus(mdl.user.shows())({
+      results: mdl.data.shows()
+    }).results);
+  };
+};
+
+var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http) {
+  return function (mdl) {
+    return function (result) {
+      return function (list) {
+        return http.postTask(http.backendlessUrl("shows"), saveDto(result, list)).chain(function (_) {
+          return getShows(mdl, http);
+        }).fork(onError(mdl), onSuccess(mdl));
+      };
+    };
+  };
+};
+
+var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShowsTask(http) {
+  return function (mdl) {
+    return function (result) {
+      return function (list) {
+        return http.putTask(http.backendlessUrl("shows\\" + result.objectId), saveDto(result, list)).chain(function (_) {
+          return getShows(mdl, http);
+        }).fork(onError(mdl), onSuccess(mdl));
+      };
+    };
+  };
+};
+
+var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
+  return function (mdl) {
+    return function (show) {
+      http.deleteTask(http.backendlessUrl("shows/" + show.objectId)).chain(function (_) {
+        return getShows(mdl, http);
+      }).fork(onError(mdl), mdl.user.shows);
+    };
+  };
 };
 });
 

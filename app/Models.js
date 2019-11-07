@@ -1,14 +1,5 @@
 import Stream from "mithril-stream"
 import Routes from "./Routes.js"
-import { any, propEq } from "ramda"
-
-export const log = (m) => (v) => {
-  console.log(m, v)
-  return v
-}
-
-const userHasAlready = (mdl) => (result) =>
-  any(propEq("id", result.id), mdl.user.shows())
 
 const state = {
   paginate: {
@@ -44,13 +35,11 @@ const user = {
 }
 
 const Model = {
-  log,
   Routes,
   state,
   user,
   data,
-  errors,
-  userHasAlready
+  errors
 }
 
 export default Model
