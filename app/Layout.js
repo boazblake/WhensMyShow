@@ -1,7 +1,7 @@
 import m from "mithril"
 import { propEq } from "ramda"
-import SearchInput from "./pages/Search/SearchInput.js"
-import HomeToolBar from "./pages/Home/HomeToolBar.js"
+import SearchInput from "./pages/Search-Input.js"
+import HomeToolBar from "./pages/Home-ToolBar.js"
 import { ProgressBar, Loader } from "./components/Elements.js"
 
 const NavBar = ({ attrs: { mdl } }) => {

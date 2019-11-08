@@ -1,5 +1,5 @@
 import m from "mithril"
-import SearchResults from "./SearchResults.js"
+import SearchResults from "./Search-Results.js"
 
 const Search = () => {
   return {

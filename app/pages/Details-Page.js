@@ -1,8 +1,8 @@
 import m from "mithril"
-import http from "../../Http.js"
+import http from "../Http.js"
 import { isNil, map, prop } from "ramda"
-import { Loader } from "../../components/Elements"
-import { getShowDetailsTask, deleteShowTask, onError } from "../fns.js"
+import { Loader } from "../components/Elements"
+import { getShowDetailsTask, deleteShowTask, onError } from "./fns.js"
 
 const deleteShow = (show, mdl) =>
   deleteShowTask(http)(mdl)(show).fork(onError(mdl)("user"), (updatedShows) => {
@@ -77,7 +77,6 @@ const Details = () => {
   return {
     oninit: ({ attrs: { mdl } }) => getShowDetails(http)(mdl),
     view: ({ attrs: { mdl } }) => {
-      console.log(mdl.errors.details())
       return m(".container", [
         isNil(mdl.data.details())
           ? m(Loader)

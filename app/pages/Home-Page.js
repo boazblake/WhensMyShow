@@ -1,6 +1,6 @@
 import m from "mithril"
-import http from "../../Http.js"
-import { getShows, filterShowsByListType } from "../fns.js"
+import http from "../Http.js"
+import { getShows, filterShowsByListType } from "./fns.js"
 import { isEmpty } from "ramda"
 
 const NoShows = m(".container.empty", [
@@ -10,7 +10,6 @@ const NoShows = m(".container.empty", [
 
 const ShowSelectedShows = () => {
   const navigateToRoute = (mdl) => (show) => {
-    console.log(show)
     mdl.state.details.selected(show.objectId)
     m.route.set(`/details/${show.id}`)
   }

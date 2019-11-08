@@ -1,8 +1,8 @@
 import m from "mithril"
 import Layout from "./Layout.js"
-import Home from "./pages/Home/component.js"
-import Search from "./pages/Search/component.js"
-import Details from "./pages/Details/component.js"
+import Home from "./pages/Home-Page.js"
+import Search from "./pages/Search-Page.js"
+import Details from "./pages/Details-Page.js"
 import { flatten } from "ramda"
 
 const Main = [

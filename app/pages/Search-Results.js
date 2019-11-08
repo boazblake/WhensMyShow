@@ -1,12 +1,12 @@
 import m from "mithril"
-import http from "../../Http.js"
+import http from "../Http.js"
 import {
   showListSelection,
   propIsDefined,
   updateUserShowsTask,
   addUserShowsTask
-} from "../fns.js"
-import { ListSelector } from "../../components/Elements.js"
+} from "./fns.js"
+import { ListSelector } from "../components/Elements.js"
 
 const updateUserShows = (mdl) => (result, list) =>
   updateUserShowsTask(http)(mdl)(result)(list)

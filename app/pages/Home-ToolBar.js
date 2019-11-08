@@ -1,5 +1,5 @@
 import m from "mithril"
-import { ListSelector } from "../../components/Elements.js"
+import { ListSelector } from "../components/Elements.js"
 
 const FilterLists = () => {
   const selectList = (mdl, list) => mdl.state.currentList(list)

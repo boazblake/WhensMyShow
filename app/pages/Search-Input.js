@@ -1,7 +1,7 @@
 import m from "mithril"
-import http from "../../Http.js"
-import { searchShows } from "../fns.js"
-import { Paginator } from "../../components/Elements.js"
+import http from "../Http.js"
+import { searchShows } from "./fns.js"
+import { Paginator } from "../components/Elements.js"
 
 const SearchInput = () => {
   const paginateFn = (mdl) => searchShows(mdl, http)
