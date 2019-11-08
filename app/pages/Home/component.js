@@ -1,9 +1,7 @@
 import m from "mithril"
 import http from "../../Http.js"
-import { getShows, deleteShowTask } from "../fns.js"
-import { isEmpty, filter, propEq } from "ramda"
-
-const deleteShow = (show, mdl) => deleteShowTask(http)(mdl)(show)
+import { getShows, filterShowsByListType } from "../fns.js"
+import { isEmpty } from "ramda"
 
 const NoShows = m(".container.empty", [
   m("p.empty-title h5", "You have no shows yet!"),
@@ -11,31 +9,24 @@ const NoShows = m(".container.empty", [
 ])
 
 const ShowSelectedShows = () => {
-  const filterShowsByList = (mdl) =>
-    filter(propEq("status", mdl.state.currentList()), mdl.user.shows())
+  const navigateToRoute = (mdl) => (show) => {
+    console.log(show)
+    mdl.state.details.selected(show.objectId)
+    m.route.set(`/details/${show.id}`)
+  }
 
   return {
     view: ({ attrs: { mdl } }) =>
-      filterShowsByList(mdl).map((show, idx) =>
+      filterShowsByListType(mdl).map((show, idx) =>
         m(
           ".tileCard",
           {
             key: idx
           },
-          [
-            m("img.img-responsive.img-fit-cover", {
-              onclick: () => m.route.set(`/details/${show.id}`),
-              src: http.imagesUrl(show.poster_path)
-            }),
-
-            m(
-              "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
-              {
-                onclick: () => deleteShow(show, mdl)
-              },
-              m("i.icon icon-cross")
-            )
-          ]
+          m("img.img-responsive.img-fit-cover", {
+            onclick: () => navigateToRoute(mdl)(show),
+            src: http.imagesUrl(show.poster_path)
+          })
         )
       )
   }

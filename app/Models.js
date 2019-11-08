@@ -13,9 +13,11 @@ const state = {
     max: Stream(null),
     value: Stream(null)
   },
-  item: {
-    selected: Stream(false),
+  searchItem: {
     showMenu: Stream(false)
+  },
+  details: {
+    selected: Stream(null)
   },
   currentList: Stream("Watching")
 }

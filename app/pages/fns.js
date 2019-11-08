@@ -36,7 +36,7 @@ export const toSearchVm = ({
   objectId
 })
 
-const onError = (mdl) => (type) => (error) => mdl.errors[type](error)
+export const onError = (mdl) => (type) => (error) => mdl.errors[type](error)
 
 const onSuccess = (mdl) => (d) => {
   mdl.user.shows(d)
@@ -100,7 +100,8 @@ export const searchShows = (mdl, http) =>
       mdl.data.shows(data.results)
     })
 
-const itemSelected = (mdl) => (result) => mdl.state.item.showMenu() == result.id
+const itemSelected = (mdl) => (result) =>
+  mdl.state.searchItem.showMenu() == result.id
 export const propIsDefined = (attr) => (result) => result[attr] !== undefined
 
 export const showListSelection = (mdl) =>
@@ -125,12 +126,13 @@ export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
     .chain((_) => getShows(mdl, http))
     .fork(onError(mdl)("search"), onSuccess(mdl))
 
-export const deleteShowTask = (http) => (mdl) => (show) => {
+export const deleteShowTask = (http) => (mdl) => (show) =>
   http
-    .deleteTask(http.backendlessUrl(`shows/${show.objectId}`))
+    .deleteTask(http.backendlessUrl(`shows/${mdl.state.details.selected()}`))
     .chain((_) => getShows(mdl, http))
-    .fork(onError(mdl)("user"), mdl.user.shows)
-}
 
 export const getShowDetailsTask = (http) => (id) =>
   http.getTask(http.detailsUrl(id))
+
+export const filterShowsByListType = (mdl) =>
+  filter(propEq("status", mdl.state.currentList()), mdl.user.shows())

@@ -45,7 +45,7 @@ const Result = () => {
       m(".menu", [
         m("img.img-responsive.img-fit-cover", {
           class: propIsDefined("objectId")(result) && "selected",
-          onclick: () => mdl.state.item.showMenu(result.id),
+          onclick: () => mdl.state.searchItem.showMenu(result.id),
           src: http.imagesUrl(result.poster_path)
         }),
 

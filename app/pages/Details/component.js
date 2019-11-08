@@ -2,7 +2,13 @@ import m from "mithril"
 import http from "../../Http.js"
 import { isNil, map, prop } from "ramda"
 import { Loader } from "../../components/Elements"
-import { getShowDetailsTask } from "../fns.js"
+import { getShowDetailsTask, deleteShowTask, onError } from "../fns.js"
+
+const deleteShow = (show, mdl) =>
+  deleteShowTask(http)(mdl)(show).fork(onError(mdl)("user"), (updatedShows) => {
+    m.route.set("/home")
+    mdl.user.shows(updatedShows)
+  })
 
 const getId = () => m.route.get().split("/")[2]
 
@@ -22,11 +28,18 @@ const TextBlock = () => {
 
 const DetailCard = () => {
   return {
-    view: ({ attrs: { show } }) =>
+    view: ({ attrs: { show, mdl } }) =>
       m(".menu", [
         m("img.img-responsive.img-fit-cover", {
           src: http.imagesUrl(show.poster_path)
         }),
+        m(
+          "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
+          {
+            onclick: () => deleteShow(show, mdl)
+          },
+          m("i.icon icon-cross")
+        ),
         m(TextBlock, {
           label: "first_air_date ",
           text: show.first_air_date
@@ -68,18 +81,27 @@ const Details = () => {
       return m(".container", [
         isNil(mdl.data.details())
           ? m(Loader)
-          : m(DetailCard, { show: mdl.data.details() }),
+          : m(DetailCard, { mdl, show: mdl.data.details() }),
         mdl.errors.details() !== null &&
-          m(
-            ".toast.toast-error",
-            m("p", mdl.errors.details().response.status_message),
+          m(".toast.toast-error", [
+            m("p", [
+              mdl.errors.details().response.status_message,
+              m(
+                "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
+                {
+                  onclick: () => deleteShow(mdl.data.details(), mdl)
+                },
+                m("i.icon icon-cross")
+              )
+            ]),
             m("p", "Choose a different show")
-          )
+          ])
       ])
     },
     onbeforeremove: ({ attrs: { mdl } }) => {
       mdl.errors.details(null)
       mdl.data.details(null)
+      mdl.state.details.selected(null)
     }
   }
 }

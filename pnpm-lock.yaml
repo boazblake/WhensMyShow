@@ -1,6 +1,6 @@
 dependencies:
   data.task: 3.1.2
-  date-fns: 2.6.0
+  date-fns: 2.7.0
   mithril: 2.0.4
   mithril-stream: 2.0.0
   ramda: 0.26.1
@@ -1537,10 +1537,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-gGDjno8m/FS1kdMU3EmKcLaO1enFyfCV/EscvDZ4+KZDSg9xHePa2VFfWd+QO5PUp18NdCIziOpaSUE4Efw8/w==
-  /date-fns/2.6.0:
+  /date-fns/2.7.0:
     dev: false
     resolution:
-      integrity: sha512-F55YxqRdEfP/eYQmQjLN798v0AwLjmZ8nMBjdQvNwEE3N/zWVrlkkqT+9seBlPlsbkybG4JmWg3Ee3dIV9BcGQ==
+      integrity: sha512-wxYp2PGoUDN5ZEACc61aOtYFvSsJUylIvCjpjDOqM1UDaKIIuMJ9fAnMYFHV3TQaDpfTVxhwNK/GiCaHKuemTA==
   /debug/2.6.9:
     dependencies:
       ms: 2.0.0

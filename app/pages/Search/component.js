@@ -10,7 +10,7 @@ const Search = () => {
       mdl.state.paginate.page(1)
       mdl.state.paginate.total_pages(0)
       mdl.state.paginate.total_results(0)
-      mdl.state.item.showMenu(false)
+      mdl.state.searchItem.showMenu(false)
     }
   }
 }
