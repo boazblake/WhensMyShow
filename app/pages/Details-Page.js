@@ -88,15 +88,10 @@ const DetailCard = () => {
             },
             m("i.icon icon-cross")
           ),
-          show.network &&
+          (show.network || show.webChannel) &&
             m(TextBlock, {
-              label: "network: ",
-              text: show.network
-            }),
-          show.webChannel &&
-            m(TextBlock, {
-              label: "webChannel ",
-              text: show.webChannel
+              label: "Channel: ",
+              text: show.network || show.webChannel
             }),
           m(TextBlock, {
             label: "Status:  ",
