@@ -45,16 +45,14 @@ const ListSelection = () => {
   }
 }
 
-const deleteShow = (mdl) => (show) => {
-  console.log("deleting this hsow", show)
-  return deleteShowTask(http)(show.objectId).fork(
+const deleteShow = (mdl) => (show) =>
+  deleteShowTask(http)(show.objectId).fork(
     onError(mdl)("details"),
     (updatedShows) => {
       m.route.set("/home")
       mdl.user.shows(updatedShows)
     }
   )
-}
 
 const getId = () => m.route.param().id
 

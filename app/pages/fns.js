@@ -124,7 +124,7 @@ export const updateShowStatus = (shows) => (data) =>
   )
 
 const getShows = (http) =>
-  http.getTask(http.backendlessUrl("devshows?pagesize=100"))
+  http.getTask(http.backendlessUrl("prodshows?pagesize=100"))
 
 export const getShowsTask = (mdl) => (http) =>
   getShows(http).fork(mdl.errors, (d) => mdl.user.shows(d))
@@ -166,7 +166,7 @@ export const toDto = (show, listType) =>
 
 export const addUserShowsTask = (http) => (mdl) => (show) => (list) =>
   http
-    .postTask(http.backendlessUrl("devshows"), toDto(show, list))
+    .postTask(http.backendlessUrl("prodshows"), toDto(show, list))
     .chain((_) => getShows(http))
     .map(mdl.user.shows)
     .fork(onError(mdl)("search"), onSuccess(mdl))
@@ -174,7 +174,7 @@ export const addUserShowsTask = (http) => (mdl) => (show) => (list) =>
 export const updateUserShowsTask = (http) => (mdl) => (show) => (list) =>
   http
     .putTask(
-      http.backendlessUrl(`devshows\\${show.objectId}`),
+      http.backendlessUrl(`prodshows\\${show.objectId}`),
       toDto(show, list)
     )
     .chain((_) => getShows(http))
@@ -182,12 +182,12 @@ export const updateUserShowsTask = (http) => (mdl) => (show) => (list) =>
 
 export const deleteShowTask = (http) => (id) =>
   http
-    .deleteTask(http.backendlessUrl(`devshows/${id}`))
+    .deleteTask(http.backendlessUrl(`prodshows/${id}`))
     .chain((_) => getShows(http))
 
 export const updateShowDetailsTask = (http) => (mdl) => (dto) =>
   http
-    .putTask(http.backendlessUrl(`devshows/${mdl.data.details().objectId}`), {
+    .putTask(http.backendlessUrl(`prodshows/${mdl.data.details().objectId}`), {
       body: dto
     })
     .chain(({ objectId }) => getShowDetailsTask(mdl)(http)(objectId))
@@ -198,7 +198,7 @@ const getShowDetails = (mdl) => (http) => (show) =>
     .map(toDetailsViewModel(show))
 
 const findShowInDbTask = (http) => (id) =>
-  http.getTask(http.backendlessUrl(`devshows/${id}`))
+  http.getTask(http.backendlessUrl(`prodshows/${id}`))
 
 export const getShowDetailsTask = (mdl) => (http) => (id) =>
   findShowInDbTask(http)(id).chain(getShowDetails(mdl)(http))
