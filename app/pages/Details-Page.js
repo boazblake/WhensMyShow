@@ -3,11 +3,11 @@ import { isNil } from "ramda"
 import { Loader, Button, ListSelector } from "../components/Elements"
 import {
   getShowDetailsTask,
+  getEpisodeTask,
   deleteShowTask,
   updateShowDetailsTask,
   onError,
-  formatError,
-  updateShowNotesTask
+  formatError
 } from "./fns.js"
 
 const updateShow = (mdl, update) =>
@@ -15,6 +15,35 @@ const updateShow = (mdl, update) =>
     onError(mdl)("details"),
     mdl.data.details
   )
+
+const Episode = () => {
+  let epsData = undefined
+  const getEpisode = (mdl) => (episode) =>
+    getEpisodeTask(http)(episode).fork(
+      onError(mdl)("episodes"),
+      (s) => (epsData = s)
+    )
+
+  return {
+    oninit: ({ attrs: { mdl, eps } }) => getEpisode(mdl)(eps),
+    view: ({ attrs: { mdl, eps } }) =>
+      epsData &&
+      m(".episode.column", [
+        m("img.img-responsive.img-fit-cover", {
+          src: epsData.image
+        }),
+        // m("pre", JSON.stringify(epsData, null, 4)),
+        m(TextBlock, {
+          label: `${epsData.name}:  `,
+          text: epsData.airdate
+        }),
+        m(TextBlock, {
+          label: "Season - Ep:  ",
+          text: `${epsData.season} - ${epsData.number}`
+        })
+      ])
+  }
+}
 
 const ListSelection = () => {
   let showOpts = true
@@ -116,10 +145,11 @@ const DetailCard = () => {
             label: "Save Notes"
           })
         ]),
-        m(TextBlock, {
-          label: "Links:  ",
-          text: m("pre", JSON.stringify(show.links, null, 4))
-        })
+        m(
+          ".columns.col-12",
+          m("h2", "Episodes"),
+          show.links.map((eps, idx) => m(Episode, { mdl, eps, key: idx }))
+        )
       ])
     }
   }

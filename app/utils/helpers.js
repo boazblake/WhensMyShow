@@ -20,13 +20,6 @@ import {
 } from "ramda"
 import Task from "data.task"
 
-export const log = (m) => (v) => {
-  console.log(m, v)
-  return v
-}
-
-export const isEmpty = (data) => data.length == 0
-
 export const infiniteScroll = (mdl) => (e) => {
   let route = mdl.state.route
   let length = mdl.data[route].data.length

@@ -4,7 +4,9 @@ import {
   showListSelection,
   propIsDefined,
   updateUserShowsTask,
-  addUserShowsTask
+  addUserShowsTask,
+  onError,
+  updateShowStatus
 } from "./fns.js"
 import { ListSelector } from "../components/Elements.js"
 

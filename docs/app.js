@@ -907,13 +907,49 @@ var updateShow = function updateShow(mdl, update) {
   return (0, _fns.updateShowDetailsTask)(_Http2.default)(mdl)(update).fork((0, _fns.onError)(mdl)("details"), mdl.data.details);
 };
 
+var Episode = function Episode() {
+  var epsData = undefined;
+  var getEpisode = function getEpisode(mdl) {
+    return function (episode) {
+      return (0, _fns.getEpisodeTask)(_Http2.default)(episode).fork((0, _fns.onError)(mdl)("episodes"), function (s) {
+        return epsData = s;
+      });
+    };
+  };
+
+  return {
+    oninit: function oninit(_ref) {
+      var _ref$attrs = _ref.attrs,
+          mdl = _ref$attrs.mdl,
+          eps = _ref$attrs.eps;
+      return getEpisode(mdl)(eps);
+    },
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          mdl = _ref2$attrs.mdl,
+          eps = _ref2$attrs.eps;
+      return epsData && m(".episode.column", [m("img.img-responsive.img-fit-cover", {
+        src: epsData.image
+      }),
+      // m("pre", JSON.stringify(epsData, null, 4)),
+      m(TextBlock, {
+        label: epsData.name + ":  ",
+        text: epsData.airdate
+      }), m(TextBlock, {
+        label: "Season - Ep:  ",
+        text: epsData.season + " - " + epsData.number
+      })]);
+    }
+  };
+};
+
 var ListSelection = function ListSelection() {
   var showOpts = true;
   return {
-    view: function view(_ref) {
-      var _ref$attrs = _ref.attrs,
-          mdl = _ref$attrs.mdl,
-          list = _ref$attrs.list;
+    view: function view(_ref3) {
+      var _ref3$attrs = _ref3.attrs,
+          mdl = _ref3$attrs.mdl,
+          list = _ref3$attrs.list;
       return m(".dropdown", [m("a.btn btn-link dropdown-toggle", { onclick: function onclick() {
           return showOpts = true;
         }, tabindex: "0" }, [list, m("i.icon icon-caret")]), showOpts && m("ul.menu", mdl.user.lists().map(function (list, idx) {
@@ -954,10 +990,10 @@ var getShowDetails = function getShowDetails(http) {
 
 var TextBlock = function TextBlock() {
   return {
-    view: function view(_ref2) {
-      var _ref2$attrs = _ref2.attrs,
-          label = _ref2$attrs.label,
-          text = _ref2$attrs.text;
+    view: function view(_ref4) {
+      var _ref4$attrs = _ref4.attrs,
+          label = _ref4$attrs.label,
+          text = _ref4$attrs.text;
       return m(".formGroup", [m("strong", label), ("time", text)]);
     }
   };
@@ -965,10 +1001,10 @@ var TextBlock = function TextBlock() {
 
 var DetailCard = function DetailCard() {
   return {
-    view: function view(_ref3) {
-      var _ref3$attrs = _ref3.attrs,
-          show = _ref3$attrs.show,
-          mdl = _ref3$attrs.mdl;
+    view: function view(_ref5) {
+      var _ref5$attrs = _ref5.attrs,
+          show = _ref5$attrs.show,
+          mdl = _ref5$attrs.mdl;
 
       // console.log("show", show)
       return m(".menu.columns", [m("div.form-group.col-6", [m(TextBlock, {
@@ -999,23 +1035,22 @@ var DetailCard = function DetailCard() {
           return updateShow(mdl, { notes: show.notes });
         },
         label: "Save Notes"
-      })]), m(TextBlock, {
-        label: "Links:  ",
-        text: m("pre", JSON.stringify(show.links, null, 4))
-      })]);
+      })]), m(".columns.col-12", m("h2", "Episodes"), show.links.map(function (eps, idx) {
+        return m(Episode, { mdl: mdl, eps: eps, key: idx });
+      }))]);
     }
   };
 };
 
 var Details = function Details() {
   return {
-    oninit: function oninit(_ref4) {
-      var mdl = _ref4.attrs.mdl;
+    oninit: function oninit(_ref6) {
+      var mdl = _ref6.attrs.mdl;
 
       getShowDetails(_Http2.default)(mdl);
     },
-    view: function view(_ref5) {
-      var mdl = _ref5.attrs.mdl;
+    view: function view(_ref7) {
+      var mdl = _ref7.attrs.mdl;
 
       return m(".container", [(0, _ramda.isNil)(mdl.data.details()) ? m(_Elements.Loader) : m(DetailCard, { mdl: mdl, show: mdl.data.details() }), mdl.errors.details() !== null && m(".toast.toast-error", [m("p", [mdl.errors.details().response.status_message, m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
@@ -1023,8 +1058,8 @@ var Details = function Details() {
         }
       }, m("i.icon icon-cross"))]), m("p", "Choose a different show")])]);
     },
-    onbeforeremove: function onbeforeremove(_ref6) {
-      var mdl = _ref6.attrs.mdl;
+    onbeforeremove: function onbeforeremove(_ref8) {
+      var mdl = _ref8.attrs.mdl;
 
       mdl.errors.details(null);
       mdl.data.details(null);
@@ -1263,19 +1298,19 @@ var onSuccess = function onSuccess(mdl) {
   return function (d) {
     mdl.user.shows(d);
     // updating the mdl.data with show details from the user list and the search results list.
-    mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()));
+    mdl.data.shows((0, _fns.updateShowStatus)(mdl.user.shows())(mdl.data.shows()));
   };
 };
 
 var updateUserShows = function updateUserShows(mdl) {
   return function (result, list) {
-    return (0, _fns.updateUserShowsTask)(_Http2.default)(result)(list).fork(onError(mdl)("search"), onSuccess(mdl));
+    return (0, _fns.updateUserShowsTask)(_Http2.default)(result)(list).fork((0, _fns.onError)(mdl)("search"), onSuccess(mdl));
   };
 };
 
 var addUserShows = function addUserShows(mdl) {
   return function (result, list) {
-    return (0, _fns.addUserShowsTask)(_Http2.default)(mdl)(result)(list).fork(onError(mdl)("search"), onSuccess(mdl));
+    return (0, _fns.addUserShowsTask)(_Http2.default)(mdl)(result)(list).fork((0, _fns.onError)(mdl)("search"), onSuccess(mdl));
   };
 };
 
@@ -1343,7 +1378,7 @@ exports.default = SearchResults;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShowsTask = exports.getShows = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
+exports.getEpisodeTask = exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShowsTask = exports.getShows = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
 
 var _ramda = require("ramda");
 
@@ -1362,24 +1397,42 @@ var formatLinks = function formatLinks(links) {
   var prev = (0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links);
   var next = (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links);
 
-  return { prev: prev, next: next };
+  var urls = (0, _ramda.without)([undefined], [prev, next]);
+  return urls;
 };
 
-var toDetailsViewModel = function toDetailsViewModel(_ref) {
-  var image = _ref.image,
-      tvmazeId = _ref.tvmazeId,
-      objectId = _ref.objectId,
-      listStatus = _ref.listStatus,
-      name = _ref.name,
-      notes = _ref.notes;
-  return function (_ref2) {
-    var webChannel = _ref2.webChannel,
-        network = _ref2.network,
-        status = _ref2.status,
-        genres = _ref2.genres,
-        premiered = _ref2.premiered,
-        summary = _ref2.summary,
-        _links = _ref2._links;
+var toEpisodeViewModel = function toEpisodeViewModel(_ref) {
+  var name = _ref.name,
+      season = _ref.season,
+      number = _ref.number,
+      airdate = _ref.airdate,
+      image = _ref.image,
+      _links = _ref._links;
+  return {
+    name: name,
+    season: season,
+    number: number,
+    airdate: airdate,
+    image: image && (makeHttps(image.original) || makeHttps(image.medium)),
+    links: formatLinks(_links)
+  };
+};
+
+var toDetailsViewModel = function toDetailsViewModel(_ref2) {
+  var image = _ref2.image,
+      tvmazeId = _ref2.tvmazeId,
+      objectId = _ref2.objectId,
+      listStatus = _ref2.listStatus,
+      name = _ref2.name,
+      notes = _ref2.notes;
+  return function (_ref3) {
+    var webChannel = _ref3.webChannel,
+        network = _ref3.network,
+        status = _ref3.status,
+        genres = _ref3.genres,
+        premiered = _ref3.premiered,
+        summary = _ref3.summary,
+        _links = _ref3._links;
     return {
       name: name,
       notes: notes,
@@ -1400,10 +1453,10 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
 
 var makeHttps = (0, _ramda.replace)("http", "https");
 
-var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_ref3) {
-  var name = _ref3.name,
-      image = _ref3.image,
-      id = _ref3.id;
+var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_ref4) {
+  var name = _ref4.name,
+      image = _ref4.image,
+      id = _ref4.id;
   return {
     image: image && (makeHttps(image.original) || makeHttps(image.medium)),
     tvmazeId: id,
@@ -1412,12 +1465,12 @@ var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_
   };
 };
 
-var toDbModel = exports.toDbModel = function toDbModel(_ref4) {
-  var listStatus = _ref4.listStatus,
-      notes = _ref4.notes,
-      name = _ref4.name,
-      tvmazeId = _ref4.tvmazeId,
-      image = _ref4.image;
+var toDbModel = exports.toDbModel = function toDbModel(_ref5) {
+  var listStatus = _ref5.listStatus,
+      notes = _ref5.notes,
+      name = _ref5.name,
+      tvmazeId = _ref5.tvmazeId,
+      image = _ref5.image;
   return {
     image: image,
     listStatus: listStatus,
@@ -1463,8 +1516,10 @@ var getShows = exports.getShows = function getShows(http) {
   return http.getTask(http.backendlessUrl("devshows?pagesize=100"));
 };
 
-var searchShowsTask = exports.searchShowsTask = function searchShowsTask(mdl, http) {
-  return http.getTask(http.searchUrl(mdl.state.query())).map((0, _ramda.pluck)("show")).map((0, _ramda.map)(toSearchViewModel)).map(rejectWithAttr("image")(null)).map(updateShowStatus(mdl.user.shows()));
+var searchShowsTask = exports.searchShowsTask = function searchShowsTask(mdl) {
+  return function (http) {
+    return http.getTask(http.searchUrl(mdl.state.query())).map((0, _ramda.pluck)("show")).map((0, _ramda.map)(toSearchViewModel)).map(rejectWithAttr("image")(null)).map(updateShowStatus(mdl.user.shows()));
+  };
 };
 
 var itemSelected = function itemSelected(mdl) {
@@ -1534,8 +1589,8 @@ var updateShowDetailsTask = exports.updateShowDetailsTask = function updateShowD
     return function (dto) {
       return http.putTask(http.backendlessUrl("devshows/" + mdl.data.details().objectId), {
         body: dto
-      }).chain(function (_ref5) {
-        var objectId = _ref5.objectId;
+      }).chain(function (_ref6) {
+        var objectId = _ref6.objectId;
         return getShowDetailsTask(mdl)(http)(objectId);
       });
     };
@@ -1566,6 +1621,12 @@ var getShowDetailsTask = exports.getShowDetailsTask = function getShowDetailsTas
 
 var filterShowsByListType = exports.filterShowsByListType = function filterShowsByListType(mdl) {
   return (0, _ramda.filter)((0, _ramda.propEq)("listStatus", mdl.state.currentList()), mdl.user.shows());
+};
+
+var getEpisodeTask = exports.getEpisodeTask = function getEpisodeTask(http) {
+  return function (episodeUrl) {
+    return http.getTask(episodeUrl).map(toEpisodeViewModel);
+  };
 };
 });
 
@@ -1690,7 +1751,7 @@ var animateChildrenLimitsExit = exports.animateChildrenLimitsExit = function ani
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.jsonCopy = exports.scrollToAnchor = exports.debounce = exports.filterTask = exports._paginate = exports._direction = exports._sort = exports._search = exports.addTerms = exports.infiniteScroll = exports.isEmpty = exports.log = undefined;
+exports.jsonCopy = exports.scrollToAnchor = exports.debounce = exports.filterTask = exports._paginate = exports._direction = exports._sort = exports._search = exports.addTerms = exports.infiniteScroll = undefined;
 
 var _ramda = require("ramda");
 
@@ -1699,17 +1760,6 @@ var _data = require("data.task");
 var _data2 = _interopRequireDefault(_data);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var log = exports.log = function log(m) {
-  return function (v) {
-    console.log(m, v);
-    return v;
-  };
-};
-
-var isEmpty = exports.isEmpty = function isEmpty(data) {
-  return data.length == 0;
-};
 
 var infiniteScroll = exports.infiniteScroll = function infiniteScroll(mdl) {
   return function (e) {

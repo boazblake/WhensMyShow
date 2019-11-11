@@ -1,5 +1,6 @@
 import {
   replace,
+  without,
   assoc,
   lensPath,
   over,
@@ -16,7 +17,7 @@ import {
   anyPass,
   pluck,
   reject,
-  isNil,
+  traverse,
   join,
   head,
   equals
@@ -33,8 +34,25 @@ const formatLinks = (links) => {
   let prev = view(lensPath(["previousepisode", "href"]), links)
   let next = view(lensPath(["nextepisode", "href"]), links)
 
-  return { prev, next }
+  let urls = without([undefined], [prev, next])
+  return urls
 }
+
+const toEpisodeViewModel = ({
+  name,
+  season,
+  number,
+  airdate,
+  image,
+  _links
+}) => ({
+  name,
+  season,
+  number,
+  airdate,
+  image: image && (makeHttps(image.original) || makeHttps(image.medium)),
+  links: formatLinks(_links)
+})
 
 const toDetailsViewModel = ({
   image,
@@ -111,7 +129,7 @@ export const updateShowStatus = (shows) => (data) =>
 export const getShows = (http) =>
   http.getTask(http.backendlessUrl("devshows?pagesize=100"))
 
-export const searchShowsTask = (mdl, http) =>
+export const searchShowsTask = (mdl) => (http) =>
   http
     .getTask(http.searchUrl(mdl.state.query()))
     .map(pluck("show"))
@@ -180,3 +198,6 @@ export const getShowDetailsTask = (mdl) => (http) => (id) =>
 
 export const filterShowsByListType = (mdl) =>
   filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())
+
+export const getEpisodeTask = (http) => (episodeUrl) =>
+  http.getTask(episodeUrl).map(toEpisodeViewModel)
