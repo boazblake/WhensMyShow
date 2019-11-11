@@ -49,14 +49,12 @@ const formatLinks = (links) => {
 }
 
 const toDetailsViewModel = ({
-  endpoint,
   image,
   tvmazeId,
   objectId,
   listStatus,
   name
 }) => ({
-  name,
   webChannel,
   network,
   status,
@@ -65,11 +63,11 @@ const toDetailsViewModel = ({
   summary,
   _links
 }) => ({
+  name,
   genre: join(" ", genres),
   premiered,
   summary,
   links: formatLinks(_links),
-  endpoint,
   image,
   tvmazeId,
   objectId,

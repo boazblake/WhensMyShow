@@ -1340,15 +1340,13 @@ var formatLinks = function formatLinks(links) {
 };
 
 var toDetailsViewModel = function toDetailsViewModel(_ref) {
-  var endpoint = _ref.endpoint,
-      image = _ref.image,
+  var image = _ref.image,
       tvmazeId = _ref.tvmazeId,
       objectId = _ref.objectId,
       listStatus = _ref.listStatus,
       name = _ref.name;
   return function (_ref2) {
-    var name = _ref2.name,
-        webChannel = _ref2.webChannel,
+    var webChannel = _ref2.webChannel,
         network = _ref2.network,
         status = _ref2.status,
         genres = _ref2.genres,
@@ -1356,11 +1354,11 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
         summary = _ref2.summary,
         _links = _ref2._links;
     return {
+      name: name,
       genre: (0, _ramda.join)(" ", genres),
       premiered: premiered,
       summary: summary,
       links: formatLinks(_links),
-      endpoint: endpoint,
       image: image,
       tvmazeId: tvmazeId,
       objectId: objectId,
