@@ -99,9 +99,9 @@ const TextBlock = () => {
 }
 
 const DetailCard = () => {
+  let showLinks = false
   return {
     view: ({ attrs: { show, mdl } }) => {
-      // console.log("show", show)
       return m(".menu.columns", [
         m("div.form-group.col-6", [
           m(TextBlock, {
@@ -146,9 +146,14 @@ const DetailCard = () => {
           })
         ]),
         m(
-          ".columns.col-12",
-          m("h2", "Episodes"),
-          show.links.map((eps, idx) => m(Episode, { mdl, eps, key: idx }))
+          ".accordian.columns.col-12",
+          { onclick: () => (showLinks = !showLinks) },
+          m("a.h2", "Episodes"),
+          m(
+            ".accordion-body",
+            showLinks &&
+              show.links.map((eps, idx) => m(Episode, { mdl, eps, key: idx }))
+          )
         )
       ])
     }

@@ -1000,13 +1000,13 @@ var TextBlock = function TextBlock() {
 };
 
 var DetailCard = function DetailCard() {
+  var showLinks = false;
   return {
     view: function view(_ref5) {
       var _ref5$attrs = _ref5.attrs,
           show = _ref5$attrs.show,
           mdl = _ref5$attrs.mdl;
 
-      // console.log("show", show)
       return m(".menu.columns", [m("div.form-group.col-6", [m(TextBlock, {
         label: show.name
       }), m("img.img-responsive.img-fit-cover", {
@@ -1035,9 +1035,11 @@ var DetailCard = function DetailCard() {
           return updateShow(mdl, { notes: show.notes });
         },
         label: "Save Notes"
-      })]), m(".columns.col-12", m("h2", "Episodes"), show.links.map(function (eps, idx) {
+      })]), m(".accordian.columns.col-12", { onclick: function onclick() {
+          return showLinks = !showLinks;
+        } }, m("a.h2", "Episodes"), m(".accordion-body", showLinks && show.links.map(function (eps, idx) {
         return m(Episode, { mdl: mdl, eps: eps, key: idx });
-      }))]);
+      })))]);
     }
   };
 };
