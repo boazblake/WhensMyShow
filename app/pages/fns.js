@@ -1,5 +1,5 @@
 import {
-  toPairs,
+  replace,
   assoc,
   lensPath,
   over,
@@ -28,17 +28,6 @@ export const log = (m) => (v) => {
 }
 
 const formatError = (error) => JSON.parse(JSON.stringify(error))
-
-// const getExternalId = (x) => {
-//   console.log("x???", x)
-//   return compose(
-//     join("="),
-//     head,
-//     toPairs,
-//     log("why now"),
-//     reject(isNil)
-//   )(x)
-// }
 
 const formatLinks = (links) => {
   let prev = view(lensPath(["previousepisode", "href"]), links)
@@ -78,8 +67,10 @@ const toDetailsViewModel = ({
   status
 })
 
+const makeHttps = replace("http", "https")
+
 export const toSearchViewModel = ({ name, image, id }) => ({
-  image: image && (image.original || image.medium),
+  image: image && (makeHttps(image.original) || makeHttps(image.medium)),
   tvmazeId: id,
   name
   // endpoint: getExternalId(externals)

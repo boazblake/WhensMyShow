@@ -1343,17 +1343,6 @@ var formatError = function formatError(error) {
   return JSON.parse(JSON.stringify(error));
 };
 
-// const getExternalId = (x) => {
-//   console.log("x???", x)
-//   return compose(
-//     join("="),
-//     head,
-//     toPairs,
-//     log("why now"),
-//     reject(isNil)
-//   )(x)
-// }
-
 var formatLinks = function formatLinks(links) {
   var prev = (0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links);
   var next = (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links);
@@ -1394,12 +1383,14 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
   };
 };
 
+var makeHttps = (0, _ramda.replace)("http", "https");
+
 var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_ref3) {
   var name = _ref3.name,
       image = _ref3.image,
       id = _ref3.id;
   return {
-    image: image && (image.original || image.medium),
+    image: image && (makeHttps(image.original) || makeHttps(image.medium)),
     tvmazeId: id,
     name: name
     // endpoint: getExternalId(externals)
