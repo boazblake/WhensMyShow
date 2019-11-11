@@ -8189,7 +8189,7 @@ a.text-error:visited {
     opacity: 0; } }
 
 * {
-  font-family: Montserrat, Sans-Serif;
+  font-family: Montserrat, NunitoSans;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }

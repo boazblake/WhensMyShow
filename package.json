@@ -15,7 +15,8 @@
     "date-fns": "^2.6.0",
     "mithril": "^2.0.4",
     "mithril-stream": "^2.0.0",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "sw-precache-brunch": "^2.0.1"
   },
   "devDependencies": {
     "auto-reload-brunch": "^2",

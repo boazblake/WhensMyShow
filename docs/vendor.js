@@ -34713,6 +34713,11 @@ require.alias("mithril-stream/stream.js", "mithril-stream");
 require.alias(".pnpm/registry.npmjs.org/process/0.11.10/node_modules/process/browser.js", "process");
 require.alias("ramda/src/index.js", "ramda");process = require('process');require.register("___globals___", function(exports, require, module) {
   
+
+// Auto-loaded modules from config.npm.globals.
+window.m = require("mithril");
+
+
 });})();require('___globals___');
 
 'use strict';

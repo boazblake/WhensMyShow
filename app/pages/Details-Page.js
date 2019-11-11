@@ -1,16 +1,29 @@
-import m from "mithril"
 import http from "../Http.js"
 import { isNil, map, prop } from "ramda"
-import { Loader } from "../components/Elements"
-import { getShowDetailsTask, deleteShowTask, onError } from "./fns.js"
+import { Loader, Button } from "../components/Elements"
+import {
+  getShowDetailsTask,
+  deleteShowTask,
+  onError,
+  updateShowNotesTask
+} from "./fns.js"
 
-const deleteShow = (show, mdl) =>
-  deleteShowTask(http)(mdl)(show).fork(onError(mdl)("user"), (updatedShows) => {
-    m.route.set("/home")
-    mdl.user.shows(updatedShows)
-  })
+const deleteShow = (mdl) => (show) =>
+  deleteShowTask(http)(mdl)(show).fork(
+    onError(mdl)("details"),
+    (updatedShows) => {
+      m.route.set("/home")
+      mdl.user.shows(updatedShows)
+    }
+  )
 
-const getId = () => m.route.get().split("/")[2]
+const updateShowNotes = (mdl) => (show) =>
+  updateShowNotesTask(http)(mdl)(show).fork(
+    onError(mdl)("details"),
+    m.route.set(m.route.get())
+  )
+
+const getId = () => m.route.param().id
 
 const formatError = (error) => JSON.parse(JSON.stringify(error))
 
@@ -28,54 +41,60 @@ const TextBlock = () => {
 
 const DetailCard = () => {
   return {
-    view: ({ attrs: { show, mdl } }) =>
-      m(".menu", [
-        m("img.img-responsive.img-fit-cover", {
-          src: http.imagesUrl(show.poster_path)
-        }),
+    view: ({ attrs: { show, mdl } }) => {
+      console.log(show)
+      return m(".menu.columns", [
         m(
-          "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
-          {
-            onclick: () => deleteShow(show, mdl)
-          },
-          m("i.icon icon-cross")
-        ),
-        m(TextBlock, {
-          label: "first_air_date ",
-          text: show.first_air_date
-        }),
-        m(TextBlock, {
-          label: "last_air_date ",
-          text: show.last_air_date
-        }),
-        m(TextBlock, {
-          label: "Status:  ",
-          text: show.status
-        }),
-        m(TextBlock, {
-          label: "Network:  ",
-          text: map(prop("name"), show.networks).join()
-        }),
-        show.next_episode_to_air &&
-          m(TextBlock, {
-            label: "Next Air Date:  ",
-            text: show.next_episode_to_air.air_date
+          "",
+          { class: "col-6" },
+          m("img.img-responsive.img-fit-cover", {
+            src: show.image
           }),
-        m(TextBlock, {
-          label: "number_of_episodes:  ",
-          text: show.number_of_episodes
-        }),
-        m(TextBlock, {
-          label: "number_of_seasons:  ",
-          text: show.number_of_seasons
-        })
+          m(
+            "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
+            {
+              onclick: () => deleteShow(mdl)(show)
+            },
+            m("i.icon icon-cross")
+          ),
+          show.network &&
+            m(TextBlock, {
+              label: "network: ",
+              text: show.network
+            }),
+          show.webChannel &&
+            m(TextBlock, {
+              label: "webChannel ",
+              text: show.webChannel
+            }),
+          m(TextBlock, {
+            label: "Status:  ",
+            text: show.status
+          })
+        ),
+        m("div.form-group.col-6", [
+          m("label.form-label[for='notes']", "Notes"),
+          m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
+            value: show.notes,
+            oninput: (e) => (show.notes = e.target.value)
+          }),
+          m(Button, {
+            classList: "",
+            action: () => updateShowNotes(mdl)(show),
+            label: "Save Notes"
+          })
+        ])
       ])
+    }
   }
 }
 
 const Details = () => {
   return {
-    oninit: ({ attrs: { mdl } }) => getShowDetails(http)(mdl),
+    oninit: ({ attrs: { mdl } }) => {
+      console.log("details", mdl.user.shows())
+      getShowDetails(http)(mdl)
+    },
     view: ({ attrs: { mdl } }) => {
       return m(".container", [
         isNil(mdl.data.details())

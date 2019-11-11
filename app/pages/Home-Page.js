@@ -1,4 +1,3 @@
-import m from "mithril"
 import http from "../Http.js"
 import { getShows, filterShowsByListType } from "./fns.js"
 import { isEmpty } from "ramda"
@@ -11,7 +10,7 @@ const NoShows = m(".container.empty", [
 const ShowSelectedShows = () => {
   const navigateToRoute = (mdl) => (show) => {
     mdl.state.details.selected(show.objectId)
-    m.route.set(`/details/${show.id}`)
+    m.route.set(`/details/${show.detailsId}`)
   }
 
   return {
@@ -24,7 +23,7 @@ const ShowSelectedShows = () => {
           },
           m("img.img-responsive.img-fit-cover", {
             onclick: () => navigateToRoute(mdl)(show),
-            src: http.imagesUrl(show.poster_path)
+            src: show.image
           })
         )
       )
@@ -34,7 +33,7 @@ const ShowSelectedShows = () => {
 const Home = () => {
   return {
     oninit: ({ attrs: { mdl } }) =>
-      getShows(mdl, http).fork(mdl.errors, (d) => mdl.user.shows(d)),
+      getShows(http).fork(mdl.errors, (d) => mdl.user.shows(d)),
     view: ({ attrs: { mdl } }) =>
       m(
         "section.tiles",

@@ -1,6 +1,5 @@
-import { baseUrl, apiKey, tmdbAuth } from "./secrets.js"
+import { tvMazeApiKey, tvMazeBaseUrl } from "./secrets.js"
 import Task from "data.task"
-import m from "mithril"
 import Model from "./Models.js"
 
 function onProgress(e) {
@@ -42,19 +41,22 @@ const _http = (mdl) => {
   return m.request
 }
 
-const headers = (url) => {
-  let tmdbBearerToken = url.includes("themoviedb") && tmdbAuth
+const headers = (url, args) => {
+  // let tmdbBearerToken = url.includes("themoviedb") && tmdbAuth
+  let contentType =
+    { "Content-Type": "application/json;charset=utf-8" } &&
+    ["Get", "POST", "PUT", "PATCH"].includes(args.method)
   return {
     headers: {
-      ...tmdbBearerToken
-      // "Content-Type": "application/json;charset=utf-8"
+      // ...tmdbBearerToken,
+      ...contentType
     }
   }
 }
 
 const _task = (url) => (args) =>
   new Task((rej, res) =>
-    _http(Model)(url, { ...args, ...headers(url), ...xhrProgress }).then(
+    _http(Model)(url, { ...args, ...headers(url, args), ...xhrProgress }).then(
       res,
       rej
     )
@@ -70,50 +72,39 @@ const postTask = (url, args = {}) =>
     ...args,
     method: "POST"
   })
-const putTask = (url, args = {}) =>
-  _task(url)({
+const putTask = (url, args = {}) => {
+  console.log(args)
+  return _task(url)({
     ...args,
     method: "PUT"
   })
+}
 const deleteTask = (url, args = {}) =>
   _task(url)({
     ...args,
     method: "DELETE"
   })
 
-const baseSearchUrl = (baseUrl) => (apiKey) => (page) => (query) =>
-  `${baseUrl}/search/multi?api_key=${apiKey}&language=en-US&query=${query}&page=${page}&include_adult=false`
-
-const baseDetailsUrl = (baseUrl) => (apiKey) => (id) =>
-  `${baseUrl}/tv/${id}?api_key=${apiKey}&language=en-US`
-const baseImagesUrl = (baseUrl) => (apiKey) => (id) =>
-  `${baseUrl}/tv/${id}/images?api_key=${apiKey}&language=en-US`
-
 const backEndlessBaseUrl =
   "https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/"
 
+const tvMazeSearchUrl = (baseUrl) => (query) =>
+  `${baseUrl}/search/shows?q=${query}`
+
+const tvMazeShowByIdUrl = (baseUrl) => (id) => `${baseUrl}/lookup/shows?${id}`
+
 const backendlessUrl = (url) => backEndlessBaseUrl + url
 
-// const shows = (shows) => `data/${shows}?pagesize=100`
-
-const searchUrl = baseSearchUrl(baseUrl)(apiKey)
-
-const detailsUrl = baseDetailsUrl(baseUrl)(apiKey)
-
-const imagesUrl = (img) =>
-  `https://image.tmdb.org/t/p/w185_and_h278_bestv2/${img}`
+const searchUrl = (query) => tvMazeSearchUrl(tvMazeBaseUrl)(query)
+const detailsUrl = (id) => tvMazeShowByIdUrl(tvMazeBaseUrl)(id)
 
 const http = {
   getTask,
   postTask,
   putTask,
   deleteTask,
-  baseSearchUrl,
-  baseDetailsUrl,
-  baseImagesUrl,
   searchUrl,
   detailsUrl,
-  imagesUrl,
   backendlessUrl
 }
 

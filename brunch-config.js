@@ -16,6 +16,9 @@ exports.files = {
 }
 
 exports.npm = {
+  globals: {
+    m: "mithril"
+  },
   styles: {
     "spectre.css": [
       "dist/spectre.css",
@@ -28,6 +31,13 @@ exports.npm = {
 exports.plugins = {
   babel: { presets: ["latest", "stage-0"] },
   uncss: { options: { csspath: "css/app.css" } }
+  // swPrecache: {
+  //   autorequire: ["app/assets/index.html"],
+  //   options: {
+  //     staticFileGlobs: ["docs/**/!(*map*)"],
+  //     stripPrefix: "docs/"
+  //   }
+  // }
 }
 
 exports.paths = {

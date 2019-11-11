@@ -1,4 +1,5 @@
 import {
+  toPairs,
   assoc,
   over,
   lensProp,
@@ -9,8 +10,17 @@ import {
   find,
   set,
   filter,
+  not,
   is,
-  anyPass
+  anyPass,
+  pluck,
+  reject,
+  isNil,
+  join,
+  isEmpty,
+  head,
+  complement,
+  equals
 } from "ramda"
 
 export const log = (m) => (v) => {
@@ -18,121 +28,156 @@ export const log = (m) => (v) => {
   return v
 }
 
-export const toSearchVm = ({
+const getExternalId = compose(
+  join("="),
+  head,
+  toPairs,
+  reject(isNil)
+)
+
+export const toViewModel = ({
   name,
-  first_air_date,
-  poster_path,
-  overview,
+  webChannel,
+  network,
+  externals,
+  image,
   id,
   status,
-  objectId
+  objectId,
+  listStatus
 }) => ({
   name,
-  first_air_date,
-  poster_path,
-  overview,
-  id,
+  webChannel: webChannel && webChannel.name,
+  network: network && network.name,
+  image: image && (image.original || image.medium),
+  tvmazeId: id,
+  endpoint: getExternalId(externals),
   status,
-  objectId
+  objectId,
+  listStatus
+})
+
+export const toSearchViewModel = ({ externals, image, id }) => ({
+  image: image && (image.original || image.medium),
+  tvmazeId: id,
+  endpoint: getExternalId(externals)
+})
+
+export const toDbModel = ({
+  listStatus,
+  endpoint,
+  notes,
+  tvmazeId,
+  image
+}) => ({
+  endpoint,
+  image,
+  listStatus,
+  notes,
+  tvmazeId
 })
 
 export const onError = (mdl) => (type) => (error) => mdl.errors[type](error)
 
 const onSuccess = (mdl) => (d) => {
   mdl.user.shows(d)
-  mdl.data.shows(
-    updateShowStatus(mdl.user.shows())({
-      results: mdl.data.shows()
-    }).results
-  )
+  // updating the mdl.data with show details from the user list and the search results list.
+  mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()))
 }
 
-export const filterIncorrectAttrTypes = (type) => (attr) =>
-  filter(
-    compose(
-      is(type),
-      prop(attr)
-    )
-  )
-
-export const formatSearchData = over(
-  lensProp("results"),
-  compose(
-    map(toSearchVm),
-    compose(filterIncorrectAttrTypes(String)("poster_path"))
-  )
-)
+const rejectWithAttr = (attr) => (value) => reject(propEq(attr, value))
 
 const updateResults = (result) => (show) => {
   if (show) {
     return assoc(
       "objectId",
       show.objectId,
-      set(lensProp("status"), prop("status", show), result)
+      set(lensProp("listStatus"), prop("listStatus", show), result)
     )
   } else {
     return result
   }
 }
 
-export const updateShowStatus = (shows) => (data) => {
-  let newResults = data.results.map((r) =>
+export const updateShowStatus = (shows) => (data) =>
+  data.map((r) =>
     compose(
       updateResults(r),
-      find(propEq("id", r.id))
+      find(propEq("tvmazeId", r.tvmazeId))
     )(shows)
   )
-  data.results = newResults
-  return data
-}
 
-export const getShows = (mdl, http) =>
-  http.getTask(http.backendlessUrl("shows?pagesize=100")).map(map(toSearchVm))
+export const getShows = (http) =>
+  http.getTask(http.backendlessUrl("devshows?pagesize=100"))
 
 export const searchShows = (mdl, http) =>
   http
-    .getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query()))
-    .map(formatSearchData)
+    .getTask(http.searchUrl(mdl.state.query()))
+    .map(pluck("show"))
+    .map(map(toSearchViewModel))
+    .map(rejectWithAttr("image")(null))
     .map(updateShowStatus(mdl.user.shows()))
     .fork(onError(mdl)("search"), (data) => {
-      mdl.state.paginate.total_pages(data.total_pages)
-      mdl.state.paginate.total_results(data.total_results)
-      mdl.data.shows(data.results)
+      // mdl.state.paginate.total_pages(data.total_pages)
+      // mdl.state.paginate.total_results(data.total_results)
+      mdl.data.shows(data)
     })
 
 const itemSelected = (mdl) => (result) =>
-  mdl.state.searchItem.showMenu() == result.id
-export const propIsDefined = (attr) => (result) => result[attr] !== undefined
+  equals(prop("tvmazeId", result), mdl.state.searchItem.showMenu())
+
+export const propIsDefined = (attr) =>
+  compose(
+    not,
+    propEq(attr, undefined)
+  )
 
 export const showListSelection = (mdl) =>
   anyPass([itemSelected(mdl), propIsDefined("objectId")])
 
-export const saveDto = (d, value) => ({
-  body: over(lensProp("status"), () => value, d)
+const updateListStatus = (show) => (listType) =>
+  over(lensProp("listStatus"), () => listType, show)
+
+const createBody = (dto) => ({
+  body: dto
 })
+
+export const toDto = (show, listType) =>
+  createBody(updateListStatus(show)(listType))
 
 export const addUserShowsTask = (http) => (mdl) => (result) => (list) =>
   http
-    .postTask(http.backendlessUrl("shows"), saveDto(result, list))
-    .chain((_) => getShows(mdl, http))
+    .postTask(http.backendlessUrl("devshows"), toDto(result, list))
+    .chain((_) => getShows(http))
+    .map(mdl.user.shows)
     .fork(onError(mdl)("search"), onSuccess(mdl))
 
 export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
   http
     .putTask(
-      http.backendlessUrl(`shows\\${result.objectId}`),
-      saveDto(result, list)
+      http.backendlessUrl(`devshows\\${result.objectId}`),
+      toDto(result, list)
     )
-    .chain((_) => getShows(mdl, http))
+    .chain((_) => getShows(http))
     .fork(onError(mdl)("search"), onSuccess(mdl))
 
-export const deleteShowTask = (http) => (mdl) => (show) =>
+export const deleteShowTask = (http) => (mdl) =>
   http
-    .deleteTask(http.backendlessUrl(`shows/${mdl.state.details.selected()}`))
-    .chain((_) => getShows(mdl, http))
+    .deleteTask(http.backendlessUrl(`devshows/${mdl.state.details.selected()}`))
+    .chain((_) => getShows(http))
+
+// export const updateShowNotesTask = (http) => (mdl) => (notes) =>
+//   http.putTask(
+//     http.backendlessUrl(`devshows/${mdl.state.details.selected()}`),
+//     {
+//       body: {
+//         notes
+//       }
+//     }
+//   )
 
 export const getShowDetailsTask = (http) => (id) =>
-  http.getTask(http.detailsUrl(id))
+  http.getTask(http.detailsUrl(id)).map(toViewModel)
 
 export const filterShowsByListType = (mdl) =>
-  filter(propEq("status", mdl.state.currentList()), mdl.user.shows())
+  filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())

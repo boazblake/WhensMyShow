@@ -22,12 +22,12 @@ const ListSelection = () => {
         mdl.user.lists().map((list, idx) =>
           m(ListSelector, {
             list,
-            active: list == result.status,
+            active: list == result.listStatus,
             key: idx,
             mdl,
             action: () => {
-              if (result.status != list) {
-                result.status == undefined
+              if (result.listStatus != list) {
+                result.listStatus == undefined
                   ? addUserShows(mdl)(result, list)
                   : updateUserShows(mdl)(result, list)
               }
@@ -45,8 +45,8 @@ const Result = () => {
       m(".menu", [
         m("img.img-responsive.img-fit-cover", {
           class: propIsDefined("objectId")(result) && "selected",
-          onclick: () => mdl.state.searchItem.showMenu(result.id),
-          src: http.imagesUrl(result.poster_path)
+          onclick: () => mdl.state.searchItem.showMenu(result.tvmazeId),
+          src: result.image
         }),
 
         showListSelection(mdl)(result) &&

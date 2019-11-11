@@ -196,10 +196,6 @@ var _data = require("data.task");
 
 var _data2 = _interopRequireDefault(_data);
 
-var _mithril = require("mithril");
-
-var _mithril2 = _interopRequireDefault(_mithril);
-
 var _Models = require("./Models.js");
 
 var _Models2 = _interopRequireDefault(_Models);
@@ -211,7 +207,7 @@ function onProgress(e) {
     // console.log("onprogress", e.total, e.loaded)
     _Models2.default.state.loadingProgress.max(e.total);
     _Models2.default.state.loadingProgress.value(e.loaded);
-    _mithril2.default.redraw();
+    m.redraw();
   }
 }
 
@@ -242,20 +238,21 @@ var xhrProgress = {
 
 var _http = function _http(mdl) {
   mdl.state.isLoading(!mdl.state.isLoading);
-  return _mithril2.default.request;
+  return m.request;
 };
 
-var headers = function headers(url) {
-  var tmdbBearerToken = url.includes("themoviedb") && _secrets.tmdbAuth;
+var headers = function headers(url, args) {
+  // let tmdbBearerToken = url.includes("themoviedb") && tmdbAuth
+  var contentType = { "Content-Type": "application/json;charset=utf-8" } && ["Get", "POST", "PUT", "PATCH"].includes(args.method);
   return {
-    headers: _extends({}, tmdbBearerToken)
+    headers: _extends({}, contentType)
   };
 };
 
 var _task = function _task(url) {
   return function (args) {
     return new _data2.default(function (rej, res) {
-      return _http(_Models2.default)(url, _extends({}, args, headers(url), xhrProgress)).then(res, rej);
+      return _http(_Models2.default)(url, _extends({}, args, headers(url, args), xhrProgress)).then(res, rej);
     });
   };
 };
@@ -274,6 +271,8 @@ var postTask = function postTask(url) {
 };
 var putTask = function putTask(url) {
   var args = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  console.log(args);
   return _task(url)(_extends({}, args, {
     method: "PUT"
   }));
@@ -285,45 +284,29 @@ var deleteTask = function deleteTask(url) {
   }));
 };
 
-var baseSearchUrl = function baseSearchUrl(baseUrl) {
-  return function (apiKey) {
-    return function (page) {
-      return function (query) {
-        return baseUrl + "/search/multi?api_key=" + apiKey + "&language=en-US&query=" + query + "&page=" + page + "&include_adult=false";
-      };
-    };
-  };
-};
-
-var baseDetailsUrl = function baseDetailsUrl(baseUrl) {
-  return function (apiKey) {
-    return function (id) {
-      return baseUrl + "/tv/" + id + "?api_key=" + apiKey + "&language=en-US";
-    };
-  };
-};
-var baseImagesUrl = function baseImagesUrl(baseUrl) {
-  return function (apiKey) {
-    return function (id) {
-      return baseUrl + "/tv/" + id + "/images?api_key=" + apiKey + "&language=en-US";
-    };
-  };
-};
-
 var backEndlessBaseUrl = "https://api.backendless.com/7F421158-889B-FD93-FF62-1ACDCD07AD00/1D9BEF3E-0CCC-D6C6-FF60-1A0B849A3E00/data/";
+
+var tvMazeSearchUrl = function tvMazeSearchUrl(baseUrl) {
+  return function (query) {
+    return baseUrl + "/search/shows?q=" + query;
+  };
+};
+
+var tvMazeShowByIdUrl = function tvMazeShowByIdUrl(baseUrl) {
+  return function (id) {
+    return baseUrl + "/lookup/shows?" + id;
+  };
+};
 
 var backendlessUrl = function backendlessUrl(url) {
   return backEndlessBaseUrl + url;
 };
 
-// const shows = (shows) => `data/${shows}?pagesize=100`
-
-var searchUrl = baseSearchUrl(_secrets.baseUrl)(_secrets.apiKey);
-
-var detailsUrl = baseDetailsUrl(_secrets.baseUrl)(_secrets.apiKey);
-
-var imagesUrl = function imagesUrl(img) {
-  return "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + img;
+var searchUrl = function searchUrl(query) {
+  return tvMazeSearchUrl(_secrets.tvMazeBaseUrl)(query);
+};
+var detailsUrl = function detailsUrl(id) {
+  return tvMazeShowByIdUrl(_secrets.tvMazeBaseUrl)(id);
 };
 
 var http = {
@@ -331,12 +314,8 @@ var http = {
   postTask: postTask,
   putTask: putTask,
   deleteTask: deleteTask,
-  baseSearchUrl: baseSearchUrl,
-  baseDetailsUrl: baseDetailsUrl,
-  baseImagesUrl: baseImagesUrl,
   searchUrl: searchUrl,
   detailsUrl: detailsUrl,
-  imagesUrl: imagesUrl,
   backendlessUrl: backendlessUrl
 };
 
@@ -359,6 +338,11 @@ var _App = require("./App.js");
 var _App2 = _interopRequireDefault(_App);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+if ("serviceWorker" in navigator) {
+  //add cache!
+  // navigator.serviceWorker.register("sw.js")
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   var root = document.body;
@@ -907,10 +891,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _mithril = require("mithril");
-
-var _mithril2 = _interopRequireDefault(_mithril);
-
 var _Http = require("../Http.js");
 
 var _Http2 = _interopRequireDefault(_Http);
@@ -923,15 +903,23 @@ var _fns = require("./fns.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var deleteShow = function deleteShow(show, mdl) {
-  return (0, _fns.deleteShowTask)(_Http2.default)(mdl)(show).fork((0, _fns.onError)(mdl)("user"), function (updatedShows) {
-    _mithril2.default.route.set("/home");
-    mdl.user.shows(updatedShows);
-  });
+var deleteShow = function deleteShow(mdl) {
+  return function (show) {
+    return (0, _fns.deleteShowTask)(_Http2.default)(mdl)(show).fork((0, _fns.onError)(mdl)("details"), function (updatedShows) {
+      m.route.set("/home");
+      mdl.user.shows(updatedShows);
+    });
+  };
+};
+
+var updateShowNotes = function updateShowNotes(mdl) {
+  return function (show) {
+    return (0, _fns.updateShowNotesTask)(_Http2.default)(mdl)(show).fork((0, _fns.onError)(mdl)("details"), m.route.set(m.route.get()));
+  };
 };
 
 var getId = function getId() {
-  return _mithril2.default.route.get().split("/")[2];
+  return m.route.param().id;
 };
 
 var formatError = function formatError(error) {
@@ -952,7 +940,7 @@ var TextBlock = function TextBlock() {
       var _ref$attrs = _ref.attrs,
           label = _ref$attrs.label,
           text = _ref$attrs.text;
-      return (0, _mithril2.default)(".formGroup", [(0, _mithril2.default)("strong", label), ("time", text)]);
+      return m(".formGroup", [m("strong", label), ("time", text)]);
     }
   };
 };
@@ -963,34 +951,35 @@ var DetailCard = function DetailCard() {
       var _ref2$attrs = _ref2.attrs,
           show = _ref2$attrs.show,
           mdl = _ref2$attrs.mdl;
-      return (0, _mithril2.default)(".menu", [(0, _mithril2.default)("img.img-responsive.img-fit-cover", {
-        src: _Http2.default.imagesUrl(show.poster_path)
-      }), (0, _mithril2.default)("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
+
+      console.log(show);
+      return m(".menu.columns", [m("", { class: "col-6" }, m("img.img-responsive.img-fit-cover", {
+        src: show.image
+      }), m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
-          return deleteShow(show, mdl);
+          return deleteShow(mdl)(show);
         }
-      }, (0, _mithril2.default)("i.icon icon-cross")), (0, _mithril2.default)(TextBlock, {
-        label: "first_air_date ",
-        text: show.first_air_date
-      }), (0, _mithril2.default)(TextBlock, {
-        label: "last_air_date ",
-        text: show.last_air_date
-      }), (0, _mithril2.default)(TextBlock, {
+      }, m("i.icon icon-cross")), show.network && m(TextBlock, {
+        label: "network: ",
+        text: show.network
+      }), show.webChannel && m(TextBlock, {
+        label: "webChannel ",
+        text: show.webChannel
+      }), m(TextBlock, {
         label: "Status:  ",
         text: show.status
-      }), (0, _mithril2.default)(TextBlock, {
-        label: "Network:  ",
-        text: (0, _ramda.map)((0, _ramda.prop)("name"), show.networks).join()
-      }), show.next_episode_to_air && (0, _mithril2.default)(TextBlock, {
-        label: "Next Air Date:  ",
-        text: show.next_episode_to_air.air_date
-      }), (0, _mithril2.default)(TextBlock, {
-        label: "number_of_episodes:  ",
-        text: show.number_of_episodes
-      }), (0, _mithril2.default)(TextBlock, {
-        label: "number_of_seasons:  ",
-        text: show.number_of_seasons
-      })]);
+      })), m("div.form-group.col-6", [m("label.form-label[for='notes']", "Notes"), m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
+        value: show.notes,
+        oninput: function oninput(e) {
+          return show.notes = e.target.value;
+        }
+      }), m(_Elements.Button, {
+        classList: "",
+        action: function action() {
+          return updateShowNotes(mdl)(show);
+        },
+        label: "Save Notes"
+      })])]);
     }
   };
 };
@@ -999,16 +988,18 @@ var Details = function Details() {
   return {
     oninit: function oninit(_ref3) {
       var mdl = _ref3.attrs.mdl;
-      return getShowDetails(_Http2.default)(mdl);
+
+      console.log("details", mdl.user.shows());
+      getShowDetails(_Http2.default)(mdl);
     },
     view: function view(_ref4) {
       var mdl = _ref4.attrs.mdl;
 
-      return (0, _mithril2.default)(".container", [(0, _ramda.isNil)(mdl.data.details()) ? (0, _mithril2.default)(_Elements.Loader) : (0, _mithril2.default)(DetailCard, { mdl: mdl, show: mdl.data.details() }), mdl.errors.details() !== null && (0, _mithril2.default)(".toast.toast-error", [(0, _mithril2.default)("p", [mdl.errors.details().response.status_message, (0, _mithril2.default)("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
+      return m(".container", [(0, _ramda.isNil)(mdl.data.details()) ? m(_Elements.Loader) : m(DetailCard, { mdl: mdl, show: mdl.data.details() }), mdl.errors.details() !== null && m(".toast.toast-error", [m("p", [mdl.errors.details().response.status_message, m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
           return deleteShow(mdl.data.details(), mdl);
         }
-      }, (0, _mithril2.default)("i.icon icon-cross"))]), (0, _mithril2.default)("p", "Choose a different show")])]);
+      }, m("i.icon icon-cross"))]), m("p", "Choose a different show")])]);
     },
     onbeforeremove: function onbeforeremove(_ref5) {
       var mdl = _ref5.attrs.mdl;
@@ -1030,10 +1021,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _mithril = require("mithril");
-
-var _mithril2 = _interopRequireDefault(_mithril);
-
 var _Http = require("../Http.js");
 
 var _Http2 = _interopRequireDefault(_Http);
@@ -1044,13 +1031,13 @@ var _ramda = require("ramda");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var NoShows = (0, _mithril2.default)(".container.empty", [(0, _mithril2.default)("p.empty-title h5", "You have no shows yet!"), (0, _mithril2.default)("p.empty-subtitle", "Click search to find your shows.")]);
+var NoShows = m(".container.empty", [m("p.empty-title h5", "You have no shows yet!"), m("p.empty-subtitle", "Click search to find your shows.")]);
 
 var ShowSelectedShows = function ShowSelectedShows() {
   var navigateToRoute = function navigateToRoute(mdl) {
     return function (show) {
       mdl.state.details.selected(show.objectId);
-      _mithril2.default.route.set("/details/" + show.id);
+      m.route.set("/details/" + show.detailsId);
     };
   };
 
@@ -1058,13 +1045,13 @@ var ShowSelectedShows = function ShowSelectedShows() {
     view: function view(_ref) {
       var mdl = _ref.attrs.mdl;
       return (0, _fns.filterShowsByListType)(mdl).map(function (show, idx) {
-        return (0, _mithril2.default)(".tileCard", {
+        return m(".tileCard", {
           key: idx
-        }, (0, _mithril2.default)("img.img-responsive.img-fit-cover", {
+        }, m("img.img-responsive.img-fit-cover", {
           onclick: function onclick() {
             return navigateToRoute(mdl)(show);
           },
-          src: _Http2.default.imagesUrl(show.poster_path)
+          src: show.image
         }));
       });
     }
@@ -1075,13 +1062,13 @@ var Home = function Home() {
   return {
     oninit: function oninit(_ref2) {
       var mdl = _ref2.attrs.mdl;
-      return (0, _fns.getShows)(mdl, _Http2.default).fork(mdl.errors, function (d) {
+      return (0, _fns.getShows)(_Http2.default).fork(mdl.errors, function (d) {
         return mdl.user.shows(d);
       });
     },
     view: function view(_ref3) {
       var mdl = _ref3.attrs.mdl;
-      return (0, _mithril2.default)("section.tiles", (0, _ramda.isEmpty)(mdl.user.shows()) ? NoShows : (0, _mithril2.default)(ShowSelectedShows, { mdl: mdl }));
+      return m("section.tiles", (0, _ramda.isEmpty)(mdl.user.shows()) ? NoShows : m(ShowSelectedShows, { mdl: mdl }));
     }
   };
 };
@@ -1157,15 +1144,9 @@ var _Http2 = _interopRequireDefault(_Http);
 
 var _fns = require("./fns.js");
 
-var _Elements = require("../components/Elements.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SearchInput = function SearchInput() {
-  var paginateFn = function paginateFn(mdl) {
-    return (0, _fns.searchShows)(mdl, _Http2.default);
-  };
-
   return {
     view: function view(_ref) {
       var mdl = _ref.attrs.mdl;
@@ -1180,7 +1161,7 @@ var SearchInput = function SearchInput() {
         onchange: function onchange() {
           return (0, _fns.searchShows)(mdl, _Http2.default);
         }
-      }), (0, _mithril2.default)(_Elements.Paginator, { mdl: mdl, paginateFn: paginateFn })]));
+      })]));
     }
   };
 };
@@ -1270,12 +1251,12 @@ var ListSelection = function ListSelection() {
       return (0, _mithril2.default)("ul.menu", mdl.user.lists().map(function (list, idx) {
         return (0, _mithril2.default)(_Elements.ListSelector, {
           list: list,
-          active: list == result.status,
+          active: list == result.listStatus,
           key: idx,
           mdl: mdl,
           action: function action() {
-            if (result.status != list) {
-              result.status == undefined ? addUserShows(mdl)(result, list) : updateUserShows(mdl)(result, list);
+            if (result.listStatus != list) {
+              result.listStatus == undefined ? addUserShows(mdl)(result, list) : updateUserShows(mdl)(result, list);
             }
           }
         });
@@ -1293,9 +1274,9 @@ var Result = function Result() {
       return (0, _mithril2.default)(".menu", [(0, _mithril2.default)("img.img-responsive.img-fit-cover", {
         class: (0, _fns.propIsDefined)("objectId")(result) && "selected",
         onclick: function onclick() {
-          return mdl.state.searchItem.showMenu(result.id);
+          return mdl.state.searchItem.showMenu(result.tvmazeId);
         },
-        src: _Http2.default.imagesUrl(result.poster_path)
+        src: result.image
       }), (0, _fns.showListSelection)(mdl)(result) && (0, _mithril2.default)(ListSelection, {
         mdl: mdl,
         result: result
@@ -1324,7 +1305,7 @@ exports.default = SearchResults;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.filterShowsByListType = exports.getShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.saveDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShows = exports.updateShowStatus = exports.formatSearchData = exports.filterIncorrectAttrTypes = exports.onError = exports.toSearchVm = exports.log = undefined;
+exports.filterShowsByListType = exports.getShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShows = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.toViewModel = exports.log = undefined;
 
 var _ramda = require("ramda");
 
@@ -1335,22 +1316,54 @@ var log = exports.log = function log(m) {
   };
 };
 
-var toSearchVm = exports.toSearchVm = function toSearchVm(_ref) {
+var getExternalId = (0, _ramda.compose)((0, _ramda.join)("="), _ramda.head, _ramda.toPairs, (0, _ramda.reject)(_ramda.isNil));
+
+var toViewModel = exports.toViewModel = function toViewModel(_ref) {
   var name = _ref.name,
-      first_air_date = _ref.first_air_date,
-      poster_path = _ref.poster_path,
-      overview = _ref.overview,
+      webChannel = _ref.webChannel,
+      network = _ref.network,
+      externals = _ref.externals,
+      image = _ref.image,
       id = _ref.id,
       status = _ref.status,
-      objectId = _ref.objectId;
+      objectId = _ref.objectId,
+      listStatus = _ref.listStatus;
   return {
     name: name,
-    first_air_date: first_air_date,
-    poster_path: poster_path,
-    overview: overview,
-    id: id,
+    webChannel: webChannel && webChannel.name,
+    network: network && network.name,
+    image: image && (image.original || image.medium),
+    tvmazeId: id,
+    endpoint: getExternalId(externals),
     status: status,
-    objectId: objectId
+    objectId: objectId,
+    listStatus: listStatus
+  };
+};
+
+var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_ref2) {
+  var externals = _ref2.externals,
+      image = _ref2.image,
+      id = _ref2.id;
+  return {
+    image: image && (image.original || image.medium),
+    tvmazeId: id,
+    endpoint: getExternalId(externals)
+  };
+};
+
+var toDbModel = exports.toDbModel = function toDbModel(_ref3) {
+  var listStatus = _ref3.listStatus,
+      endpoint = _ref3.endpoint,
+      notes = _ref3.notes,
+      tvmazeId = _ref3.tvmazeId,
+      image = _ref3.image;
+  return {
+    endpoint: endpoint,
+    image: image,
+    listStatus: listStatus,
+    notes: notes,
+    tvmazeId: tvmazeId
   };
 };
 
@@ -1365,24 +1378,21 @@ var onError = exports.onError = function onError(mdl) {
 var onSuccess = function onSuccess(mdl) {
   return function (d) {
     mdl.user.shows(d);
-    mdl.data.shows(updateShowStatus(mdl.user.shows())({
-      results: mdl.data.shows()
-    }).results);
+    // updating the mdl.data with show details from the user list and the search results list.
+    mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()));
   };
 };
 
-var filterIncorrectAttrTypes = exports.filterIncorrectAttrTypes = function filterIncorrectAttrTypes(type) {
-  return function (attr) {
-    return (0, _ramda.filter)((0, _ramda.compose)((0, _ramda.is)(type), (0, _ramda.prop)(attr)));
+var rejectWithAttr = function rejectWithAttr(attr) {
+  return function (value) {
+    return (0, _ramda.reject)((0, _ramda.propEq)(attr, value));
   };
 };
-
-var formatSearchData = exports.formatSearchData = (0, _ramda.over)((0, _ramda.lensProp)("results"), (0, _ramda.compose)((0, _ramda.map)(toSearchVm), (0, _ramda.compose)(filterIncorrectAttrTypes(String)("poster_path"))));
 
 var updateResults = function updateResults(result) {
   return function (show) {
     if (show) {
-      return (0, _ramda.assoc)("objectId", show.objectId, (0, _ramda.set)((0, _ramda.lensProp)("status"), (0, _ramda.prop)("status", show), result));
+      return (0, _ramda.assoc)("objectId", show.objectId, (0, _ramda.set)((0, _ramda.lensProp)("listStatus"), (0, _ramda.prop)("listStatus", show), result));
     } else {
       return result;
     }
@@ -1391,56 +1401,63 @@ var updateResults = function updateResults(result) {
 
 var updateShowStatus = exports.updateShowStatus = function updateShowStatus(shows) {
   return function (data) {
-    var newResults = data.results.map(function (r) {
-      return (0, _ramda.compose)(updateResults(r), (0, _ramda.find)((0, _ramda.propEq)("id", r.id)))(shows);
+    return data.map(function (r) {
+      return (0, _ramda.compose)(updateResults(r), (0, _ramda.find)((0, _ramda.propEq)("tvmazeId", r.tvmazeId)))(shows);
     });
-    data.results = newResults;
-    return data;
   };
 };
 
-var getShows = exports.getShows = function getShows(mdl, http) {
-  return http.getTask(http.backendlessUrl("shows?pagesize=100")).map((0, _ramda.map)(toSearchVm));
+var getShows = exports.getShows = function getShows(http) {
+  return http.getTask(http.backendlessUrl("devshows?pagesize=100"));
 };
 
 var searchShows = exports.searchShows = function searchShows(mdl, http) {
-  return http.getTask(http.searchUrl(mdl.state.paginate.page())(mdl.state.query())).map(formatSearchData).map(updateShowStatus(mdl.user.shows())).fork(onError(mdl)("search"), function (data) {
-    mdl.state.paginate.total_pages(data.total_pages);
-    mdl.state.paginate.total_results(data.total_results);
-    mdl.data.shows(data.results);
+  return http.getTask(http.searchUrl(mdl.state.query())).map((0, _ramda.pluck)("show")).map((0, _ramda.map)(toSearchViewModel)).map(rejectWithAttr("image")(null)).map(updateShowStatus(mdl.user.shows())).fork(onError(mdl)("search"), function (data) {
+    // mdl.state.paginate.total_pages(data.total_pages)
+    // mdl.state.paginate.total_results(data.total_results)
+    mdl.data.shows(data);
   });
 };
 
 var itemSelected = function itemSelected(mdl) {
   return function (result) {
-    return mdl.state.searchItem.showMenu() == result.id;
+    return (0, _ramda.equals)((0, _ramda.prop)("tvmazeId", result), mdl.state.searchItem.showMenu());
   };
 };
+
 var propIsDefined = exports.propIsDefined = function propIsDefined(attr) {
-  return function (result) {
-    return result[attr] !== undefined;
-  };
+  return (0, _ramda.compose)(_ramda.not, (0, _ramda.propEq)(attr, undefined));
 };
 
 var showListSelection = exports.showListSelection = function showListSelection(mdl) {
   return (0, _ramda.anyPass)([itemSelected(mdl), propIsDefined("objectId")]);
 };
 
-var saveDto = exports.saveDto = function saveDto(d, value) {
-  return {
-    body: (0, _ramda.over)((0, _ramda.lensProp)("status"), function () {
-      return value;
-    }, d)
+var updateListStatus = function updateListStatus(show) {
+  return function (listType) {
+    return (0, _ramda.over)((0, _ramda.lensProp)("listStatus"), function () {
+      return listType;
+    }, show);
   };
+};
+
+var createBody = function createBody(dto) {
+  return {
+    body: dto
+  };
+};
+
+var toDto = exports.toDto = function toDto(show, listType) {
+  return createBody(updateListStatus(show)(listType));
 };
 
 var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http) {
   return function (mdl) {
     return function (result) {
       return function (list) {
-        return http.postTask(http.backendlessUrl("shows"), saveDto(result, list)).chain(function (_) {
-          return getShows(mdl, http);
-        }).fork(onError(mdl)("search"), onSuccess(mdl));
+        return http.postTask(http.backendlessUrl("devshows"), toDto(result, list)).chain(function (_) {
+          return getShows(http);
+        }).map(mdl.user.shows).fork(onError(mdl)("search"), onSuccess(mdl));
       };
     };
   };
@@ -1450,8 +1467,8 @@ var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShows
   return function (mdl) {
     return function (result) {
       return function (list) {
-        return http.putTask(http.backendlessUrl("shows\\" + result.objectId), saveDto(result, list)).chain(function (_) {
-          return getShows(mdl, http);
+        return http.putTask(http.backendlessUrl("devshows\\" + result.objectId), toDto(result, list)).chain(function (_) {
+          return getShows(http);
         }).fork(onError(mdl)("search"), onSuccess(mdl));
       };
     };
@@ -1460,22 +1477,30 @@ var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShows
 
 var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
   return function (mdl) {
-    return function (show) {
-      return http.deleteTask(http.backendlessUrl("shows/" + mdl.state.details.selected())).chain(function (_) {
-        return getShows(mdl, http);
-      });
-    };
+    return http.deleteTask(http.backendlessUrl("devshows/" + mdl.state.details.selected())).chain(function (_) {
+      return getShows(http);
+    });
   };
 };
 
+// export const updateShowNotesTask = (http) => (mdl) => (notes) =>
+//   http.putTask(
+//     http.backendlessUrl(`devshows/${mdl.state.details.selected()}`),
+//     {
+//       body: {
+//         notes
+//       }
+//     }
+//   )
+
 var getShowDetailsTask = exports.getShowDetailsTask = function getShowDetailsTask(http) {
   return function (id) {
-    return http.getTask(http.detailsUrl(id));
+    return http.getTask(http.detailsUrl(id)).map(toViewModel);
   };
 };
 
 var filterShowsByListType = exports.filterShowsByListType = function filterShowsByListType(mdl) {
-  return (0, _ramda.filter)((0, _ramda.propEq)("status", mdl.state.currentList()), mdl.user.shows());
+  return (0, _ramda.filter)((0, _ramda.propEq)("listStatus", mdl.state.currentList()), mdl.user.shows());
 };
 });
 
@@ -1485,11 +1510,14 @@ var filterShowsByListType = exports.filterShowsByListType = function filterShows
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var apiKey = exports.apiKey = "1e4d78ab60660282c63379725fc9b111";
+var tmdbApiKey = exports.tmdbApiKey = "1e4d78ab60660282c63379725fc9b111";
 var tmdbAuth = exports.tmdbAuth = {
   Authorization: "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTRkNzhhYjYwNjYwMjgyYzYzMzc5NzI1ZmM5YjExMSIsInN1YiI6IjVkYmNjMjBjOTdhNGU2MDAxNTdjNjkxYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.TgL91o4VHyQo4cm3KLx6nVICyrn8E8pXDC1zMdlDFsU"
 };
-var baseUrl = exports.baseUrl = "https://api.themoviedb.org/3";
+var tmdbBaseUrl = exports.tmdbBaseUrl = "https://api.themoviedb.org/3";
+
+var tvMazeApiKey = exports.tvMazeApiKey = "F4-A2-dEzYi0oXvzbNWON3_nrnPSt9Yv";
+var tvMazeBaseUrl = exports.tvMazeBaseUrl = "http://api.tvmaze.com";
 });
 
 ;require.register("utils/animations.js", function(exports, require, module) {
@@ -1745,6 +1773,11 @@ Object.keys(_helpers).forEach(function (key) {
 
 ;require.alias(".pnpm/registry.npmjs.org/process/0.11.10/node_modules/process/browser.js", "process");process = require('process');require.register("___globals___", function(exports, require, module) {
   
+
+// Auto-loaded modules from config.npm.globals.
+window.m = require("mithril");
+
+
 });})();require('___globals___');
 
 
