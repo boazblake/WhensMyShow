@@ -10,13 +10,13 @@ import {
   updateShowNotesTask
 } from "./fns.js"
 
-const ListSelection = () => {
-  const updateUserShows = (mdl, list) =>
-    updateShowDetailsTask(http)(mdl)({ listStatus: list }).fork(
-      onError(mdl)("details"),
-      mdl.data.details
-    )
+const updateShow = (mdl, update) =>
+  updateShowDetailsTask(http)(mdl)(update).fork(
+    onError(mdl)("details"),
+    mdl.data.details
+  )
 
+const ListSelection = () => {
   let showOpts = true
   return {
     view: ({ attrs: { mdl, list } }) =>
@@ -33,7 +33,7 @@ const ListSelection = () => {
               m(ListSelector, {
                 list,
                 action: () => {
-                  updateUserShows(mdl, list)
+                  updateShow(mdl, { listStatus: list })
                   showOpts = false
                 },
                 key: idx,
@@ -55,12 +55,6 @@ const deleteShow = (mdl) => (show) => {
     }
   )
 }
-
-const updateShowNotes = (mdl) => (show) =>
-  updateShowNotesTask(http)(mdl)(show).fork(
-    onError(mdl)("details"),
-    m.route.set(m.route.get())
-  )
 
 const getId = () => m.route.param().id
 
@@ -125,7 +119,7 @@ const DetailCard = () => {
           }),
           m(Button, {
             classList: "",
-            action: () => updateShowNotes(mdl)(show),
+            action: () => updateShow(mdl, { notes: show.notes }),
             label: "Save Notes"
           })
         ]),

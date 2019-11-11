@@ -52,7 +52,8 @@ const toDetailsViewModel = ({
   tvmazeId,
   objectId,
   listStatus,
-  name
+  name,
+  notes
 }) => ({
   webChannel,
   network,
@@ -63,6 +64,7 @@ const toDetailsViewModel = ({
   _links
 }) => ({
   name,
+  notes,
   genre: join(" ", genres),
   premiered,
   summary,

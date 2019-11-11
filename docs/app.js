@@ -903,11 +903,11 @@ var _fns = require("./fns.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ListSelection = function ListSelection() {
-  var updateUserShows = function updateUserShows(mdl, list) {
-    return (0, _fns.updateShowDetailsTask)(_Http2.default)(mdl)({ listStatus: list }).fork((0, _fns.onError)(mdl)("details"), mdl.data.details);
-  };
+var updateShow = function updateShow(mdl, update) {
+  return (0, _fns.updateShowDetailsTask)(_Http2.default)(mdl)(update).fork((0, _fns.onError)(mdl)("details"), mdl.data.details);
+};
 
+var ListSelection = function ListSelection() {
   var showOpts = true;
   return {
     view: function view(_ref) {
@@ -920,7 +920,7 @@ var ListSelection = function ListSelection() {
         return m(_Elements.ListSelector, {
           list: list,
           action: function action() {
-            updateUserShows(mdl, list);
+            updateShow(mdl, { listStatus: list });
             showOpts = false;
           },
           key: idx,
@@ -938,12 +938,6 @@ var deleteShow = function deleteShow(mdl) {
       m.route.set("/home");
       mdl.user.shows(updatedShows);
     });
-  };
-};
-
-var updateShowNotes = function updateShowNotes(mdl) {
-  return function (show) {
-    return (0, _fns.updateShowNotesTask)(_Http2.default)(mdl)(show).fork((0, _fns.onError)(mdl)("details"), m.route.set(m.route.get()));
   };
 };
 
@@ -1006,7 +1000,7 @@ var DetailCard = function DetailCard() {
       }), m(_Elements.Button, {
         classList: "",
         action: function action() {
-          return updateShowNotes(mdl)(show);
+          return updateShow(mdl, { notes: show.notes });
         },
         label: "Save Notes"
       })]), m(TextBlock, {
@@ -1373,7 +1367,8 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
       tvmazeId = _ref.tvmazeId,
       objectId = _ref.objectId,
       listStatus = _ref.listStatus,
-      name = _ref.name;
+      name = _ref.name,
+      notes = _ref.notes;
   return function (_ref2) {
     var webChannel = _ref2.webChannel,
         network = _ref2.network,
@@ -1384,6 +1379,7 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
         _links = _ref2._links;
     return {
       name: name,
+      notes: notes,
       genre: (0, _ramda.join)(" ", genres),
       premiered: premiered,
       summary: summary,
