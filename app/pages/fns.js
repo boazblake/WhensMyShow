@@ -30,13 +30,14 @@ export const log = (m) => (v) => {
 
 export const formatError = (error) => JSON.parse(JSON.stringify(error))
 
-const formatLinks = (links) => {
-  let prev = view(lensPath(["previousepisode", "href"]), links)
-  let next = view(lensPath(["nextepisode", "href"]), links)
-
-  let urls = without([undefined], [prev, next])
-  return urls
-}
+const formatLinks = (links) =>
+  without(
+    [undefined],
+    [
+      view(lensPath(["previousepisode", "href"]), links),
+      view(lensPath(["nextepisode", "href"]), links)
+    ]
+  )
 
 const toEpisodeViewModel = ({
   name,
@@ -91,7 +92,6 @@ export const toSearchViewModel = ({ name, image, id }) => ({
   image: image && (makeHttps(image.original) || makeHttps(image.medium)),
   tvmazeId: id,
   name
-  // endpoint: getExternalId(externals)
 })
 
 export const toDbModel = ({ listStatus, notes, name, tvmazeId, image }) => ({

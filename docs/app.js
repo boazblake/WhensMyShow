@@ -1396,11 +1396,7 @@ var formatError = exports.formatError = function formatError(error) {
 };
 
 var formatLinks = function formatLinks(links) {
-  var prev = (0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links);
-  var next = (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links);
-
-  var urls = (0, _ramda.without)([undefined], [prev, next]);
-  return urls;
+  return (0, _ramda.without)([undefined], [(0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links), (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links)]);
 };
 
 var toEpisodeViewModel = function toEpisodeViewModel(_ref) {
@@ -1463,7 +1459,6 @@ var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_
     image: image && (makeHttps(image.original) || makeHttps(image.medium)),
     tvmazeId: id,
     name: name
-    // endpoint: getExternalId(externals)
   };
 };
 
