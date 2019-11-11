@@ -42,7 +42,6 @@ const formatError = (error) => JSON.parse(JSON.stringify(error))
 
 const formatLinks = (links) => {
   let prev = view(lensPath(["previousepisode", "href"]), links)
-  console.log(prev)
   let next = view(lensPath(["nextepisode", "href"]), links)
 
   return { prev, next }
@@ -163,18 +162,18 @@ const createBody = (dto) => ({
 export const toDto = (show, listType) =>
   createBody(updateListStatus(show)(listType))
 
-export const addUserShowsTask = (http) => (mdl) => (result) => (list) =>
+export const addUserShowsTask = (http) => (mdl) => (show) => (list) =>
   http
-    .postTask(http.backendlessUrl("devshows"), toDto(result, list))
+    .postTask(http.backendlessUrl("devshows"), toDto(show, list))
     .chain((_) => getShows(http))
     .map(mdl.user.shows)
     .fork(onError(mdl)("search"), onSuccess(mdl))
 
-export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
+export const updateUserShowsTask = (http) => (mdl) => (show) => (list) =>
   http
     .putTask(
-      http.backendlessUrl(`devshows\\${result.objectId}`),
-      toDto(result, list)
+      http.backendlessUrl(`devshows\\${show.objectId}`),
+      toDto(show, list)
     )
     .chain((_) => getShows(http))
     .fork(onError(mdl)("search"), onSuccess(mdl))
@@ -184,15 +183,12 @@ export const deleteShowTask = (http) => (id) =>
     .deleteTask(http.backendlessUrl(`devshows/${id}`))
     .chain((_) => getShows(http))
 
-// export const updateShowNotesTask = (http) => (mdl) => (notes) =>
-//   http.putTask(
-//     http.backendlessUrl(`devshows/${mdl.state.details.selected()}`),
-//     {
-//       body: {
-//         notes
-//       }
-//     }
-//   )
+export const updateShowDetailsTask = (http) => (mdl) => (dto) =>
+  http
+    .putTask(http.backendlessUrl(`devshows/${mdl.data.details().objectId}`), {
+      body: dto
+    })
+    .chain(({ objectId }) => getShowDetailsTask(mdl)(http)(objectId))
 
 const getShowDetails = (mdl) => (http) => (show) =>
   http
@@ -203,11 +199,7 @@ const findShowInDbTask = (http) => (id) =>
   http.getTask(http.backendlessUrl(`devshows/${id}`))
 
 export const getShowDetailsTask = (mdl) => (http) => (id) =>
-  findShowInDbTask(http)(id)
-    .chain(getShowDetails(mdl)(http))
-    .fork((e) => {
-      mdl.errors.details(formatError(e))
-    }, mdl.data.details)
+  findShowInDbTask(http)(id).chain(getShowDetails(mdl)(http))
 
 export const filterShowsByListType = (mdl) =>
   filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())

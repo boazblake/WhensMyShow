@@ -1,12 +1,49 @@
 import http from "../Http.js"
 import { isNil } from "ramda"
-import { Loader, Button } from "../components/Elements"
+import { Loader, Button, ListSelector } from "../components/Elements"
 import {
   getShowDetailsTask,
   deleteShowTask,
+  updateShowDetailsTask,
   onError,
+  formatError,
   updateShowNotesTask
 } from "./fns.js"
+
+const ListSelection = () => {
+  const updateUserShows = (mdl, list) =>
+    updateShowDetailsTask(http)(mdl)({ listStatus: list }).fork(
+      onError(mdl)("details"),
+      mdl.data.details
+    )
+
+  let showOpts = true
+  return {
+    view: ({ attrs: { mdl, list } }) =>
+      m(".dropdown", [
+        m(
+          "a.btn btn-link dropdown-toggle",
+          { onclick: () => (showOpts = true), tabindex: "0" },
+          [list, m("i.icon icon-caret")]
+        ),
+        showOpts &&
+          m(
+            "ul.menu",
+            mdl.user.lists().map((list, idx) =>
+              m(ListSelector, {
+                list,
+                action: () => {
+                  updateUserShows(mdl, list)
+                  showOpts = false
+                },
+                key: idx,
+                mdl
+              })
+            )
+          )
+      ])
+  }
+}
 
 const deleteShow = (mdl) => (show) => {
   console.log("deleting this hsow", show)
@@ -27,7 +64,11 @@ const updateShowNotes = (mdl) => (show) =>
 
 const getId = () => m.route.param().id
 
-const getShowDetails = (http) => (mdl) => getShowDetailsTask(mdl)(http)(getId())
+const getShowDetails = (http) => (mdl) =>
+  getShowDetailsTask(mdl)(http)(getId()).fork(
+    (e) => mdl.errors.details(formatError(e)),
+    mdl.data.details
+  )
 
 const TextBlock = () => {
   return {
@@ -39,7 +80,7 @@ const TextBlock = () => {
 const DetailCard = () => {
   return {
     view: ({ attrs: { show, mdl } }) => {
-      console.log("show", show)
+      // console.log("show", show)
       return m(".menu.columns", [
         m("div.form-group.col-6", [
           m(TextBlock, {
@@ -75,6 +116,8 @@ const DetailCard = () => {
           })
         ]),
         m("div.form-group.col-6", [
+          m(ListSelection, { mdl, list: show.listStatus }),
+
           m("label.form-label[for='notes']", "Notes"),
           m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
             value: show.notes,

@@ -903,6 +903,34 @@ var _fns = require("./fns.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var ListSelection = function ListSelection() {
+  var updateUserShows = function updateUserShows(mdl, list) {
+    return (0, _fns.updateShowDetailsTask)(_Http2.default)(mdl)({ listStatus: list }).fork((0, _fns.onError)(mdl)("details"), mdl.data.details);
+  };
+
+  var showOpts = true;
+  return {
+    view: function view(_ref) {
+      var _ref$attrs = _ref.attrs,
+          mdl = _ref$attrs.mdl,
+          list = _ref$attrs.list;
+      return m(".dropdown", [m("a.btn btn-link dropdown-toggle", { onclick: function onclick() {
+          return showOpts = true;
+        }, tabindex: "0" }, [list, m("i.icon icon-caret")]), showOpts && m("ul.menu", mdl.user.lists().map(function (list, idx) {
+        return m(_Elements.ListSelector, {
+          list: list,
+          action: function action() {
+            updateUserShows(mdl, list);
+            showOpts = false;
+          },
+          key: idx,
+          mdl: mdl
+        });
+      }))]);
+    }
+  };
+};
+
 var deleteShow = function deleteShow(mdl) {
   return function (show) {
     console.log("deleting this hsow", show);
@@ -925,16 +953,18 @@ var getId = function getId() {
 
 var getShowDetails = function getShowDetails(http) {
   return function (mdl) {
-    return (0, _fns.getShowDetailsTask)(mdl)(http)(getId());
+    return (0, _fns.getShowDetailsTask)(mdl)(http)(getId()).fork(function (e) {
+      return mdl.errors.details((0, _fns.formatError)(e));
+    }, mdl.data.details);
   };
 };
 
 var TextBlock = function TextBlock() {
   return {
-    view: function view(_ref) {
-      var _ref$attrs = _ref.attrs,
-          label = _ref$attrs.label,
-          text = _ref$attrs.text;
+    view: function view(_ref2) {
+      var _ref2$attrs = _ref2.attrs,
+          label = _ref2$attrs.label,
+          text = _ref2$attrs.text;
       return m(".formGroup", [m("strong", label), ("time", text)]);
     }
   };
@@ -942,12 +972,12 @@ var TextBlock = function TextBlock() {
 
 var DetailCard = function DetailCard() {
   return {
-    view: function view(_ref2) {
-      var _ref2$attrs = _ref2.attrs,
-          show = _ref2$attrs.show,
-          mdl = _ref2$attrs.mdl;
+    view: function view(_ref3) {
+      var _ref3$attrs = _ref3.attrs,
+          show = _ref3$attrs.show,
+          mdl = _ref3$attrs.mdl;
 
-      console.log("show", show);
+      // console.log("show", show)
       return m(".menu.columns", [m("div.form-group.col-6", [m(TextBlock, {
         label: show.name
       }), m("img.img-responsive.img-fit-cover", {
@@ -968,7 +998,7 @@ var DetailCard = function DetailCard() {
       }), m(TextBlock, {
         label: "Genre:  ",
         text: show.genre
-      })]), m("div.form-group.col-6", [m("label.form-label[for='notes']", "Notes"), m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
+      })]), m("div.form-group.col-6", [m(ListSelection, { mdl: mdl, list: show.listStatus }), m("label.form-label[for='notes']", "Notes"), m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
         value: show.notes,
         oninput: function oninput(e) {
           return show.notes = e.target.value;
@@ -989,13 +1019,13 @@ var DetailCard = function DetailCard() {
 
 var Details = function Details() {
   return {
-    oninit: function oninit(_ref3) {
-      var mdl = _ref3.attrs.mdl;
+    oninit: function oninit(_ref4) {
+      var mdl = _ref4.attrs.mdl;
 
       getShowDetails(_Http2.default)(mdl);
     },
-    view: function view(_ref4) {
-      var mdl = _ref4.attrs.mdl;
+    view: function view(_ref5) {
+      var mdl = _ref5.attrs.mdl;
 
       return m(".container", [(0, _ramda.isNil)(mdl.data.details()) ? m(_Elements.Loader) : m(DetailCard, { mdl: mdl, show: mdl.data.details() }), mdl.errors.details() !== null && m(".toast.toast-error", [m("p", [mdl.errors.details().response.status_message, m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
@@ -1003,8 +1033,8 @@ var Details = function Details() {
         }
       }, m("i.icon icon-cross"))]), m("p", "Choose a different show")])]);
     },
-    onbeforeremove: function onbeforeremove(_ref5) {
-      var mdl = _ref5.attrs.mdl;
+    onbeforeremove: function onbeforeremove(_ref6) {
+      var mdl = _ref6.attrs.mdl;
 
       mdl.errors.details(null);
       mdl.data.details(null);
@@ -1305,7 +1335,7 @@ exports.default = SearchResults;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.filterShowsByListType = exports.getShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShowsTask = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.log = undefined;
+exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShowsTask = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.log = undefined;
 
 var _ramda = require("ramda");
 
@@ -1333,7 +1363,6 @@ var formatError = function formatError(error) {
 
 var formatLinks = function formatLinks(links) {
   var prev = (0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links);
-  console.log(prev);
   var next = (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links);
 
   return { prev: prev, next: next };
@@ -1491,9 +1520,9 @@ var toDto = exports.toDto = function toDto(show, listType) {
 
 var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http) {
   return function (mdl) {
-    return function (result) {
+    return function (show) {
       return function (list) {
-        return http.postTask(http.backendlessUrl("devshows"), toDto(result, list)).chain(function (_) {
+        return http.postTask(http.backendlessUrl("devshows"), toDto(show, list)).chain(function (_) {
           return getShows(http);
         }).map(mdl.user.shows).fork(onError(mdl)("search"), onSuccess(mdl));
       };
@@ -1503,9 +1532,9 @@ var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http
 
 var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShowsTask(http) {
   return function (mdl) {
-    return function (result) {
+    return function (show) {
       return function (list) {
-        return http.putTask(http.backendlessUrl("devshows\\" + result.objectId), toDto(result, list)).chain(function (_) {
+        return http.putTask(http.backendlessUrl("devshows\\" + show.objectId), toDto(show, list)).chain(function (_) {
           return getShows(http);
         }).fork(onError(mdl)("search"), onSuccess(mdl));
       };
@@ -1521,15 +1550,18 @@ var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
   };
 };
 
-// export const updateShowNotesTask = (http) => (mdl) => (notes) =>
-//   http.putTask(
-//     http.backendlessUrl(`devshows/${mdl.state.details.selected()}`),
-//     {
-//       body: {
-//         notes
-//       }
-//     }
-//   )
+var updateShowDetailsTask = exports.updateShowDetailsTask = function updateShowDetailsTask(http) {
+  return function (mdl) {
+    return function (dto) {
+      return http.putTask(http.backendlessUrl("devshows/" + mdl.data.details().objectId), {
+        body: dto
+      }).chain(function (_ref5) {
+        var objectId = _ref5.objectId;
+        return getShowDetailsTask(mdl)(http)(objectId);
+      });
+    };
+  };
+};
 
 var getShowDetails = function getShowDetails(mdl) {
   return function (http) {
@@ -1548,9 +1580,7 @@ var findShowInDbTask = function findShowInDbTask(http) {
 var getShowDetailsTask = exports.getShowDetailsTask = function getShowDetailsTask(mdl) {
   return function (http) {
     return function (id) {
-      return findShowInDbTask(http)(id).chain(getShowDetails(mdl)(http)).fork(function (e) {
-        mdl.errors.details(formatError(e));
-      }, mdl.data.details);
+      return findShowInDbTask(http)(id).chain(getShowDetails(mdl)(http));
     };
   };
 };
