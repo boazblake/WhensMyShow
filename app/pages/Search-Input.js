@@ -1,8 +1,11 @@
 import m from "mithril"
 import http from "../Http.js"
-import { searchShows } from "./fns.js"
+import { searchShowsTask, onError } from "./fns.js"
 
 const SearchInput = () => {
+  const searchShows = (mdl) =>
+    searchShowsTask(mdl)(http).fork(onError(mdl)("search"), mdl.data.shows)
+
   return {
     view: ({ attrs: { mdl } }) =>
       m(
@@ -14,7 +17,7 @@ const SearchInput = () => {
             placeholder: "search",
             value: mdl.state.query(),
             oninput: (e) => mdl.state.query(e.target.value),
-            onchange: () => searchShows(mdl, http)
+            onchange: () => searchShows(mdl)
           })
         ])
       )

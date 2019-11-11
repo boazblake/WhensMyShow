@@ -86,12 +86,6 @@ export const toDbModel = ({ listStatus, notes, name, tvmazeId, image }) => ({
 
 export const onError = (mdl) => (type) => (error) => mdl.errors[type](error)
 
-const onSuccess = (mdl) => (d) => {
-  mdl.user.shows(d)
-  // updating the mdl.data with show details from the user list and the search results list.
-  mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()))
-}
-
 const rejectWithAttr = (attr) => (value) => reject(propEq(attr, value))
 
 const updateResults = (result) => (show) => {
@@ -117,21 +111,13 @@ export const updateShowStatus = (shows) => (data) =>
 const getShows = (http) =>
   http.getTask(http.backendlessUrl("devshows?pagesize=100"))
 
-export const getShowsTask = (mdl) => (http) =>
-  getShows(http).fork(mdl.errors, (d) => mdl.user.shows(d))
-
-export const searchShows = (mdl, http) =>
+export const searchShowsTask = (mdl, http) =>
   http
     .getTask(http.searchUrl(mdl.state.query()))
     .map(pluck("show"))
     .map(map(toSearchViewModel))
     .map(rejectWithAttr("image")(null))
     .map(updateShowStatus(mdl.user.shows()))
-    .fork(onError(mdl)("search"), (data) => {
-      // mdl.state.paginate.total_pages(data.total_pages)
-      // mdl.state.paginate.total_results(data.total_results)
-      mdl.data.shows(data)
-    })
 
 const itemSelected = (mdl) => (result) =>
   equals(prop("tvmazeId", result), mdl.state.searchItem.showMenu())
@@ -160,16 +146,14 @@ export const addUserShowsTask = (http) => (mdl) => (show) => (list) =>
     .postTask(http.backendlessUrl("devshows"), toDto(show, list))
     .chain((_) => getShows(http))
     .map(mdl.user.shows)
-    .fork(onError(mdl)("search"), onSuccess(mdl))
 
-export const updateUserShowsTask = (http) => (mdl) => (show) => (list) =>
+export const updateUserShowsTask = (http) => (show) => (list) =>
   http
     .putTask(
       http.backendlessUrl(`devshows\\${show.objectId}`),
       toDto(show, list)
     )
     .chain((_) => getShows(http))
-    .fork(onError(mdl)("search"), onSuccess(mdl))
 
 export const deleteShowTask = (http) => (id) =>
   http

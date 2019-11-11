@@ -1055,6 +1055,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var NoShows = m(".container.empty", [m("p.empty-title h5", "You have no shows yet!"), m("p.empty-subtitle", "Click search to find your shows.")]);
 
+var getShowsTask = function getShowsTask(mdl) {
+  return function (http) {
+    return getShows(http).fork(mdl.errors, function (d) {
+      return mdl.user.shows(d);
+    });
+  };
+};
+
 var selectedShows = function selectedShows() {
   var toDetailsPage = function toDetailsPage(mdl) {
     return function (show) {
@@ -1084,7 +1092,7 @@ var Home = function Home() {
   return {
     oninit: function oninit(_ref2) {
       var mdl = _ref2.attrs.mdl;
-      return (0, _fns.getShowsTask)(mdl)(_Http2.default);
+      return getShowsTask(mdl)(_Http2.default);
     },
     view: function view(_ref3) {
       var mdl = _ref3.attrs.mdl;
@@ -1167,6 +1175,10 @@ var _fns = require("./fns.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SearchInput = function SearchInput() {
+  var searchShows = function searchShows(mdl) {
+    return (0, _fns.searchShowsTask)(mdl)(_Http2.default).fork((0, _fns.onError)(mdl)("search"), mdl.data.shows);
+  };
+
   return {
     view: function view(_ref) {
       var mdl = _ref.attrs.mdl;
@@ -1179,7 +1191,7 @@ var SearchInput = function SearchInput() {
           return mdl.state.query(e.target.value);
         },
         onchange: function onchange() {
-          return (0, _fns.searchShows)(mdl, _Http2.default);
+          return searchShows(mdl);
         }
       })]));
     }
@@ -1249,15 +1261,23 @@ var _Elements = require("../components/Elements.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var onSuccess = function onSuccess(mdl) {
+  return function (d) {
+    mdl.user.shows(d);
+    // updating the mdl.data with show details from the user list and the search results list.
+    mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()));
+  };
+};
+
 var updateUserShows = function updateUserShows(mdl) {
   return function (result, list) {
-    return (0, _fns.updateUserShowsTask)(_Http2.default)(mdl)(result)(list);
+    return (0, _fns.updateUserShowsTask)(_Http2.default)(result)(list).fork(onError(mdl)("search"), onSuccess(mdl));
   };
 };
 
 var addUserShows = function addUserShows(mdl) {
   return function (result, list) {
-    return (0, _fns.addUserShowsTask)(_Http2.default)(mdl)(result)(list);
+    return (0, _fns.addUserShowsTask)(_Http2.default)(mdl)(result)(list).fork(onError(mdl)("search"), onSuccess(mdl));
   };
 };
 
@@ -1325,7 +1345,7 @@ exports.default = SearchResults;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShows = exports.getShowsTask = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
+exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShowsTask = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
 
 var _ramda = require("ramda");
 
@@ -1417,14 +1437,6 @@ var onError = exports.onError = function onError(mdl) {
   };
 };
 
-var onSuccess = function onSuccess(mdl) {
-  return function (d) {
-    mdl.user.shows(d);
-    // updating the mdl.data with show details from the user list and the search results list.
-    mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()));
-  };
-};
-
 var rejectWithAttr = function rejectWithAttr(attr) {
   return function (value) {
     return (0, _ramda.reject)((0, _ramda.propEq)(attr, value));
@@ -1453,20 +1465,8 @@ var getShows = function getShows(http) {
   return http.getTask(http.backendlessUrl("devshows?pagesize=100"));
 };
 
-var getShowsTask = exports.getShowsTask = function getShowsTask(mdl) {
-  return function (http) {
-    return getShows(http).fork(mdl.errors, function (d) {
-      return mdl.user.shows(d);
-    });
-  };
-};
-
-var searchShows = exports.searchShows = function searchShows(mdl, http) {
-  return http.getTask(http.searchUrl(mdl.state.query())).map((0, _ramda.pluck)("show")).map((0, _ramda.map)(toSearchViewModel)).map(rejectWithAttr("image")(null)).map(updateShowStatus(mdl.user.shows())).fork(onError(mdl)("search"), function (data) {
-    // mdl.state.paginate.total_pages(data.total_pages)
-    // mdl.state.paginate.total_results(data.total_results)
-    mdl.data.shows(data);
-  });
+var searchShowsTask = exports.searchShowsTask = function searchShowsTask(mdl, http) {
+  return http.getTask(http.searchUrl(mdl.state.query())).map((0, _ramda.pluck)("show")).map((0, _ramda.map)(toSearchViewModel)).map(rejectWithAttr("image")(null)).map(updateShowStatus(mdl.user.shows()));
 };
 
 var itemSelected = function itemSelected(mdl) {
@@ -1507,20 +1507,18 @@ var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http
       return function (list) {
         return http.postTask(http.backendlessUrl("devshows"), toDto(show, list)).chain(function (_) {
           return getShows(http);
-        }).map(mdl.user.shows).fork(onError(mdl)("search"), onSuccess(mdl));
+        }).map(mdl.user.shows);
       };
     };
   };
 };
 
 var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShowsTask(http) {
-  return function (mdl) {
-    return function (show) {
-      return function (list) {
-        return http.putTask(http.backendlessUrl("devshows\\" + show.objectId), toDto(show, list)).chain(function (_) {
-          return getShows(http);
-        }).fork(onError(mdl)("search"), onSuccess(mdl));
-      };
+  return function (show) {
+    return function (list) {
+      return http.putTask(http.backendlessUrl("devshows\\" + show.objectId), toDto(show, list)).chain(function (_) {
+        return getShows(http);
+      });
     };
   };
 };

@@ -8,11 +8,23 @@ import {
 } from "./fns.js"
 import { ListSelector } from "../components/Elements.js"
 
+const onSuccess = (mdl) => (d) => {
+  mdl.user.shows(d)
+  // updating the mdl.data with show details from the user list and the search results list.
+  mdl.data.shows(updateShowStatus(mdl.user.shows())(mdl.data.shows()))
+}
+
 const updateUserShows = (mdl) => (result, list) =>
-  updateUserShowsTask(http)(mdl)(result)(list)
+  updateUserShowsTask(http)(result)(list).fork(
+    onError(mdl)("search"),
+    onSuccess(mdl)
+  )
 
 const addUserShows = (mdl) => (result, list) =>
-  addUserShowsTask(http)(mdl)(result)(list)
+  addUserShowsTask(http)(mdl)(result)(list).fork(
+    onError(mdl)("search"),
+    onSuccess(mdl)
+  )
 
 const ListSelection = () => {
   return {
