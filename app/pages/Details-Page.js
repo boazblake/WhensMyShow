@@ -1,5 +1,5 @@
 import http from "../Http.js"
-import { isNil, map, prop } from "ramda"
+import { isNil } from "ramda"
 import { Loader, Button } from "../components/Elements"
 import {
   getShowDetailsTask,
@@ -25,12 +25,7 @@ const updateShowNotes = (mdl) => (show) =>
 
 const getId = () => m.route.param().id
 
-const formatError = (error) => JSON.parse(JSON.stringify(error))
-
-const getShowDetails = (http) => (mdl) =>
-  getShowDetailsTask(http)(getId()).fork((e) => {
-    mdl.errors.details(formatError(e))
-  }, mdl.data.details)
+const getShowDetails = (http) => (mdl) => getShowDetailsTask(mdl)(http)(getId())
 
 const TextBlock = () => {
   return {
@@ -42,7 +37,7 @@ const TextBlock = () => {
 const DetailCard = () => {
   return {
     view: ({ attrs: { show, mdl } }) => {
-      console.log(show)
+      console.log("show", show)
       return m(".menu.columns", [
         m(
           "",
@@ -92,7 +87,6 @@ const DetailCard = () => {
 const Details = () => {
   return {
     oninit: ({ attrs: { mdl } }) => {
-      console.log("details", mdl.user.shows())
       getShowDetails(http)(mdl)
     },
     view: ({ attrs: { mdl } }) => {

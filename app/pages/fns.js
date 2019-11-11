@@ -11,15 +11,12 @@ import {
   set,
   filter,
   not,
-  is,
   anyPass,
   pluck,
   reject,
   isNil,
   join,
-  isEmpty,
   head,
-  complement,
   equals
 } from "ramda"
 
@@ -28,6 +25,8 @@ export const log = (m) => (v) => {
   return v
 }
 
+const formatError = (error) => JSON.parse(JSON.stringify(error))
+
 const getExternalId = compose(
   join("="),
   head,
@@ -35,26 +34,35 @@ const getExternalId = compose(
   reject(isNil)
 )
 
-export const toViewModel = ({
-  name,
-  webChannel,
-  network,
-  externals,
+const toDetailsViewModel = ({
+  endpoint,
   image,
-  id,
-  status,
+  tvmazeId,
   objectId,
   listStatus
 }) => ({
   name,
+  webChannel,
+  network,
+  status,
+  genres,
+  premiered,
+  summary,
+  _links
+}) => ({
+  genre: join(" ", genres),
+  premiered,
+  summary,
+  links: _links,
+  endpoint,
+  image,
+  tvmazeId,
+  objectId,
+  listStatus,
+  name,
   webChannel: webChannel && webChannel.name,
   network: network && network.name,
-  image: image && (image.original || image.medium),
-  tvmazeId: id,
-  endpoint: getExternalId(externals),
-  status,
-  objectId,
-  listStatus
+  status
 })
 
 export const toSearchViewModel = ({ externals, image, id }) => ({
@@ -107,8 +115,11 @@ export const updateShowStatus = (shows) => (data) =>
     )(shows)
   )
 
-export const getShows = (http) =>
+const getShows = (http) =>
   http.getTask(http.backendlessUrl("devshows?pagesize=100"))
+
+export const getShowsTask = (mdl) => (http) =>
+  getShows(http).fork(mdl.errors, (d) => mdl.user.shows(d))
 
 export const searchShows = (mdl, http) =>
   http
@@ -176,8 +187,21 @@ export const deleteShowTask = (http) => (mdl) =>
 //     }
 //   )
 
-export const getShowDetailsTask = (http) => (id) =>
-  http.getTask(http.detailsUrl(id)).map(toViewModel)
+const getShowDetails = (mdl) => (http) => (show) =>
+  http
+    .getTask(http.tvMazeDetailsUrl(show.endpoint))
+    .map(toDetailsViewModel(show))
+
+const findShowInDbTask = (http) => (id) =>
+  http.getTask(http.backendlessUrl(`devshows/${id}`))
+
+export const getShowDetailsTask = (mdl) => (http) => (id) =>
+  findShowInDbTask(http)(id)
+    .map(log("getShowDetailsTask"))
+    .chain(getShowDetails(mdl)(http))
+    .fork((e) => {
+      mdl.errors.details(formatError(e))
+    }, mdl.data.details)
 
 export const filterShowsByListType = (mdl) =>
   filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())

@@ -96,7 +96,7 @@ const tvMazeShowByIdUrl = (baseUrl) => (id) => `${baseUrl}/lookup/shows?${id}`
 const backendlessUrl = (url) => backEndlessBaseUrl + url
 
 const searchUrl = (query) => tvMazeSearchUrl(tvMazeBaseUrl)(query)
-const detailsUrl = (id) => tvMazeShowByIdUrl(tvMazeBaseUrl)(id)
+const tvMazeDetailsUrl = (id) => tvMazeShowByIdUrl(tvMazeBaseUrl)(id)
 
 const http = {
   getTask,
@@ -104,7 +104,7 @@ const http = {
   putTask,
   deleteTask,
   searchUrl,
-  detailsUrl,
+  tvMazeDetailsUrl,
   backendlessUrl
 }
 
