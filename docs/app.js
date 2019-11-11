@@ -1462,7 +1462,7 @@ var updateShowStatus = exports.updateShowStatus = function updateShowStatus(show
 };
 
 var getShows = function getShows(http) {
-  return http.getTask(http.backendlessUrl("devshows?pagesize=100"));
+  return http.getTask(http.backendlessUrl("prodshows?pagesize=100"));
 };
 
 var getShowsTask = exports.getShowsTask = function getShowsTask(mdl) {
@@ -1517,7 +1517,7 @@ var addUserShowsTask = exports.addUserShowsTask = function addUserShowsTask(http
   return function (mdl) {
     return function (show) {
       return function (list) {
-        return http.postTask(http.backendlessUrl("devshows"), toDto(show, list)).chain(function (_) {
+        return http.postTask(http.backendlessUrl("prodshows"), toDto(show, list)).chain(function (_) {
           return getShows(http);
         }).map(mdl.user.shows).fork(onError(mdl)("search"), onSuccess(mdl));
       };
@@ -1529,7 +1529,7 @@ var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShows
   return function (mdl) {
     return function (show) {
       return function (list) {
-        return http.putTask(http.backendlessUrl("devshows\\" + show.objectId), toDto(show, list)).chain(function (_) {
+        return http.putTask(http.backendlessUrl("prodshows\\" + show.objectId), toDto(show, list)).chain(function (_) {
           return getShows(http);
         }).fork(onError(mdl)("search"), onSuccess(mdl));
       };
@@ -1539,7 +1539,7 @@ var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShows
 
 var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
   return function (id) {
-    return http.deleteTask(http.backendlessUrl("devshows/" + id)).chain(function (_) {
+    return http.deleteTask(http.backendlessUrl("prodshows/" + id)).chain(function (_) {
       return getShows(http);
     });
   };
@@ -1548,7 +1548,7 @@ var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
 var updateShowDetailsTask = exports.updateShowDetailsTask = function updateShowDetailsTask(http) {
   return function (mdl) {
     return function (dto) {
-      return http.putTask(http.backendlessUrl("devshows/" + mdl.data.details().objectId), {
+      return http.putTask(http.backendlessUrl("prodshows/" + mdl.data.details().objectId), {
         body: dto
       }).chain(function (_ref5) {
         var objectId = _ref5.objectId;
@@ -1568,7 +1568,7 @@ var getShowDetails = function getShowDetails(mdl) {
 
 var findShowInDbTask = function findShowInDbTask(http) {
   return function (id) {
-    return http.getTask(http.backendlessUrl("devshows/" + id));
+    return http.getTask(http.backendlessUrl("prodshows/" + id));
   };
 };
 
@@ -1598,7 +1598,7 @@ var tmdbAuth = exports.tmdbAuth = {
 var tmdbBaseUrl = exports.tmdbBaseUrl = "https://api.themoviedb.org/3";
 
 var tvMazeApiKey = exports.tvMazeApiKey = "F4-A2-dEzYi0oXvzbNWON3_nrnPSt9Yv";
-var tvMazeBaseUrl = exports.tvMazeBaseUrl = "http://api.tvmaze.com";
+var tvMazeBaseUrl = exports.tvMazeBaseUrl = "https://api.tvmaze.com";
 });
 
 ;require.register("utils/animations.js", function(exports, require, module) {
