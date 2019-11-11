@@ -91,7 +91,7 @@ const backEndlessBaseUrl =
 const tvMazeSearchUrl = (baseUrl) => (query) =>
   `${baseUrl}/search/shows?q=${query}`
 
-const tvMazeShowByIdUrl = (baseUrl) => (id) => `${baseUrl}/lookup/shows?${id}`
+const tvMazeShowByIdUrl = (baseUrl) => (id) => `${baseUrl}/shows/${id}`
 
 const backendlessUrl = (url) => backEndlessBaseUrl + url
 

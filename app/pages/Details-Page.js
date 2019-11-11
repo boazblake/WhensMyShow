@@ -8,14 +8,16 @@ import {
   updateShowNotesTask
 } from "./fns.js"
 
-const deleteShow = (mdl) => (show) =>
-  deleteShowTask(http)(mdl)(show).fork(
+const deleteShow = (mdl) => (show) => {
+  console.log("deleting this hsow", show)
+  return deleteShowTask(http)(show.objectId).fork(
     onError(mdl)("details"),
     (updatedShows) => {
       m.route.set("/home")
       mdl.user.shows(updatedShows)
     }
   )
+}
 
 const updateShowNotes = (mdl) => (show) =>
   updateShowNotesTask(http)(mdl)(show).fork(
@@ -39,9 +41,10 @@ const DetailCard = () => {
     view: ({ attrs: { show, mdl } }) => {
       console.log("show", show)
       return m(".menu.columns", [
-        m(
-          "",
-          { class: "col-6" },
+        m("div.form-group.col-6", [
+          m(TextBlock, {
+            label: show.name
+          }),
           m("img.img-responsive.img-fit-cover", {
             src: show.image
           }),
@@ -65,8 +68,12 @@ const DetailCard = () => {
           m(TextBlock, {
             label: "Status:  ",
             text: show.status
+          }),
+          m(TextBlock, {
+            label: "Genre:  ",
+            text: show.genre
           })
-        ),
+        ]),
         m("div.form-group.col-6", [
           m("label.form-label[for='notes']", "Notes"),
           m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
@@ -78,7 +85,11 @@ const DetailCard = () => {
             action: () => updateShowNotes(mdl)(show),
             label: "Save Notes"
           })
-        ])
+        ]),
+        m(TextBlock, {
+          label: "Links:  ",
+          text: m("pre", JSON.stringify(show.links, null, 4))
+        })
       ])
     }
   }
@@ -101,7 +112,7 @@ const Details = () => {
               m(
                 "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
                 {
-                  onclick: () => deleteShow(mdl.data.details(), mdl)
+                  onclick: () => deleteShow(mdl)(mdl.data.details())
                 },
                 m("i.icon icon-cross")
               )

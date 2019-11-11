@@ -294,7 +294,7 @@ var tvMazeSearchUrl = function tvMazeSearchUrl(baseUrl) {
 
 var tvMazeShowByIdUrl = function tvMazeShowByIdUrl(baseUrl) {
   return function (id) {
-    return baseUrl + "/lookup/shows?" + id;
+    return baseUrl + "/shows/" + id;
   };
 };
 
@@ -905,7 +905,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var deleteShow = function deleteShow(mdl) {
   return function (show) {
-    return (0, _fns.deleteShowTask)(_Http2.default)(mdl)(show).fork((0, _fns.onError)(mdl)("details"), function (updatedShows) {
+    console.log("deleting this hsow", show);
+    return (0, _fns.deleteShowTask)(_Http2.default)(show.objectId).fork((0, _fns.onError)(mdl)("details"), function (updatedShows) {
       m.route.set("/home");
       mdl.user.shows(updatedShows);
     });
@@ -947,7 +948,9 @@ var DetailCard = function DetailCard() {
           mdl = _ref2$attrs.mdl;
 
       console.log("show", show);
-      return m(".menu.columns", [m("", { class: "col-6" }, m("img.img-responsive.img-fit-cover", {
+      return m(".menu.columns", [m("div.form-group.col-6", [m(TextBlock, {
+        label: show.name
+      }), m("img.img-responsive.img-fit-cover", {
         src: show.image
       }), m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
@@ -962,7 +965,10 @@ var DetailCard = function DetailCard() {
       }), m(TextBlock, {
         label: "Status:  ",
         text: show.status
-      })), m("div.form-group.col-6", [m("label.form-label[for='notes']", "Notes"), m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
+      }), m(TextBlock, {
+        label: "Genre:  ",
+        text: show.genre
+      })]), m("div.form-group.col-6", [m("label.form-label[for='notes']", "Notes"), m("textarea.form-input[id='notes'][placeholder='Notes'][rows='10']", {
         value: show.notes,
         oninput: function oninput(e) {
           return show.notes = e.target.value;
@@ -973,7 +979,10 @@ var DetailCard = function DetailCard() {
           return updateShowNotes(mdl)(show);
         },
         label: "Save Notes"
-      })])]);
+      })]), m(TextBlock, {
+        label: "Links:  ",
+        text: m("pre", JSON.stringify(show.links, null, 4))
+      })]);
     }
   };
 };
@@ -990,7 +999,7 @@ var Details = function Details() {
 
       return m(".container", [(0, _ramda.isNil)(mdl.data.details()) ? m(_Elements.Loader) : m(DetailCard, { mdl: mdl, show: mdl.data.details() }), mdl.errors.details() !== null && m(".toast.toast-error", [m("p", [mdl.errors.details().response.status_message, m("b.btn btn-action btn-error btn-s s-circle deleteIcon ", {
         onclick: function onclick() {
-          return deleteShow(mdl.data.details(), mdl);
+          return deleteShow(mdl)(mdl.data.details());
         }
       }, m("i.icon icon-cross"))]), m("p", "Choose a different show")])]);
     },
@@ -1311,14 +1320,32 @@ var formatError = function formatError(error) {
   return JSON.parse(JSON.stringify(error));
 };
 
-var getExternalId = (0, _ramda.compose)((0, _ramda.join)("="), _ramda.head, _ramda.toPairs, (0, _ramda.reject)(_ramda.isNil));
+// const getExternalId = (x) => {
+//   console.log("x???", x)
+//   return compose(
+//     join("="),
+//     head,
+//     toPairs,
+//     log("why now"),
+//     reject(isNil)
+//   )(x)
+// }
+
+var formatLinks = function formatLinks(links) {
+  var prev = (0, _ramda.view)((0, _ramda.lensPath)(["previousepisode", "href"]), links);
+  console.log(prev);
+  var next = (0, _ramda.view)((0, _ramda.lensPath)(["nextepisode", "href"]), links);
+
+  return { prev: prev, next: next };
+};
 
 var toDetailsViewModel = function toDetailsViewModel(_ref) {
   var endpoint = _ref.endpoint,
       image = _ref.image,
       tvmazeId = _ref.tvmazeId,
       objectId = _ref.objectId,
-      listStatus = _ref.listStatus;
+      listStatus = _ref.listStatus,
+      name = _ref.name;
   return function (_ref2) {
     var name = _ref2.name,
         webChannel = _ref2.webChannel,
@@ -1332,13 +1359,12 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
       genre: (0, _ramda.join)(" ", genres),
       premiered: premiered,
       summary: summary,
-      links: _links,
+      links: formatLinks(_links),
       endpoint: endpoint,
       image: image,
       tvmazeId: tvmazeId,
       objectId: objectId,
       listStatus: listStatus,
-      name: name,
       webChannel: webChannel && webChannel.name,
       network: network && network.name,
       status: status
@@ -1347,27 +1373,28 @@ var toDetailsViewModel = function toDetailsViewModel(_ref) {
 };
 
 var toSearchViewModel = exports.toSearchViewModel = function toSearchViewModel(_ref3) {
-  var externals = _ref3.externals,
+  var name = _ref3.name,
       image = _ref3.image,
       id = _ref3.id;
   return {
     image: image && (image.original || image.medium),
     tvmazeId: id,
-    endpoint: getExternalId(externals)
+    name: name
+    // endpoint: getExternalId(externals)
   };
 };
 
 var toDbModel = exports.toDbModel = function toDbModel(_ref4) {
   var listStatus = _ref4.listStatus,
-      endpoint = _ref4.endpoint,
       notes = _ref4.notes,
+      name = _ref4.name,
       tvmazeId = _ref4.tvmazeId,
       image = _ref4.image;
   return {
-    endpoint: endpoint,
     image: image,
     listStatus: listStatus,
     notes: notes,
+    name: name,
     tvmazeId: tvmazeId
   };
 };
@@ -1489,8 +1516,8 @@ var updateUserShowsTask = exports.updateUserShowsTask = function updateUserShows
 };
 
 var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
-  return function (mdl) {
-    return http.deleteTask(http.backendlessUrl("devshows/" + mdl.state.details.selected())).chain(function (_) {
+  return function (id) {
+    return http.deleteTask(http.backendlessUrl("devshows/" + id)).chain(function (_) {
       return getShows(http);
     });
   };
@@ -1509,7 +1536,7 @@ var deleteShowTask = exports.deleteShowTask = function deleteShowTask(http) {
 var getShowDetails = function getShowDetails(mdl) {
   return function (http) {
     return function (show) {
-      return http.getTask(http.tvMazeDetailsUrl(show.endpoint)).map(toDetailsViewModel(show));
+      return http.getTask(http.tvMazeDetailsUrl(show.tvmazeId)).map(toDetailsViewModel(show));
     };
   };
 };
@@ -1523,7 +1550,7 @@ var findShowInDbTask = function findShowInDbTask(http) {
 var getShowDetailsTask = exports.getShowDetailsTask = function getShowDetailsTask(mdl) {
   return function (http) {
     return function (id) {
-      return findShowInDbTask(http)(id).map(log("getShowDetailsTask")).chain(getShowDetails(mdl)(http)).fork(function (e) {
+      return findShowInDbTask(http)(id).chain(getShowDetails(mdl)(http)).fork(function (e) {
         mdl.errors.details(formatError(e));
       }, mdl.data.details);
     };

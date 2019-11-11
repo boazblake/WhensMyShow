@@ -1,6 +1,7 @@
 import {
   toPairs,
   assoc,
+  lensPath,
   over,
   lensProp,
   map,
@@ -10,6 +11,7 @@ import {
   find,
   set,
   filter,
+  view,
   not,
   anyPass,
   pluck,
@@ -27,19 +29,32 @@ export const log = (m) => (v) => {
 
 const formatError = (error) => JSON.parse(JSON.stringify(error))
 
-const getExternalId = compose(
-  join("="),
-  head,
-  toPairs,
-  reject(isNil)
-)
+// const getExternalId = (x) => {
+//   console.log("x???", x)
+//   return compose(
+//     join("="),
+//     head,
+//     toPairs,
+//     log("why now"),
+//     reject(isNil)
+//   )(x)
+// }
+
+const formatLinks = (links) => {
+  let prev = view(lensPath(["previousepisode", "href"]), links)
+  console.log(prev)
+  let next = view(lensPath(["nextepisode", "href"]), links)
+
+  return { prev, next }
+}
 
 const toDetailsViewModel = ({
   endpoint,
   image,
   tvmazeId,
   objectId,
-  listStatus
+  listStatus,
+  name
 }) => ({
   name,
   webChannel,
@@ -53,35 +68,29 @@ const toDetailsViewModel = ({
   genre: join(" ", genres),
   premiered,
   summary,
-  links: _links,
+  links: formatLinks(_links),
   endpoint,
   image,
   tvmazeId,
   objectId,
   listStatus,
-  name,
   webChannel: webChannel && webChannel.name,
   network: network && network.name,
   status
 })
 
-export const toSearchViewModel = ({ externals, image, id }) => ({
+export const toSearchViewModel = ({ name, image, id }) => ({
   image: image && (image.original || image.medium),
   tvmazeId: id,
-  endpoint: getExternalId(externals)
+  name
+  // endpoint: getExternalId(externals)
 })
 
-export const toDbModel = ({
-  listStatus,
-  endpoint,
-  notes,
-  tvmazeId,
-  image
-}) => ({
-  endpoint,
+export const toDbModel = ({ listStatus, notes, name, tvmazeId, image }) => ({
   image,
   listStatus,
   notes,
+  name,
   tvmazeId
 })
 
@@ -172,9 +181,9 @@ export const updateUserShowsTask = (http) => (mdl) => (result) => (list) =>
     .chain((_) => getShows(http))
     .fork(onError(mdl)("search"), onSuccess(mdl))
 
-export const deleteShowTask = (http) => (mdl) =>
+export const deleteShowTask = (http) => (id) =>
   http
-    .deleteTask(http.backendlessUrl(`devshows/${mdl.state.details.selected()}`))
+    .deleteTask(http.backendlessUrl(`devshows/${id}`))
     .chain((_) => getShows(http))
 
 // export const updateShowNotesTask = (http) => (mdl) => (notes) =>
@@ -189,7 +198,7 @@ export const deleteShowTask = (http) => (mdl) =>
 
 const getShowDetails = (mdl) => (http) => (show) =>
   http
-    .getTask(http.tvMazeDetailsUrl(show.endpoint))
+    .getTask(http.tvMazeDetailsUrl(show.tvmazeId))
     .map(toDetailsViewModel(show))
 
 const findShowInDbTask = (http) => (id) =>
@@ -197,7 +206,6 @@ const findShowInDbTask = (http) => (id) =>
 
 export const getShowDetailsTask = (mdl) => (http) => (id) =>
   findShowInDbTask(http)(id)
-    .map(log("getShowDetailsTask"))
     .chain(getShowDetails(mdl)(http))
     .fork((e) => {
       mdl.errors.details(formatError(e))

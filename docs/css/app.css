@@ -8222,6 +8222,9 @@ a.text-error:visited {
   align-content: center;
   justify-content: flex-start; }
 
+img {
+  width: 200px; }
+
 .tileCard {
   position: relative; }
   .tileCard > ul.menu {
