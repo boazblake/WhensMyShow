@@ -1057,9 +1057,7 @@ var NoShows = m(".container.empty", [m("p.empty-title h5", "You have no shows ye
 
 var getShowsTask = function getShowsTask(mdl) {
   return function (http) {
-    return getShows(http).fork(mdl.errors, function (d) {
-      return mdl.user.shows(d);
-    });
+    return (0, _fns.getShows)(http).fork(mdl.errors, mdl.user.shows);
   };
 };
 
@@ -1345,7 +1343,7 @@ exports.default = SearchResults;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShowsTask = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
+exports.filterShowsByListType = exports.getShowDetailsTask = exports.updateShowDetailsTask = exports.deleteShowTask = exports.updateUserShowsTask = exports.addUserShowsTask = exports.toDto = exports.showListSelection = exports.propIsDefined = exports.searchShowsTask = exports.getShows = exports.updateShowStatus = exports.onError = exports.toDbModel = exports.toSearchViewModel = exports.formatError = exports.log = undefined;
 
 var _ramda = require("ramda");
 
@@ -1461,7 +1459,7 @@ var updateShowStatus = exports.updateShowStatus = function updateShowStatus(show
   };
 };
 
-var getShows = function getShows(http) {
+var getShows = exports.getShows = function getShows(http) {
   return http.getTask(http.backendlessUrl("devshows?pagesize=100"));
 };
 

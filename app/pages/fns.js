@@ -108,7 +108,7 @@ export const updateShowStatus = (shows) => (data) =>
     )(shows)
   )
 
-const getShows = (http) =>
+export const getShows = (http) =>
   http.getTask(http.backendlessUrl("devshows?pagesize=100"))
 
 export const searchShowsTask = (mdl, http) =>

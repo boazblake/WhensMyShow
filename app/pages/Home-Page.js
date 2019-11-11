@@ -1,5 +1,5 @@
 import http from "../Http.js"
-import { filterShowsByListType } from "./fns.js"
+import { getShows, filterShowsByListType } from "./fns.js"
 import { isEmpty } from "ramda"
 
 const NoShows = m(".container.empty", [
@@ -8,7 +8,7 @@ const NoShows = m(".container.empty", [
 ])
 
 const getShowsTask = (mdl) => (http) =>
-  getShows(http).fork(mdl.errors, (d) => mdl.user.shows(d))
+  getShows(http).fork(mdl.errors, mdl.user.shows)
 
 const selectedShows = () => {
   const toDetailsPage = (mdl) => (show) => {
