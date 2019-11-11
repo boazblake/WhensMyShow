@@ -148,7 +148,11 @@ const DetailCard = () => {
         m(
           ".accordian.columns.col-12",
           { onclick: () => (showLinks = !showLinks) },
-          m("a.h2", "Episodes"),
+          m(
+            "a.h2",
+            "Episodes",
+            m(`i.icon ${showLinks ? "icon-arrow-down" : "icon-arrow-right"}`)
+          ),
           m(
             ".accordion-body",
             showLinks &&

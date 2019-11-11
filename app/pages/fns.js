@@ -30,14 +30,17 @@ export const log = (m) => (v) => {
 
 export const formatError = (error) => JSON.parse(JSON.stringify(error))
 
+export const getEpisodeLink = (path) => (links) =>
+  view(lensPath([path, "href"]), links)
+
 const formatLinks = (links) =>
   without(
     [undefined],
     [
-      view(lensPath(["previousepisode", "href"]), links),
-      view(lensPath(["nextepisode", "href"]), links)
+      getEpisodeLink("previousepisode")(links),
+      getEpisodeLink("nextepisode")(links)
     ]
-  )
+  ).map(makeHttps)
 
 const toEpisodeViewModel = ({
   name,
@@ -200,4 +203,7 @@ export const filterShowsByListType = (mdl) =>
   filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())
 
 export const getEpisodeTask = (http) => (episodeUrl) =>
-  http.getTask(episodeUrl).map(toEpisodeViewModel)
+  http
+    .getTask(episodeUrl)
+    .map(toEpisodeViewModel)
+    .map(log("wtf"))
