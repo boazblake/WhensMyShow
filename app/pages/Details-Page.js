@@ -110,13 +110,6 @@ const DetailCard = () => {
           m("img.img-responsive.img-fit-cover", {
             src: show.image
           }),
-          m(
-            "b.btn btn-action btn-error btn-s deleteIcon ",
-            {
-              onclick: () => deleteShow(mdl)(show)
-            },
-            m("i.icon icon-cross")
-          ),
           (show.network || show.webChannel) &&
             m(TextBlock, {
               label: "Channel: ",

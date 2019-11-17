@@ -1,5 +1,10 @@
 import http from "../Http.js"
-import { getShows, filterShowsByListType } from "./fns.js"
+import {
+  getShows,
+  filterShowsByListType,
+  deleteShowTask,
+  onError
+} from "./fns.js"
 import { isEmpty } from "ramda"
 
 const NoShows = m(".container.empty", [
@@ -16,6 +21,15 @@ const selectedShows = () => {
     m.route.set(`/details/${show.objectId}`)
   }
 
+  const deleteShow = (mdl) => (show) =>
+    deleteShowTask(http)(show.objectId).fork(
+      onError(mdl)("details"),
+      (updatedShows) => {
+        m.route.set("/home")
+        mdl.user.shows(updatedShows)
+      }
+    )
+
   return {
     view: ({ attrs: { mdl } }) =>
       filterShowsByListType(mdl).map((show, idx) =>
@@ -24,10 +38,19 @@ const selectedShows = () => {
           {
             key: idx
           },
-          m("img.img-responsive.img-fit-cover", {
-            onclick: () => toDetailsPage(mdl)(show),
-            src: show.image
-          })
+          [
+            m(
+              "b.btn btn-action btn-error btn-s deleteIcon ",
+              {
+                onclick: () => deleteShow(mdl)(show)
+              },
+              m("i.icon icon-cross")
+            ),
+            m("img.img-responsive.img-fit-cover", {
+              onclick: () => toDetailsPage(mdl)(show),
+              src: show.image
+            })
+          ]
         )
       )
   }
