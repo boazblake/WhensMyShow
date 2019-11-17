@@ -194,7 +194,4 @@ export const filterShowsByListType = (mdl) =>
   filter(propEq("listStatus", mdl.state.currentList()), mdl.user.shows())
 
 export const getEpisodeTask = (http) => (episodeUrl) =>
-  http
-    .getTask(episodeUrl)
-    .map(toEpisodeViewModel)
-    .map(log("wtf"))
+  http.getTask(episodeUrl).map(toEpisodeViewModel)
