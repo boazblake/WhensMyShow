@@ -30,14 +30,14 @@ exports.npm = {
 
 exports.plugins = {
   babel: { presets: ["latest", "stage-0"] },
-  uncss: { options: { csspath: "css/app.css" } }
-  // swPrecache: {
-  //   autorequire: ["app/assets/index.html"],
-  //   options: {
-  //     staticFileGlobs: ["docs/**/!(*map*)"],
-  //     stripPrefix: "docs/"
-  //   }
-  // }
+  uncss: { options: { csspath: "css/app.css" } },
+  swPrecache: {
+    autorequire: ["app/assets/index.html"],
+    options: {
+      staticFileGlobs: ["docs/**/!(*map*)"],
+      stripPrefix: "docs/"
+    }
+  }
 }
 
 exports.paths = {
