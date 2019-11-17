@@ -3,7 +3,7 @@ import Model from "./Models.js"
 import App from "./App.js"
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js")
+  // navigator.serviceWorker.register("sw.js")
 }
 
 document.addEventListener("DOMContentLoaded", () => {
