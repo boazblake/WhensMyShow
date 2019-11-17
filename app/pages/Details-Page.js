@@ -111,7 +111,7 @@ const DetailCard = () => {
             src: show.image
           }),
           m(
-            "b.btn btn-action btn-error btn-s s-circle deleteIcon ",
+            "b.btn btn-action btn-error btn-s deleteIcon ",
             {
               onclick: () => deleteShow(mdl)(show)
             },

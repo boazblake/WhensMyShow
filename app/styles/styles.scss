@@ -14,26 +14,16 @@
   --white: rgba(255, 255, 255, 1);
 }
 
-.app {
-  display: flex;
-  flex-flow: column;
-  justify-content: space-between;
-  align-content: space-between;
-  height: 100vh;
-  width: 100vw;
-}
-
-.main {
-  height: 80%;
-  overflow: scroll;
-}
-
 .tiles {
   display: flex;
   flex-flow: wrap;
   width: 100vw;
   align-content: center;
   justify-content: flex-start;
+}
+
+.dropdown {
+  z-index: 1000;
 }
 
 // .menu {
@@ -50,6 +40,7 @@ img {
 
 .tileCard {
   position: relative;
+  flex: 0 50%;
 
   > ul.menu {
     position: absolute;

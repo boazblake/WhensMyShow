@@ -20,7 +20,7 @@ const selectedShows = () => {
     view: ({ attrs: { mdl } }) =>
       filterShowsByListType(mdl).map((show, idx) =>
         m(
-          ".tileCard",
+          "li.menu",
           {
             key: idx
           },
@@ -38,7 +38,7 @@ const Home = () => {
     oninit: ({ attrs: { mdl } }) => getShowsTask(mdl)(http),
     view: ({ attrs: { mdl } }) =>
       m(
-        "section.tiles",
+        "ul.tiles",
         isEmpty(mdl.user.shows()) ? NoShows : m(selectedShows, { mdl })
       )
   }
