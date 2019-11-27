@@ -1,0 +1,6 @@
+endpoint: https://us1.prisma.sh/boaz-blake-8951e1/whensMyShow/dev
+datamodel: datamodel.prisma
+
+generate:
+  - generator: typescript-client
+    output: ./generated/prisma-client/

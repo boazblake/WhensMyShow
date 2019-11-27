@@ -1,0 +1,14 @@
+type User {
+  id: ID! @id
+  name: String!
+}
+
+type Show {
+  id: ID! @id
+  orderId: Int
+  image: String
+  listStatus: String
+  name: String
+  notes: String!
+  tvmazeId: Int
+}
